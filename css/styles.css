@@ -235,7 +235,7 @@ body {
 .vitals-box { margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #ddd; }
 
 .vital-row { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
-.vital-label { font-size: 11px; font-weight: 700; width: 28px; flex-shrink: 0; }
+.vital-label { font-size: 11px; font-weight: 700; min-width: 80px; flex-shrink: 0; }
 
 .vital-input {
   width: 44px;
