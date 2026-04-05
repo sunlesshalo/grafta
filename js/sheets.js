@@ -84,6 +84,7 @@ async function createSpreadsheet() {
     ['water_target', '3000'],
     ['day_start_hour', '5'],
     ['first_day', new Date().toISOString().slice(0, 10)],
+    ['bp_times', '2'],
   ]);
 
   localStorage.setItem(KEY_SHEET, id);
@@ -137,12 +138,13 @@ export async function batchUpdate(spreadsheetId, requests) {
 
 export async function getSettings(spreadsheetId) {
   const rows = await getRange(spreadsheetId, `${S.SETTINGS}!A:B`);
-  const settings = { water_target: 3000, day_start_hour: 5, lang: null };
+  const settings = { water_target: 3000, day_start_hour: 5, lang: null, bp_times: 2 };
   for (const row of rows.slice(1)) { // skip header
     if (row[0] === 'water_target')   settings.water_target   = parseInt(row[1], 10);
     if (row[0] === 'day_start_hour') settings.day_start_hour = parseInt(row[1], 10);
     if (row[0] === 'first_day')      settings.first_day       = row[1];
     if (row[0] === 'lang')           settings.lang            = row[1];
+    if (row[0] === 'bp_times')       settings.bp_times        = parseInt(row[1], 10) || 2;
   }
   return settings;
 }

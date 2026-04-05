@@ -37,7 +37,7 @@ window._app     = {
 };
 
 // ── State ─────────────────────────────────────────────────────────────────────
-let _settings    = { water_target: 3000, day_start_hour: 5, first_day: null };
+let _settings    = { water_target: 3000, day_start_hour: 5, first_day: null, bp_times: 2 };
 let _viewingDate = null;
 let _isToday     = false;
 
@@ -82,6 +82,7 @@ async function onSignedIn() {
     // Sync settings to localStorage for editor quick access
     localStorage.setItem('mt_water_target', String(_settings.water_target));
     localStorage.setItem('mt_day_start',    String(_settings.day_start_hour));
+    localStorage.setItem('mt_bp_times',     String(_settings.bp_times ?? 2));
 
     // Init tracker with settings
     initTracker({ settings: _settings, onOpenEditor: openEditorView });

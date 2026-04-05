@@ -6,7 +6,7 @@ import { t } from './i18n.js';
 
 let _viewingDate  = null;
 let _isToday      = false;
-let _settings     = { water_target: 3000, day_start_hour: 5 };
+let _settings     = { water_target: 3000, day_start_hour: 5, bp_times: 2 };
 let _onOpenEditor = null;
 let _onOpenLabs   = null;
 
@@ -123,8 +123,11 @@ async function renderMeds() {
     html += `<div class="time-label">${block.time}</div>`;
 
     // Which BP applies to this time block?
+    const bpArr = s.bp || [];
     const blockHour = parseInt(block.time.split(':')[0], 10);
-    const bp = blockHour < 12 ? s.bpAm : s.bpPm;
+    const bp = blockHour < 12
+      ? (bpArr[0] || null)
+      : (bpArr[bpArr.length - 1] || bpArr[0] || null);
 
     block.meds.forEach(med => {
       const on   = !!s.checked[med.id];
@@ -164,8 +167,7 @@ export function resetDay() {
     s.checked = {};
     s.water   = [];
     s.urine   = [];
-    s.bpAm    = null;
-    s.bpPm    = null;
+    s.bp      = [];
     s.weight  = null;
     s.temp    = null;
     s.notes   = '';
@@ -193,9 +195,12 @@ function renderHealth() {
 }
 
 function renderVitals(s) {
+  const bpCount = _settings.bp_times || 2;
+  const bpArr   = s.bp || [];
   let html = `<div class="vitals-box">`;
-  html += vitalsRow(t('vital_am'), 'bpAm',  s.bpAm,   'bp');
-  html += vitalsRow(t('vital_pm'), 'bpPm',  s.bpPm,   'bp');
+  for (let i = 0; i < bpCount; i++) {
+    html += vitalsRow(t('vital_bp', { n: i + 1 }), i, bpArr[i] ?? null, 'bp');
+  }
   html += vitalsRow(t('vital_wt'), 'weight', s.weight, 'weight');
   html += vitalsRow(t('vital_temp'), 'temp', s.temp,   'temp');
   html += `</div>`;
@@ -213,11 +218,11 @@ function vitalsRow(label, key, value, type) {
       ? `${value.value}°C`
       : `${value.value} kg`;
     const alertCls = (type === 'bp' && bpHigh(value)) || (type === 'temp' && value.value >= 37.5) ? ' alert' : '';
-    html += `<span class="vital-locked${alertCls}">${display} <button class="log-del" onclick="window._tracker.clearVital('${key}')">×</button></span>`;
+    html += `<span class="vital-locked${alertCls}">${display} <button class="log-del" onclick="window._tracker.clearVital('${key}','${type}')">×</button></span>`;
   } else if (type === 'bp') {
-    html += `<input class="vital-input" id="${key}Sys" type="number" inputmode="numeric" placeholder="sys" style="width:40px">`;
+    html += `<input class="vital-input" id="bp${key}Sys" type="number" inputmode="numeric" placeholder="sys" style="width:40px">`;
     html += `<span class="vital-slash">/</span>`;
-    html += `<input class="vital-input" id="${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px">`;
+    html += `<input class="vital-input" id="bp${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px">`;
     html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','bp')">${t('ok_btn')}</button>`;
   } else {
     const ph    = type === 'weight' ? 'kg'  : '°C';
@@ -242,10 +247,12 @@ function renderNotes(s) {
 export function saveVital(key, type) {
   const s = state();
   if (type === 'bp') {
-    const sys = parseInt(document.getElementById(key + 'Sys')?.value, 10);
-    const dia = parseInt(document.getElementById(key + 'Dia')?.value, 10);
+    const idx = parseInt(key, 10);
+    const sys = parseInt(document.getElementById(`bp${idx}Sys`)?.value, 10);
+    const dia = parseInt(document.getElementById(`bp${idx}Dia`)?.value, 10);
     if (!sys || !dia) return;
-    s[key] = { sys, dia, time: nowTime() };
+    if (!s.bp) s.bp = [];
+    s.bp[idx] = { sys, dia, time: nowTime() };
   } else {
     const val = parseFloat(document.getElementById(key + 'Val')?.value);
     if (!val) return;
@@ -255,9 +262,15 @@ export function saveVital(key, type) {
   renderAll();
 }
 
-export function clearVital(key) {
+export function clearVital(key, type) {
   const s = state();
-  s[key] = null;
+  if (type === 'bp') {
+    const idx = parseInt(key, 10);
+    if (!s.bp) s.bp = [];
+    s.bp[idx] = null;
+  } else {
+    s[key] = null;
+  }
   save(s);
   renderAll();
 }

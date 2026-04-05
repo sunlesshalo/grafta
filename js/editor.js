@@ -135,6 +135,7 @@ function renderInlineEdit(med) {
 function renderSettings() {
   const wt = localStorage.getItem('mt_water_target') || '3000';
   const ds = localStorage.getItem('mt_day_start')    || '5';
+  const bt = localStorage.getItem('mt_bp_times')     || '2';
   return `
     <div class="editor-settings">
       <h3>${t('settings_title')}</h3>
@@ -147,6 +148,11 @@ function renderSettings() {
         <label>${t('day_starts')}</label>
         <input type="number" value="${ds}" min="0" max="6" id="settingDayStart"
           oninput="localStorage.setItem('mt_day_start', this.value)">
+      </div>
+      <div class="editor-field">
+        <label>${t('bp_readings_label')}</label>
+        <input type="number" value="${bt}" min="1" max="4" id="settingBpTimes"
+          oninput="localStorage.setItem('mt_bp_times', this.value)">
       </div>
     </div>`;
 }

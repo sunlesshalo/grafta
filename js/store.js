@@ -15,8 +15,7 @@ let syncQueue    = null; // holds latest { date, state } to write
 export function emptyState(dateKey) {
   return {
     date: dateKey,
-    bpAm: null,
-    bpPm: null,
+    bp: [],             // [{sys, dia, time}] — one entry per configured reading
     weight: null,
     temp: null,
     checked: {},        // { uuid: true/false }
@@ -31,7 +30,15 @@ export function getState(dateKey) {
   const raw = localStorage.getItem(KEY_PREFIX + dateKey);
   if (!raw) return emptyState(dateKey);
   try {
-    return { ...emptyState(dateKey), ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    const s = { ...emptyState(dateKey), ...parsed };
+    // Migrate legacy bpAm/bpPm → bp array
+    if (!parsed.bp && (parsed.bpAm || parsed.bpPm)) {
+      s.bp = [];
+      if (parsed.bpAm) s.bp[0] = parsed.bpAm;
+      if (parsed.bpPm) s.bp[1] = parsed.bpPm;
+    }
+    return s;
   } catch {
     return emptyState(dateKey);
   }
@@ -91,12 +98,13 @@ async function flushSync() {
 function buildRow(state) {
   const meds_done  = Object.values(state.checked || {}).filter(Boolean).length;
   const meds_total = Object.keys(state.checked || {}).length;
+  const bp = state.bp || [];
   return [
     state.date,
-    state.bpAm?.sys  ?? '',
-    state.bpAm?.dia  ?? '',
-    state.bpPm?.sys  ?? '',
-    state.bpPm?.dia  ?? '',
+    bp[0]?.sys  ?? '',
+    bp[0]?.dia  ?? '',
+    bp[1]?.sys  ?? '',
+    bp[1]?.dia  ?? '',
     state.weight?.value ?? '',
     state.temp?.value   ?? '',
     meds_done,
@@ -121,8 +129,10 @@ export function parseSheetRow(row) {
 
   return {
     date:    safe(0),
-    bpAm:    num(1) ? { sys: num(1), dia: num(2) }   : null,
-    bpPm:    num(3) ? { sys: num(3), dia: num(4) }   : null,
+    bp:      [
+      num(1) ? { sys: num(1), dia: num(2) } : null,
+      num(3) ? { sys: num(3), dia: num(4) } : null,
+    ].filter(Boolean),
     weight:  num(5) ? { value: num(5) }               : null,
     temp:    num(6) ? { value: num(6) }               : null,
     checked: tryParse(safe(11), {}),
@@ -160,7 +170,7 @@ export async function syncAndMerge(dateKey) {
 
   const local = getState(dateKey);
   // Remote wins if it has actual data and local has none
-  const remoteHasData = remote.bpAm || remote.weight || remote.temp ||
+  const remoteHasData = (remote.bp || []).length > 0 || remote.weight || remote.temp ||
     Object.values(remote.checked || {}).some(Boolean) ||
     (remote.water || []).length > 0;
 
