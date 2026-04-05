@@ -174,7 +174,8 @@ body {
   min-height: calc(100dvh - 48px);
 }
 
-#colLabs { display: none; }
+/* Desktop: colLabs auto-places at row 2, col 1 (below Meds) */
+#colLabs { border-top: 2px solid #000; border-right: 1px solid #ddd; }
 
 .col {
   padding: 8px;
@@ -676,11 +677,6 @@ body {
 .signin-lang {
   margin-top: 20px;
   text-align: center;
-}
-
-.signin-lang .lang-select {
-  font-size: 13px;
-  padding: 5px 28px 5px 10px;
 }
 
 /* ── Responsive fluid tweaks ── */
