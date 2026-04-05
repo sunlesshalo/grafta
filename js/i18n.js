@@ -84,6 +84,13 @@ const LANGS = {
     water_glass:         '{remaining} ml left — {mlPerHour} ml/h — a glass every ~{minutes} min',
     water_more:          '{remaining} ml left — {mlPerHour} ml/h — drink more!',
     water_now:           '{remaining} ml left — {mlPerHour} ml/h — drink now!',
+    // Fluid types
+    drink_water:         'Water',
+    drink_coffee:        'Coffee',
+    drink_tea:           'Tea',
+    drink_juice:         'Juice',
+    drink_soup:          'Soup',
+    drink_other:         'Other',
     // Labs
     labs_title:          'Labs',
     labs_date:           'Date',
@@ -186,6 +193,13 @@ const LANGS = {
     water_glass:         'Mai rămân {remaining} ml — {mlPerHour} ml/h — un pahar la ~{minutes} min',
     water_more:          'Mai rămân {remaining} ml — {mlPerHour} ml/h — bea mai mult!',
     water_now:           'Mai rămân {remaining} ml — {mlPerHour} ml/h — bea acum!',
+    // Fluid types
+    drink_water:         'Apă',
+    drink_coffee:        'Cafea',
+    drink_tea:           'Ceai',
+    drink_juice:         'Suc',
+    drink_soup:          'Supă',
+    drink_other:         'Altele',
     // Labs
     labs_title:          'Analize',
     labs_date:           'Data',
@@ -288,6 +302,13 @@ const LANGS = {
     water_glass:         '{remaining} ml maradt — {mlPerHour} ml/h — egy pohár kb. {minutes} percenként',
     water_more:          '{remaining} ml maradt — {mlPerHour} ml/h — igyál többet!',
     water_now:           '{remaining} ml maradt — {mlPerHour} ml/h — igyál most!',
+    // Fluid types
+    drink_water:         'Víz',
+    drink_coffee:        'Kávé',
+    drink_tea:           'Tea',
+    drink_juice:         'Gyümölcslé',
+    drink_soup:          'Leves',
+    drink_other:         'Egyéb',
     // Labs
     labs_title:          'Labor',
     labs_date:           'Dátum',

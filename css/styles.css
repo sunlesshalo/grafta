@@ -387,7 +387,32 @@ body {
   border-bottom: 1px solid #f0f0f0;
 }
 .log-time   { color: #999; }
+.log-label  { color: #888; font-style: italic; flex: 1; padding: 0 6px; }
 .log-amount { font-weight: 600; }
+
+/* ── Drink type selector ── */
+.fluid-type-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.fluid-type-btn {
+  background: #fff;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  cursor: pointer;
+  color: #666;
+  white-space: nowrap;
+}
+.fluid-type-btn.active {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
 
 /* ── Labs ── */
 .labs-form {
@@ -494,6 +519,12 @@ body {
 }
 
 .editor-title { font-size: 15px; font-weight: 700; }
+
+.editor-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .editor-save {
   background: #000;

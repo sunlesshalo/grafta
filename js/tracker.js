@@ -9,6 +9,9 @@ let _isToday      = false;
 let _settings     = { water_target: 3000, day_start_hour: 5, bp_times: 2 };
 let _onOpenEditor = null;
 let _onOpenLabs   = null;
+let _waterLabel   = 'drink_water'; // i18n key for selected drink type
+
+const DRINK_TYPES = ['drink_water','drink_coffee','drink_tea','drink_juice','drink_soup','drink_other'];
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
@@ -305,6 +308,15 @@ function renderFluidCol(type, elId, title, target) {
 
   if (type === 'water' && target && _isToday) html += waterPace(total, target);
 
+  if (type === 'water') {
+    html += `<div class="fluid-type-row">`;
+    DRINK_TYPES.forEach(key => {
+      const active = _waterLabel === key ? ' active' : '';
+      html += `<button class="fluid-type-btn${active}" onclick="window._tracker.setFluidLabel('${key}')">${t(key)}</button>`;
+    });
+    html += `</div>`;
+  }
+
   html += `<div class="fluid-btns">`;
   [100, 200, 250, 500].forEach(ml => {
     html += `<button class="fluid-btn" onclick="window._tracker.addFluid('${type}',${ml})">+${ml}</button>`;
@@ -316,6 +328,7 @@ function renderFluidCol(type, elId, title, target) {
     const idx = entries.length - 1 - ri;
     html += `<div class="log-entry">
       <span class="log-time">${entry.time || t('night')}</span>
+      ${entry.label ? `<span class="log-label">${entry.label}</span>` : ''}
       <span class="log-amount">${entry.amount} ml</span>
       <button class="log-del" onclick="window._tracker.delFluid('${type}',${idx})">×</button>
     </div>`;
@@ -324,10 +337,17 @@ function renderFluidCol(type, elId, title, target) {
   el.innerHTML = html;
 }
 
+export function setFluidLabel(key) {
+  _waterLabel = key;
+  renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
+}
+
 export function addFluid(type, ml) {
   const s = state();
   if (!s[type]) s[type] = [];
-  s[type].push({ amount: ml, time: isNight() ? null : nowTime() });
+  const entry = { amount: ml, time: isNight() ? null : nowTime() };
+  if (type === 'water') entry.label = t(_waterLabel);
+  s[type].push(entry);
   save(s);
   renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
   renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
