@@ -1,7 +1,7 @@
 // ── app.js — Entry point, routing, glue ──
 
 import { initAuth, signIn, signOut, reconnect, isSignedIn, getUserId } from './auth.js';
-import { getSpreadsheetId, getSettings } from './sheets.js';
+import { getSpreadsheetId, getSettings, setSetting } from './sheets.js';
 import { getState, retryPending, syncAndMerge, setSyncStatus, getCurrentConfigVersion } from './store.js';
 import { loadConfig, getCachedMeds, resolveScheduleForDate } from './schedule.js';
 import { initTracker, renderDay, renderAll as trackerRenderAll } from './tracker.js';
@@ -31,6 +31,8 @@ window._app     = {
     if (!document.getElementById('viewEditor').classList.contains('hidden')) {
       editorRender();
     }
+    // Persist to Google Sheets in the background
+    getSpreadsheetId().then(id => setSetting(id, 'lang', lang)).catch(() => {});
   },
 };
 
@@ -70,6 +72,12 @@ async function onSignedIn() {
       loadConfig(),
     ]);
     _settings = { ...settings };
+
+    // Apply language from Sheets (overrides any local default)
+    if (_settings.lang) {
+      setLang(_settings.lang);
+      applyStaticTranslations();
+    }
 
     // Sync settings to localStorage for editor quick access
     localStorage.setItem('mt_water_target', String(_settings.water_target));
