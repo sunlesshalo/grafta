@@ -19,10 +19,12 @@
     <p class="signin-sub">Track your meds, vitals, and labs.<br>Your data stays in your own Google Drive.</p>
     <button id="signinBtn" class="signin-btn">Sign in with Google</button>
     <p class="signin-note">We only access files this app creates.</p>
-    <div class="lang-switcher signin-lang">
-      <button class="lang-btn active" data-lang="en" onclick="_app.setLang('en')">EN</button>
-      <button class="lang-btn" data-lang="ro" onclick="_app.setLang('ro')">RO</button>
-      <button class="lang-btn" data-lang="hu" onclick="_app.setLang('hu')">HU</button>
+    <div class="signin-lang">
+      <select id="langSelectSignin" class="lang-select" onchange="_app.setLang(this.value)">
+        <option value="en">English</option>
+        <option value="ro">Română</option>
+        <option value="hu">Magyar</option>
+      </select>
     </div>
   </div>
 </div>
@@ -43,12 +45,12 @@
     <div class="day-nav-right">
       <button id="nextBtn" onclick="_app.nextDay()">&rarr;</button>
       <button id="editorBtn" class="gear-btn" onclick="_app.openEditor()" title="Edit med schedule">&#9881;</button>
-      <span class="lang-switcher">
-        <button class="lang-btn active" data-lang="en" onclick="_app.setLang('en')">EN</button>
-        <button class="lang-btn" data-lang="ro" onclick="_app.setLang('ro')">RO</button>
-        <button class="lang-btn" data-lang="hu" onclick="_app.setLang('hu')">HU</button>
-      </span>
-      <button id="signoutBtn" class="gear-btn" onclick="_app.signOut()" title="Sign out" style="font-size:13px;color:#999">out</button>
+      <select id="langSelect" class="lang-select" onchange="_app.setLang(this.value)">
+        <option value="en">English</option>
+        <option value="ro">Română</option>
+        <option value="hu">Magyar</option>
+      </select>
+      <button id="signoutBtn" class="gear-btn" onclick="_app.signOut()" title="Sign out">Sign out</button>
     </div>
   </div>
 

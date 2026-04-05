@@ -654,37 +654,34 @@ body {
   color: #999;
 }
 
-/* ── Language switcher ── */
-.lang-switcher {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.lang-btn {
+/* ── Language select ── */
+.lang-select {
+  appearance: none;
+  -webkit-appearance: none;
   background: none;
   border: 1px solid #ddd;
-  border-radius: 3px;
-  padding: 2px 5px;
-  font-size: 10px;
+  border-radius: 4px;
+  padding: 2px 20px 2px 6px;
+  font-size: 11px;
   font-weight: 600;
-  color: #bbb;
+  color: #555;
   cursor: pointer;
-  letter-spacing: 0.3px;
-  line-height: 1.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath fill='%23999' d='M0 0l4 5 4-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 5px center;
+  outline: none;
 }
 
-.lang-btn:hover { color: #555; border-color: #aaa; }
-.lang-btn.active { color: #000; border-color: #000; background: #f5f5f5; }
+.lang-select:hover { border-color: #aaa; color: #000; }
 
 .signin-lang {
   margin-top: 20px;
-  justify-content: center;
+  text-align: center;
 }
 
-.signin-lang .lang-btn {
-  font-size: 12px;
-  padding: 4px 10px;
+.signin-lang .lang-select {
+  font-size: 13px;
+  padding: 5px 28px 5px 10px;
 }
 
 /* ── Responsive fluid tweaks ── */

@@ -96,6 +96,8 @@ const LANGS = {
     labs_failed_save:    'Failed to save: ',
     labs_failed_delete:  'Failed to delete: ',
     labs_last_n:         'last {n}',
+    // Nav
+    signout:             'Sign out',
     // Validation
     val_enter_date:      'Please enter a date.',
     val_enter_value:     'Enter at least one value.',
@@ -196,6 +198,8 @@ const LANGS = {
     labs_failed_save:    'Salvare eșuată: ',
     labs_failed_delete:  'Ștergere eșuată: ',
     labs_last_n:         'ultimele {n}',
+    // Nav
+    signout:             'Deconectare',
     // Validation
     val_enter_date:      'Vă rugăm să introduceți o dată.',
     val_enter_value:     'Introduceți cel puțin o valoare.',
@@ -296,6 +300,8 @@ const LANGS = {
     labs_failed_save:    'Mentési hiba: ',
     labs_failed_delete:  'Törlési hiba: ',
     labs_last_n:         'utolsó {n}',
+    // Nav
+    signout:             'Kijelentkezés',
     // Validation
     val_enter_date:      'Kérjük adjon meg egy dátumot.',
     val_enter_value:     'Adjon meg legalább egy értéket.',
@@ -358,8 +364,13 @@ export function applyStaticTranslations() {
   if (editorTitle) editorTitle.textContent = t('editor_title');
   if (editorSave && !editorSave.disabled)  editorSave.textContent = t('btn_save');
 
-  // Lang switcher active state
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === _lang);
+  // Sign out button
+  const signoutBtn = document.getElementById('signoutBtn');
+  if (signoutBtn) signoutBtn.textContent = t('signout');
+
+  // Sync language selects to current lang
+  ['langSelect', 'langSelectSignin'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (sel) sel.value = _lang;
   });
 }
