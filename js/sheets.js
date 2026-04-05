@@ -41,6 +41,7 @@ async function gapiCall(label, fn) {
 }
 
 function handleSpreadsheetGone() {
+  if (!navigator.onLine) return; // don't clear cache on network errors
   console.warn('[sheets] spreadsheet not found — clearing cached ID');
   localStorage.removeItem(KEY_SHEET);
   _verified = false; // force re-lookup on next getSpreadsheetId()
@@ -57,19 +58,22 @@ let _verified = false; // true once we've confirmed the sheet ID this session
 export async function getSpreadsheetId() {
   const cached = localStorage.getItem(KEY_SHEET);
 
-  // First call each session: always verify via Drive (even if cached)
-  if (!_verified) {
+  // First call each session: verify via Drive (skip if offline)
+  if (!_verified && navigator.onLine) {
     _verified = true;
     const correct = await findBestSpreadsheet();
     if (correct) {
       localStorage.setItem(KEY_SHEET, correct);
       return correct;
     }
-    // Nothing on Drive — cached ID is stale, clear it and create fresh
-    localStorage.removeItem(KEY_SHEET);
+    // Drive found nothing — if we have a cache, it's stale
+    if (cached) {
+      localStorage.removeItem(KEY_SHEET);
+    }
     return createSpreadsheet();
   }
 
+  // Offline or already verified: trust the cache
   if (cached) return cached;
   return createSpreadsheet();
 }
