@@ -49,7 +49,35 @@ async function gapiCall(label, fn) {
 export async function getSpreadsheetId() {
   const cached = localStorage.getItem(KEY_SHEET);
   if (cached) return cached;
+
+  // Search Drive for an existing spreadsheet before creating a new one
+  const existing = await findExistingSpreadsheet();
+  if (existing) {
+    localStorage.setItem(KEY_SHEET, existing);
+    return existing;
+  }
   return createSpreadsheet();
+}
+
+async function findExistingSpreadsheet() {
+  await waitForGapi();
+  try {
+    const res = await gapiCall('drive.files.list', () =>
+      window.gapi.client.drive.files.list({
+        q: `name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
+        fields: 'files(id,name)',
+        spaces: 'drive',
+      })
+    );
+    const files = res.result.files || [];
+    if (files.length > 0) {
+      console.log('[sheets] found existing spreadsheet:', files[0].id);
+      return files[0].id;
+    }
+  } catch (e) {
+    console.warn('[sheets] Drive search failed, will create new:', e);
+  }
+  return null;
 }
 
 async function createSpreadsheet() {

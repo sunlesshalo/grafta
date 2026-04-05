@@ -1,6 +1,7 @@
 // ── editor.js — Med schedule editor with config versioning ──
 
 import { getCachedMeds, setCachedMeds, saveSchedule, generateId } from './schedule.js';
+import { getSpreadsheetId, setSetting } from './sheets.js';
 import { t } from './i18n.js';
 
 let _meds         = [];   // working copy
@@ -227,6 +228,18 @@ export async function save() {
   try {
     await saveSchedule(_meds.filter(m => m.active !== false));
     setCachedMeds(_meds.filter(m => m.active !== false));
+
+    // Push settings to Sheets so they sync across devices
+    const sheetId = await getSpreadsheetId();
+    const wt = localStorage.getItem('mt_water_target');
+    const ds = localStorage.getItem('mt_day_start');
+    const bt = localStorage.getItem('mt_bp_times');
+    await Promise.all([
+      wt ? setSetting(sheetId, 'water_target', wt) : null,
+      ds ? setSetting(sheetId, 'day_start_hour', ds) : null,
+      bt ? setSetting(sheetId, 'bp_times', bt) : null,
+    ]);
+
     _onSaved && _onSaved();
   } catch (e) {
     alert(t('save_failed') + e.message);
