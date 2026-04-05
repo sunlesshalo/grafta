@@ -685,6 +685,17 @@ body {
   color: #999;
 }
 
+/* Settings fields: label fills space, input stays compact */
+.editor-settings .editor-field label {
+  width: auto;
+  flex: 1;
+  white-space: nowrap;
+}
+.editor-settings .editor-field input {
+  flex: none;
+  width: 80px;
+}
+
 /* ── Language select ── */
 .lang-select {
   appearance: none;
