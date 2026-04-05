@@ -109,7 +109,7 @@ const LANGS = {
     val_enter_date:      'Please enter a date.',
     val_enter_value:     'Enter at least one value.',
     // Tooltips
-    tip_bp:              'Blood pressure (mmHg). High if ≥ 140/90 — take your medication.',
+    tip_bp:              'Enter systolic (top) / diastolic (bottom) in mmHg. If ≥ 140/90 your conditional meds will activate.',
     tip_weight:          'Body weight (kg)',
     tip_temp:            'Body temperature (°C). Alert if ≥ 37.5°C',
     tip_water_target:    'Daily fluid intake goal (ml)',
@@ -230,7 +230,7 @@ const LANGS = {
     val_enter_date:      'Vă rugăm să introduceți o dată.',
     val_enter_value:     'Introduceți cel puțin o valoare.',
     // Tooltips
-    tip_bp:              'Tensiune arterială (mmHg). Ridicată dacă ≥ 140/90 — luați medicamentul.',
+    tip_bp:              'Introduceți sistolică (sus) / diastolică (jos) în mmHg. Dacă ≥ 140/90, medicamentele condiționate se activează.',
     tip_weight:          'Greutate corporală (kg)',
     tip_temp:            'Temperatură corporală (°C). Alertă dacă ≥ 37,5°C',
     tip_water_target:    'Obiectiv zilnic de aport de lichide (ml)',
@@ -351,7 +351,7 @@ const LANGS = {
     val_enter_date:      'Kérjük adjon meg egy dátumot.',
     val_enter_value:     'Adjon meg legalább egy értéket.',
     // Tooltips
-    tip_bp:              'Vérnyomás (Hgmm). Magas, ha ≥ 140/90 — vegye be a gyógyszerét.',
+    tip_bp:              'Adja meg a szisztolés (felső) / diasztolés (alsó) értéket Hgmm-ben. Ha ≥ 140/90, a feltételes gyógyszerek aktiválódnak.',
     tip_weight:          'Testsúly (kg)',
     tip_temp:            'Testhőmérséklet (°C). Riasztás ≥ 37,5°C esetén',
     tip_water_target:    'Napi folyadékbeviteli cél (ml)',
