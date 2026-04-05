@@ -1,4 +1,4 @@
-const CACHE = 'mt-v2-25';
+const CACHE = 'mt-v2-26';
 const PRECACHE = ['/', '/css/styles.css', '/js/auth.js', '/js/sheets.js', '/js/store.js', '/js/schedule.js', '/js/tracker.js', '/js/editor.js', '/js/labs.js', '/js/i18n.js', '/js/app.js', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -10,18 +10,18 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Only cache GET requests to our own origin; never intercept Google API calls
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET') return;
   if (url.hostname !== self.location.hostname) return;
 
+  // Network-first: always try to get the latest, fall back to cache offline
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      const network = fetch(e.request).then(res => {
-        if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
-        return res;
-      }).catch(() => cached);
-      return cached || network;
-    })
+    fetch(e.request).then(res => {
+      if (res.ok) {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+      }
+      return res;
+    }).catch(() => caches.match(e.request))
   );
 });
