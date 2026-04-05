@@ -1,6 +1,7 @@
 // ── labs.js — Lab results CRUD + trend ──
 
 import { getSpreadsheetId, getLabs, appendLab, deleteLabRow } from './sheets.js';
+import { t, tArr } from './i18n.js';
 
 let _labs = []; // [{ date, creatinine, tacrolimus, notes }]
 let _loaded = false;
@@ -34,7 +35,7 @@ export async function renderLabs() {
 
   if (!_loaded) await loadLabs();
 
-  let html = `<div class="col-title">Labs</div>`;
+  let html = `<div class="col-title">${t('labs_title')}</div>`;
 
   // Entry form
   const today = todayKey();
@@ -42,25 +43,25 @@ export async function renderLabs() {
     <div class="labs-form">
       <div class="labs-form-row">
         <div class="labs-input-group">
-          <span class="labs-label">Date</span>
+          <span class="labs-label">${t('labs_date')}</span>
           <input class="labs-input date-input" type="date" id="labDate" value="${today}">
         </div>
       </div>
       <div class="labs-form-row">
         <div class="labs-input-group">
-          <span class="labs-label">Creatinine</span>
+          <span class="labs-label">${t('labs_creatinine')}</span>
           <input class="labs-input" type="number" step="0.01" inputmode="decimal" id="labCreatinine" placeholder="mg/dL">
         </div>
         <div class="labs-input-group">
-          <span class="labs-label">Tacrolimus</span>
+          <span class="labs-label">${t('labs_tacrolimus')}</span>
           <input class="labs-input" type="number" step="0.1" inputmode="decimal" id="labTacrolimus" placeholder="ng/mL">
         </div>
       </div>
       <div class="labs-form-row">
-        <input class="labs-input date-input" type="text" id="labNotes" placeholder="Notes (optional)" style="width:100%">
+        <input class="labs-input date-input" type="text" id="labNotes" placeholder="${t('labs_notes_ph')}" style="width:100%">
       </div>
       <div class="labs-form-row">
-        <button class="labs-add-btn" onclick="window._labs.addLab()">Add result</button>
+        <button class="labs-add-btn" onclick="window._labs.addLab()">${t('labs_add')}</button>
       </div>
     </div>`;
 
@@ -69,7 +70,7 @@ export async function renderLabs() {
 
   // Entry list
   if (_labs.length === 0) {
-    html += `<p style="color:#999;font-size:12px;padding:8px 0">No lab results yet.</p>`;
+    html += `<p style="color:#999;font-size:12px;padding:8px 0">${t('labs_no_results')}</p>`;
   } else {
     _labs.forEach(lab => {
       html += `
@@ -105,12 +106,12 @@ function renderTrend() {
   let html = `<div class="labs-trend">`;
 
   if (creatVals.length >= 2) {
-    html += `<div style="margin-bottom:6px"><strong>Creatinine</strong> (last ${creatVals.length})`;
+    html += `<div style="margin-bottom:6px"><strong>${t('labs_creatinine')}</strong> (${t('labs_last_n', { n: creatVals.length })})`;
     html += renderSparkline(creatVals.map(v => v.val));
     html += `</div>`;
   }
   if (tachVals.length >= 2) {
-    html += `<div style="margin-bottom:6px"><strong>Tacrolimus</strong> (last ${tachVals.length})`;
+    html += `<div style="margin-bottom:6px"><strong>${t('labs_tacrolimus')}</strong> (${t('labs_last_n', { n: tachVals.length })})`;
     html += renderSparkline(tachVals.map(v => v.val));
     html += `</div>`;
   }
@@ -154,11 +155,11 @@ export async function addLab() {
   const tacrolimus  = document.getElementById('labTacrolimus')?.value;
   const notes       = document.getElementById('labNotes')?.value || '';
 
-  if (!date) { alert('Please enter a date.'); return; }
-  if (!creatinine && !tacrolimus) { alert('Enter at least one value.'); return; }
+  if (!date)                       { alert(t('val_enter_date'));  return; }
+  if (!creatinine && !tacrolimus)  { alert(t('val_enter_value')); return; }
 
   const btn = document.querySelector('.labs-add-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('saving'); }
 
   try {
     const sheetId = await getSpreadsheetId();
@@ -178,21 +179,21 @@ export async function addLab() {
 
     renderLabs();
   } catch (e) {
-    alert('Failed to save: ' + e.message);
+    alert(t('labs_failed_save') + e.message);
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Add result'; }
+    if (btn) { btn.disabled = false; btn.textContent = t('labs_add'); }
   }
 }
 
 export async function deleteLab(date) {
-  if (!confirm(`Delete lab result for ${date}?`)) return;
+  if (!confirm(t('labs_delete_confirm', { date }))) return;
   try {
     const sheetId = await getSpreadsheetId();
     await deleteLabRow(sheetId, date);
     _labs = _labs.filter(l => l.date !== date);
     renderLabs();
   } catch (e) {
-    alert('Failed to delete: ' + e.message);
+    alert(t('labs_failed_delete') + e.message);
   }
 }
 
@@ -206,7 +207,7 @@ function todayKey() {
 
 function formatDate(dateStr) {
   const d    = new Date(dateStr + 'T12:00:00');
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const mons = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days = tArr('days');
+  const mons = tArr('months');
   return `${days[d.getDay()]} ${d.getDate()} ${mons[d.getMonth()]} ${d.getFullYear()}`;
 }

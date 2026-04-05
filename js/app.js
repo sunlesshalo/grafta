@@ -10,6 +10,7 @@ import { renderLabs } from './labs.js';
 import * as tracker from './tracker.js';
 import * as editor  from './editor.js';
 import * as labs    from './labs.js';
+import { t, tArr, setLang, getLang, applyStaticTranslations } from './i18n.js';
 
 // ── Expose globals for inline onclick handlers ────────────────────────────────
 window._tracker = tracker;
@@ -21,6 +22,16 @@ window._app     = {
   openEditor: openEditorView,
   closeEditor: closeEditorView,
   signOut: () => { signOut(); showView('viewSignin'); },
+  setLang: (lang) => {
+    setLang(lang);
+    updateDayLabel();
+    if (!document.getElementById('viewTracker').classList.contains('hidden')) {
+      trackerRenderAll();
+    }
+    if (!document.getElementById('viewEditor').classList.contains('hidden')) {
+      editorRender();
+    }
+  },
 };
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -29,6 +40,8 @@ let _viewingDate = null;
 let _isToday     = false;
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
+
+applyStaticTranslations();
 
 initAuth(async (signedIn) => {
   if (signedIn) {
@@ -139,12 +152,12 @@ function updateDayLabel() {
   if (!label || !_viewingDate) return;
 
   const d    = new Date(_viewingDate + 'T12:00:00');
-  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const mons = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days = tArr('days');
+  const mons = tArr('months');
   let html = `<span class="sync-dot" id="syncDot"></span>`;
   html += `${days[d.getDay()]} ${d.getDate()} ${mons[d.getMonth()]}`;
-  if (_isToday) html += ` <span class="sub">today</span>`;
-  else          html += ` <span class="past-badge">past</span>`;
+  if (_isToday) html += ` <span class="sub">${t('today_badge')}</span>`;
+  else          html += ` <span class="past-badge">${t('past_badge')}</span>`;
   label.innerHTML = html;
 
   const prevBtn = document.getElementById('prevBtn');

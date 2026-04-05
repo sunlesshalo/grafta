@@ -19,12 +19,17 @@
     <p class="signin-sub">Track your meds, vitals, and labs.<br>Your data stays in your own Google Drive.</p>
     <button id="signinBtn" class="signin-btn">Sign in with Google</button>
     <p class="signin-note">We only access files this app creates.</p>
+    <div class="lang-switcher signin-lang">
+      <button class="lang-btn active" data-lang="en" onclick="_app.setLang('en')">EN</button>
+      <button class="lang-btn" data-lang="ro" onclick="_app.setLang('ro')">RO</button>
+      <button class="lang-btn" data-lang="hu" onclick="_app.setLang('hu')">HU</button>
+    </div>
   </div>
 </div>
 
 <!-- ── Reconnect banner ── -->
 <div id="reconnectBanner" class="reconnect-banner hidden">
-  Session expired — <button id="reconnectBtn">Reconnect</button>
+  <span id="reconnectText">Session expired — </span><button id="reconnectBtn">Reconnect</button>
 </div>
 
 <!-- ── Tracker view ── -->
@@ -38,6 +43,11 @@
     <div class="day-nav-right">
       <button id="nextBtn" onclick="_app.nextDay()">&rarr;</button>
       <button id="editorBtn" class="gear-btn" onclick="_app.openEditor()" title="Edit med schedule">&#9881;</button>
+      <span class="lang-switcher">
+        <button class="lang-btn active" data-lang="en" onclick="_app.setLang('en')">EN</button>
+        <button class="lang-btn" data-lang="ro" onclick="_app.setLang('ro')">RO</button>
+        <button class="lang-btn" data-lang="hu" onclick="_app.setLang('hu')">HU</button>
+      </span>
       <button id="signoutBtn" class="gear-btn" onclick="_app.signOut()" title="Sign out" style="font-size:13px;color:#999">out</button>
     </div>
   </div>
@@ -63,7 +73,7 @@
 <!-- ── Med editor overlay ── -->
 <div id="viewEditor" class="view view-editor hidden">
   <div class="editor-bar">
-    <button class="editor-back" onclick="_app.closeEditor()">&#8592; Back</button>
+    <button class="editor-back" onclick="_app.closeEditor()">← Back</button>
     <span class="editor-title">Med Schedule</span>
     <button class="editor-save" id="editorSaveBtn" onclick="_editor.save()">Save</button>
   </div>

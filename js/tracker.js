@@ -2,6 +2,7 @@
 
 import { getState, setState, setSyncStatus } from './store.js';
 import { resolveScheduleForDate, isConditionalMet, getScheduleForVersion, getCachedMeds } from './schedule.js';
+import { t } from './i18n.js';
 
 let _viewingDate  = null;
 let _isToday      = false;
@@ -83,8 +84,8 @@ function getCurrentTimeBlock(schedule) {
 export function renderAll() {
   if (!_viewingDate) return;
   renderMeds();
-  renderFluidCol('water', 'colWater', 'Fluids', _settings.water_target);
-  renderFluidCol('urine', 'colUrine', 'Urine',  null);
+  renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
+  renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
   renderHealth();
 }
 
@@ -105,12 +106,12 @@ async function renderMeds() {
 
   const cur = getCurrentTimeBlock(schedule);
 
-  let html = `<div class="col-title">Meds <span style="float:right;font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></div>`;
+  let html = `<div class="col-title">${t('meds_title')} <span style="float:right;font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></div>`;
 
   if (allMeds.length === 0) {
     html += `<div style="padding:24px 0;text-align:center;color:#999;font-size:13px">
-      No meds scheduled yet.<br>
-      <button onclick="window._app.openEditor()" style="margin-top:12px;background:#000;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">Set up schedule</button>
+      ${t('no_meds_yet')}<br>
+      <button onclick="window._app.openEditor()" style="margin-top:12px;background:#000;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">${t('setup_schedule')}</button>
     </div>`;
     el.innerHTML = html;
     return;
@@ -136,7 +137,7 @@ async function renderMeds() {
 
       html += `<div class="${cls}" data-med-id="${med.id}" onclick="window._tracker.toggleMed('${med.id}')">`;
       html += `<span class="box${on ? ' on' : ''}"></span>`;
-      html += `<span>${med.name}`;
+      html += `<span>${med.name || `<em style="color:#999">${t('unnamed')}</em>`}`;
       if (med.dose) html += ` <span style="color:#666">${med.dose}</span>`;
       if (cond)     html += ` <span class="med-note">${cond}</span>`;
       if (med.notes && !cond) html += ` <span class="med-note">${med.notes}</span>`;
@@ -146,7 +147,7 @@ async function renderMeds() {
     html += `</div>`;
   });
 
-  if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()">reset today</button>`;
+  if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()">${t('reset_today')}</button>`;
   el.innerHTML = html;
 }
 
@@ -158,7 +159,7 @@ export function toggleMed(medId) {
 }
 
 export function resetDay() {
-  if (confirm('Reset all data for today?')) {
+  if (confirm(t('reset_confirm'))) {
     const s = { ...getState(_viewingDate) };
     s.checked = {};
     s.water   = [];
@@ -180,12 +181,10 @@ function renderHealth() {
   if (!el) return;
 
   const s = state();
-  let html = `<div class="col-title">Health</div>`;
+  let html = `<div class="col-title">${t('health_title')}</div>`;
   html += renderVitals(s);
   html += renderNotes(s);
 
-  // On desktop, also inject into meds col top (below title, before schedule)
-  // We use a separate div injected by app.js
   el.innerHTML = html;
 
   // Also update the desktop vitals section in the meds col
@@ -195,16 +194,10 @@ function renderHealth() {
 
 function renderVitals(s) {
   let html = `<div class="vitals-box">`;
-
-  // BP AM
-  html += vitalsRow('AM', 'bpAm', s.bpAm, 'bp');
-  // BP PM
-  html += vitalsRow('PM', 'bpPm', s.bpPm, 'bp');
-  // Weight
-  html += vitalsRow('Wt', 'weight', s.weight, 'weight');
-  // Temp
-  html += vitalsRow('T°', 'temp', s.temp, 'temp');
-
+  html += vitalsRow(t('vital_am'), 'bpAm',  s.bpAm,   'bp');
+  html += vitalsRow(t('vital_pm'), 'bpPm',  s.bpPm,   'bp');
+  html += vitalsRow(t('vital_wt'), 'weight', s.weight, 'weight');
+  html += vitalsRow(t('vital_temp'), 'temp', s.temp,   'temp');
   html += `</div>`;
   return html;
 }
@@ -215,7 +208,7 @@ function vitalsRow(label, key, value, type) {
 
   if (value) {
     const display = type === 'bp'
-      ? `${value.sys}/${value.dia}${bpHigh(value) ? ' <span style="color:#c00">↑ take med</span>' : ''}`
+      ? `${value.sys}/${value.dia}${bpHigh(value) ? ` <span style="color:#c00">↑ ${t('take_med')}</span>` : ''}`
       : type === 'temp'
       ? `${value.value}°C`
       : `${value.value} kg`;
@@ -225,13 +218,13 @@ function vitalsRow(label, key, value, type) {
     html += `<input class="vital-input" id="${key}Sys" type="number" inputmode="numeric" placeholder="sys" style="width:40px">`;
     html += `<span class="vital-slash">/</span>`;
     html += `<input class="vital-input" id="${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px">`;
-    html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','bp')">OK</button>`;
+    html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','bp')">${t('ok_btn')}</button>`;
   } else {
     const ph    = type === 'weight' ? 'kg'  : '°C';
     const step  = type === 'weight' ? '0.1' : '0.1';
     const width = type === 'weight' ? '56px' : '48px';
     html += `<input class="vital-input wide" id="${key}Val" type="number" inputmode="decimal" step="${step}" placeholder="${ph}" style="width:${width}">`;
-    html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','${type}')">OK</button>`;
+    html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','${type}')">${t('ok_btn')}</button>`;
   }
 
   html += `</div>`;
@@ -240,8 +233,8 @@ function vitalsRow(label, key, value, type) {
 
 function renderNotes(s) {
   return `<div class="notes-box">
-    <div class="notes-label">Notes</div>
-    <textarea class="notes-input" id="dayNotes" placeholder="How are you feeling today?"
+    <div class="notes-label">${t('notes_label')}</div>
+    <textarea class="notes-input" id="dayNotes" placeholder="${t('notes_ph')}"
       oninput="window._tracker.saveNotes(this.value)">${s.notes || ''}</textarea>
   </div>`;
 }
@@ -279,20 +272,21 @@ export function saveNotes(value) {
 
 function waterPace(current, target) {
   const remaining = target - current;
-  if (remaining <= 0) return `<div class="water-pace done">Done! Well done!</div>`;
+  if (remaining <= 0) return `<div class="water-pace done">${t('water_done')}</div>`;
 
   const now = new Date();
   const hoursLeft = 22 - now.getHours() - (now.getMinutes() / 60);
 
-  if (hoursLeft <= 0) return `<div class="water-pace urgent">${remaining} ml left — time's up!</div>`;
+  if (hoursLeft <= 0) return `<div class="water-pace urgent">${t('water_times_up', { remaining })}</div>`;
 
   const mlPerHour = Math.ceil(remaining / hoursLeft);
-  let cls, msg;
-  if      (mlPerHour <= 150) { cls = 'relaxed'; msg = `${remaining} ml left — ${mlPerHour} ml/h — easy`; }
-  else if (mlPerHour <= 250) { cls = 'normal';  msg = `${remaining} ml left — ${mlPerHour} ml/h — a glass every ~${Math.round(60 * 200 / mlPerHour)} min`; }
-  else if (mlPerHour <= 400) { cls = 'push';    msg = `${remaining} ml left — ${mlPerHour} ml/h — drink more!`; }
-  else                       { cls = 'urgent';  msg = `${remaining} ml left — ${mlPerHour} ml/h — drink now!`; }
-  return `<div class="water-pace ${cls}">${msg}</div>`;
+  let cls, key;
+  if      (mlPerHour <= 150) { cls = 'relaxed'; key = 'water_easy'; }
+  else if (mlPerHour <= 250) { cls = 'normal';  key = 'water_glass'; }
+  else if (mlPerHour <= 400) { cls = 'push';    key = 'water_more'; }
+  else                       { cls = 'urgent';  key = 'water_now'; }
+  const minutes = Math.round(60 * 200 / mlPerHour);
+  return `<div class="water-pace ${cls}">${t(key, { remaining, mlPerHour, minutes })}</div>`;
 }
 
 function renderFluidCol(type, elId, title, target) {
@@ -320,7 +314,7 @@ function renderFluidCol(type, elId, title, target) {
   entries.slice().reverse().forEach((entry, ri) => {
     const idx = entries.length - 1 - ri;
     html += `<div class="log-entry">
-      <span class="log-time">${entry.time || 'night'}</span>
+      <span class="log-time">${entry.time || t('night')}</span>
       <span class="log-amount">${entry.amount} ml</span>
       <button class="log-del" onclick="window._tracker.delFluid('${type}',${idx})">×</button>
     </div>`;
@@ -334,12 +328,12 @@ export function addFluid(type, ml) {
   if (!s[type]) s[type] = [];
   s[type].push({ amount: ml, time: isNight() ? null : nowTime() });
   save(s);
-  renderFluidCol('water', 'colWater', 'Fluids', _settings.water_target);
-  renderFluidCol('urine', 'colUrine', 'Urine',  null);
+  renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
+  renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
 }
 
 export function addCustomFluid(type) {
-  const val = prompt('ml?');
+  const val = prompt(t('fluid_ml_prompt'));
   if (val && !isNaN(val) && Number(val) > 0) addFluid(type, Number(val));
 }
 
@@ -347,6 +341,6 @@ export function delFluid(type, idx) {
   const s = state();
   s[type].splice(idx, 1);
   save(s);
-  renderFluidCol('water', 'colWater', 'Fluids', _settings.water_target);
-  renderFluidCol('urine', 'colUrine', 'Urine',  null);
+  renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
+  renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
 }
