@@ -90,7 +90,8 @@ async function onSignedIn() {
     // If no meds yet — go straight to editor
     if (getCachedMeds().length === 0) {
       setSyncStatus('ok');
-      openEditorView();
+      hideLoading();
+      showWelcome();
       return;
     }
 
@@ -98,7 +99,8 @@ async function onSignedIn() {
     _isToday     = true;
     updateDayLabel();
     renderDay(_viewingDate, _isToday);
-    renderLabs(); // load labs on sign-in for desktop; mobile shows on tab activate
+    renderLabs();
+    hideLoading();
 
     // Background sync from sheet
     syncAndMerge(_viewingDate).then(merged => {
@@ -111,6 +113,8 @@ async function onSignedIn() {
   } catch (e) {
     console.error('onSignedIn error:', e);
     setSyncStatus('fail');
+    hideLoading();
+    if (window._showError) window._showError(t('offline_banner'));
   }
 }
 
@@ -227,6 +231,26 @@ document.addEventListener('click', e => {
   }
 });
 
+// ── Loading ───────────────────────────────────────────────────────────────────
+
+function hideLoading() {
+  document.getElementById('loadingOverlay')?.classList.add('hidden');
+}
+
+// ── Welcome ───────────────────────────────────────────────────────────────────
+
+function showWelcome() {
+  const col = document.getElementById('colMeds');
+  if (!col) return;
+  col.innerHTML = `
+    <div style="text-align:center;padding:32px 16px">
+      <h2 style="font-size:20px;margin-bottom:12px">${t('welcome_title')}</h2>
+      <p style="color:#555;font-size:14px;line-height:1.5;margin-bottom:24px">${t('welcome_text')}</p>
+      <button onclick="window._app.openEditor()"
+        style="background:#000;color:#fff;border:none;border-radius:6px;padding:12px 24px;font-size:15px;font-weight:700;cursor:pointer">${t('welcome_btn')}</button>
+    </div>`;
+}
+
 // ── Views ─────────────────────────────────────────────────────────────────────
 
 function showView(id) {
@@ -236,6 +260,40 @@ function showView(id) {
   });
 }
 
+
+// ── Error toast ───────────────────────────────────────────────────────────────
+
+window._showError = function(msg) {
+  const el = document.getElementById('errorToast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  clearTimeout(window._errTimer);
+  window._errTimer = setTimeout(() => el.classList.add('hidden'), 5000);
+};
+document.addEventListener('click', e => {
+  if (e.target.id === 'errorToast') e.target.classList.add('hidden');
+});
+
+// ── Offline detection ─────────────────────────────────────────────────────────
+
+function updateOnlineStatus() {
+  const banner = document.getElementById('offlineBanner');
+  const text   = document.getElementById('offlineText');
+  if (!banner) return;
+  if (navigator.onLine) {
+    banner.classList.add('hidden');
+  } else {
+    if (text) text.textContent = t('offline_banner');
+    banner.classList.remove('hidden');
+  }
+  // Update sync dot
+  if (!navigator.onLine) setSyncStatus('offline');
+}
+
+window.addEventListener('online',  updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
 
 // ── PWA ───────────────────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {

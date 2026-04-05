@@ -89,6 +89,7 @@ async function flushSync() {
     } else {
       setSyncStatus('fail');
       addToPending(date, state);
+      if (window._showError) window._showError('Sync failed — saved locally, will retry');
     }
   }
 
@@ -169,17 +170,37 @@ export async function syncAndMerge(dateKey) {
   if (!remote) return getState(dateKey);
 
   const local = getState(dateKey);
-  // Remote wins if it has actual data and local has none
-  const remoteHasData = (remote.bp || []).length > 0 || remote.weight || remote.temp ||
-    Object.values(remote.checked || {}).some(Boolean) ||
-    (remote.water || []).length > 0;
+  const merged = mergeStates(local, remote);
+  localStorage.setItem(KEY_PREFIX + dateKey, JSON.stringify(merged));
+  return merged;
+}
 
-  if (remoteHasData) {
-    const merged = { ...local, ...remote };
-    localStorage.setItem(KEY_PREFIX + dateKey, JSON.stringify(merged));
-    return merged;
+function mergeStates(local, remote) {
+  const m = emptyState(local.date);
+
+  // Scalars: remote wins if present, else local
+  m.weight = remote.weight || local.weight;
+  m.temp   = remote.temp   || local.temp;
+  m.notes  = remote.notes  || local.notes;
+  m.config_version = Math.max(local.config_version || 0, remote.config_version || 0);
+
+  // BP: per-index merge (each slot is a specific reading)
+  const lBp = local.bp || [], rBp = remote.bp || [];
+  m.bp = [];
+  for (let i = 0; i < Math.max(lBp.length, rBp.length); i++) {
+    m.bp[i] = rBp[i] || lBp[i] || null;
   }
-  return local;
+
+  // Checked: union — true wins
+  m.checked = { ...(local.checked || {}), ...(remote.checked || {}) };
+
+  // Fluid arrays: longer wins (append-only, longer = more complete)
+  m.water = (remote.water || []).length >= (local.water || []).length
+    ? (remote.water || []) : (local.water || []);
+  m.urine = (remote.urine || []).length >= (local.urine || []).length
+    ? (remote.urine || []) : (local.urine || []);
+
+  return m;
 }
 
 // ── Pending queue (offline retry) ────────────────────────────────────────────

@@ -34,6 +34,11 @@
   <span id="reconnectText">Session expired — </span><button id="reconnectBtn">Reconnect</button>
 </div>
 
+<!-- ── Offline banner ── -->
+<div id="offlineBanner" class="offline-banner hidden">
+  <span id="offlineText">Offline — changes saved locally</span>
+</div>
+
 <!-- ── Tracker view ── -->
 <div id="viewTracker" class="view hidden">
 
@@ -59,6 +64,10 @@
     <div class="mob-tab" data-tab="1">Fluids</div>
     <div class="mob-tab" data-tab="2">Urine</div>
     <div class="mob-tab" data-tab="3">Labs</div>
+  </div>
+
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
   </div>
 
   <div class="grid">
@@ -89,6 +98,9 @@
 
 <!-- Tooltip popup -->
 <div id="tipPopup" class="tip-popup hidden"></div>
+
+<!-- Error toast -->
+<div id="errorToast" class="error-toast hidden"></div>
 
 <!-- GIS -->
 <script src="https://accounts.google.com/gsi/client" async></script>

@@ -103,6 +103,11 @@ const LANGS = {
     labs_failed_save:    'Failed to save: ',
     labs_failed_delete:  'Failed to delete: ',
     labs_last_n:         'last {n}',
+    // Status
+    offline_banner:      'Offline — changes saved locally',
+    welcome_title:       'Welcome to Med Tracker',
+    welcome_text:        'Add your medications, set the times, and start tracking. Your data is stored securely in your own Google Drive.',
+    welcome_btn:         'Set up my meds',
     // Nav
     signout:             'Sign out',
     // Validation
@@ -224,6 +229,11 @@ const LANGS = {
     labs_failed_save:    'Salvare eșuată: ',
     labs_failed_delete:  'Ștergere eșuată: ',
     labs_last_n:         'ultimele {n}',
+    // Status
+    offline_banner:      'Offline — modificările sunt salvate local',
+    welcome_title:       'Bun venit la Med Tracker',
+    welcome_text:        'Adăugați medicamentele, setați orele și începeți urmărirea. Datele sunt stocate în siguranță în Google Drive-ul dvs.',
+    welcome_btn:         'Configurează medicamentele',
     // Nav
     signout:             'Deconectare',
     // Validation
@@ -345,6 +355,11 @@ const LANGS = {
     labs_failed_save:    'Mentési hiba: ',
     labs_failed_delete:  'Törlési hiba: ',
     labs_last_n:         'utolsó {n}',
+    // Status
+    offline_banner:      'Offline — a változások helyben mentve',
+    welcome_title:       'Üdvözöljük a Med Trackerben',
+    welcome_text:        'Adja hozzá gyógyszereit, állítsa be az időpontokat, és kezdje el a követést. Adatai biztonságosan a saját Google Drive-ján tárolódnak.',
+    welcome_btn:         'Gyógyszerek beállítása',
     // Nav
     signout:             'Kijelentkezés',
     // Validation
