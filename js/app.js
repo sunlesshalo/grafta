@@ -1,7 +1,7 @@
 // ── app.js — Entry point, routing, glue ──
 
 import { initAuth, signIn, signOut, reconnect, isSignedIn, getUserId } from './auth.js';
-import { getSpreadsheetId, getSettings, setSetting } from './sheets.js';
+import { getSpreadsheetId, getSettings, setSetting, recheckSpreadsheet } from './sheets.js';
 import { getState, retryPending, syncAndMerge, setSyncStatus, getCurrentConfigVersion } from './store.js';
 import { loadConfig, getCachedMeds, resolveScheduleForDate } from './schedule.js';
 import { initTracker, renderDay, renderAll as trackerRenderAll } from './tracker.js';
@@ -89,10 +89,23 @@ async function onSignedIn() {
 
     // If no meds yet — go straight to editor
     if (getCachedMeds().length === 0) {
-      setSyncStatus('ok');
-      hideLoading();
-      showWelcome();
-      return;
+      // Maybe we're pointing at the wrong spreadsheet — check Drive
+      const switched = await recheckSpreadsheet();
+      if (switched) {
+        await loadConfig();
+        const [s2] = await Promise.all([getSettings(await getSpreadsheetId())]);
+        _settings = { ...s2 };
+        localStorage.setItem('mt_water_target', String(_settings.water_target));
+        localStorage.setItem('mt_day_start',    String(_settings.day_start_hour));
+        localStorage.setItem('mt_bp_times',     String(_settings.bp_times ?? 2));
+        initTracker({ settings: _settings, onOpenEditor: openEditorView });
+      }
+      if (getCachedMeds().length === 0) {
+        setSyncStatus('ok');
+        hideLoading();
+        showWelcome();
+        return;
+      }
     }
 
     _viewingDate = todayKey();

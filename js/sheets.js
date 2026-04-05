@@ -59,6 +59,23 @@ export async function getSpreadsheetId() {
   return createSpreadsheet();
 }
 
+/**
+ * Called after loadConfig() if config is empty — checks if a different
+ * spreadsheet on Drive has the data (fixes wrong-spreadsheet-cached).
+ */
+export async function recheckSpreadsheet() {
+  const current = localStorage.getItem(KEY_SHEET);
+  if (!current) return false;
+
+  const better = await findExistingSpreadsheet();
+  if (better && better !== current) {
+    console.log('[sheets] switching to spreadsheet with data:', better);
+    localStorage.setItem(KEY_SHEET, better);
+    return true; // caller should reload config
+  }
+  return false;
+}
+
 async function findExistingSpreadsheet() {
   await waitForGapi();
   try {
@@ -66,14 +83,27 @@ async function findExistingSpreadsheet() {
       window.gapi.client.drive.files.list({
         q: `name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
         fields: 'files(id,name)',
+        orderBy: 'createdTime',   // oldest first — the original has the data
         spaces: 'drive',
       })
     );
     const files = res.result.files || [];
-    if (files.length > 0) {
-      console.log('[sheets] found existing spreadsheet:', files[0].id);
-      return files[0].id;
+    if (files.length === 0) return null;
+
+    // If multiple spreadsheets exist, find the one with actual config data
+    for (const file of files) {
+      try {
+        const config = await getRange(file.id, `${S.CONFIG}!A:A`);
+        if (config.length > 1) { // has rows beyond header
+          console.log('[sheets] found spreadsheet with data:', file.id);
+          return file.id;
+        }
+      } catch { /* skip inaccessible */ }
     }
+
+    // Fallback: return the oldest one
+    console.log('[sheets] using oldest spreadsheet:', files[0].id);
+    return files[0].id;
   } catch (e) {
     console.warn('[sheets] Drive search failed, will create new:', e);
   }
