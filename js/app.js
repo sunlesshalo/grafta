@@ -98,6 +98,7 @@ async function onSignedIn() {
     _isToday     = true;
     updateDayLabel();
     renderDay(_viewingDate, _isToday);
+    renderLabs(); // load labs on sign-in for desktop; mobile shows on tab activate
 
     // Background sync from sheet
     syncAndMerge(_viewingDate).then(merged => {
