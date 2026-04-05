@@ -210,6 +210,23 @@ document.addEventListener('click', e => {
   if (tab && tab.dataset.tab === '3') renderLabs();
 });
 
+// ── Tooltip popup ─────────────────────────────────────────────────────────────
+
+document.addEventListener('click', e => {
+  const icon = e.target.closest('.tip-icon');
+  const popup = document.getElementById('tipPopup');
+  if (!popup) return;
+  if (icon) {
+    e.stopPropagation();
+    popup.textContent = t(icon.dataset.tipKey);
+    popup.classList.remove('hidden');
+    clearTimeout(window._tipTimer);
+    window._tipTimer = setTimeout(() => popup.classList.add('hidden'), 4000);
+  } else {
+    popup.classList.add('hidden');
+  }
+});
+
 // ── Views ─────────────────────────────────────────────────────────────────────
 
 function showView(id) {

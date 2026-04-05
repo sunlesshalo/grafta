@@ -49,12 +49,12 @@ export async function renderLabs() {
       </div>
       <div class="labs-form-row">
         <div class="labs-input-group">
-          <span class="labs-label" title="${t('tip_creatinine')}">${t('labs_creatinine')}</span>
-          <input class="labs-input" type="number" step="0.01" inputmode="decimal" id="labCreatinine" placeholder="mg/dL" title="${t('tip_creatinine')}">
+          <span class="labs-label">${t('labs_creatinine')} <span class="tip-icon" data-tip-key="tip_creatinine">i</span></span>
+          <input class="labs-input" type="number" step="0.01" inputmode="decimal" id="labCreatinine" placeholder="mg/dL">
         </div>
         <div class="labs-input-group">
-          <span class="labs-label" title="${t('tip_tacrolimus')}">${t('labs_tacrolimus')}</span>
-          <input class="labs-input" type="number" step="0.1" inputmode="decimal" id="labTacrolimus" placeholder="ng/mL" title="${t('tip_tacrolimus')}">
+          <span class="labs-label">${t('labs_tacrolimus')} <span class="tip-icon" data-tip-key="tip_tacrolimus">i</span></span>
+          <input class="labs-input" type="number" step="0.1" inputmode="decimal" id="labTacrolimus" placeholder="ng/mL">
         </div>
       </div>
       <div class="labs-form-row">

@@ -140,19 +140,19 @@ function renderSettings() {
     <div class="editor-settings">
       <h3>${t('settings_title')}</h3>
       <div class="editor-field">
-        <label title="${t('tip_water_target')}">${t('water_target')}</label>
+        <label>${t('water_target')} <span class="tip-icon" data-tip-key="tip_water_target">i</span></label>
         <input type="number" value="${wt}" placeholder="${t('ml')}" id="settingWaterTarget"
-          title="${t('tip_water_target')}" oninput="localStorage.setItem('mt_water_target', this.value)">
+          oninput="localStorage.setItem('mt_water_target', this.value)">
       </div>
       <div class="editor-field">
-        <label title="${t('tip_day_start')}">${t('day_starts')}</label>
+        <label>${t('day_starts')} <span class="tip-icon" data-tip-key="tip_day_start">i</span></label>
         <input type="number" value="${ds}" min="0" max="6" id="settingDayStart"
-          title="${t('tip_day_start')}" oninput="localStorage.setItem('mt_day_start', this.value)">
+          oninput="localStorage.setItem('mt_day_start', this.value)">
       </div>
       <div class="editor-field">
-        <label title="${t('tip_bp_times')}">${t('bp_readings_label')}</label>
+        <label>${t('bp_readings_label')} <span class="tip-icon" data-tip-key="tip_bp_times">i</span></label>
         <input type="number" value="${bt}" min="1" max="4" id="settingBpTimes"
-          title="${t('tip_bp_times')}" oninput="localStorage.setItem('mt_bp_times', this.value)">
+          oninput="localStorage.setItem('mt_bp_times', this.value)">
       </div>
     </div>`;
 }

@@ -199,10 +199,10 @@ function renderVitals(s) {
 }
 
 function vitalsRow(label, key, value, type) {
-  let html = `<div class="vital-row">`;
-  html += `<span class="vital-label">${label}</span>`;
-
   const tipKey = type === 'bp' ? 'tip_bp' : type === 'weight' ? 'tip_weight' : 'tip_temp';
+  let html = `<div class="vital-row">`;
+  html += `<span class="vital-label">${label} <span class="tip-icon" data-tip-key="${tipKey}">i</span></span>`;
+
   if (value) {
     const display = type === 'bp'
       ? `${value.sys}/${value.dia}${bpHigh(value) ? ` <span style="color:#c00">↑ ${t('take_med')}</span>` : ''}`
