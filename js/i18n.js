@@ -108,6 +108,18 @@ const LANGS = {
     // Validation
     val_enter_date:      'Please enter a date.',
     val_enter_value:     'Enter at least one value.',
+    // Tooltips
+    tip_bp:              'Blood pressure (mmHg). High if ≥ 140/90 — take your medication.',
+    tip_weight:          'Body weight (kg)',
+    tip_temp:            'Body temperature (°C). Alert if ≥ 37.5°C',
+    tip_water_target:    'Daily fluid intake goal (ml)',
+    tip_day_start:       'Hour (0–6): entries before this time count for the previous day',
+    tip_bp_times:        'Number of blood pressure readings per day (1–4)',
+    tip_creatinine:      'Creatinine (mg/dL) — kidney function marker. Normal: 0.6–1.2',
+    tip_tacrolimus:      'Tacrolimus (ng/mL) — immunosuppressant level. Target range set by your doctor.',
+    tip_reset:           'Clear all meds, fluids and vitals for today',
+    tip_del:             'Delete',
+    tip_custom_fluid:    'Add a custom amount (ml)',
   },
 
   ro: {
@@ -217,6 +229,18 @@ const LANGS = {
     // Validation
     val_enter_date:      'Vă rugăm să introduceți o dată.',
     val_enter_value:     'Introduceți cel puțin o valoare.',
+    // Tooltips
+    tip_bp:              'Tensiune arterială (mmHg). Ridicată dacă ≥ 140/90 — luați medicamentul.',
+    tip_weight:          'Greutate corporală (kg)',
+    tip_temp:            'Temperatură corporală (°C). Alertă dacă ≥ 37,5°C',
+    tip_water_target:    'Obiectiv zilnic de aport de lichide (ml)',
+    tip_day_start:       'Ora (0–6): intrările de dinaintea acestei ore aparțin zilei precedente',
+    tip_bp_times:        'Număr de măsurători ale tensiunii pe zi (1–4)',
+    tip_creatinine:      'Creatinină (mg/dL) — marker al funcției renale. Normal: 0,6–1,2',
+    tip_tacrolimus:      'Tacrolimus (ng/mL) — nivel imunosupresor. Valoare țintă conform medicului.',
+    tip_reset:           'Șterge toate datele de azi (medicamente, lichide, vitale)',
+    tip_del:             'Șterge',
+    tip_custom_fluid:    'Adaugă o cantitate personalizată (ml)',
   },
 
   hu: {
@@ -326,6 +350,18 @@ const LANGS = {
     // Validation
     val_enter_date:      'Kérjük adjon meg egy dátumot.',
     val_enter_value:     'Adjon meg legalább egy értéket.',
+    // Tooltips
+    tip_bp:              'Vérnyomás (Hgmm). Magas, ha ≥ 140/90 — vegye be a gyógyszerét.',
+    tip_weight:          'Testsúly (kg)',
+    tip_temp:            'Testhőmérséklet (°C). Riasztás ≥ 37,5°C esetén',
+    tip_water_target:    'Napi folyadékbeviteli cél (ml)',
+    tip_day_start:       'Óra (0–6): ennél korábbi bejegyzések az előző naphoz tartoznak',
+    tip_bp_times:        'Napi vérnyomásmérések száma (1–4)',
+    tip_creatinine:      'Kreatinin (mg/dL) — vesefunkció-mutató. Normál: 0,6–1,2',
+    tip_tacrolimus:      'Takrolimusz (ng/mL) — immunszuppresszív szint. Célérték: orvos szerint.',
+    tip_reset:           'Törli a mai gyógyszerek, folyadékok és vitálisok adatait',
+    tip_del:             'Törlés',
+    tip_custom_fluid:    'Egyedi mennyiség hozzáadása (ml)',
   },
 };
 

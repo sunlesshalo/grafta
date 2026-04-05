@@ -157,7 +157,7 @@ async function renderMeds() {
   });
 
   html += renderNotes(s);
-  if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()">${t('reset_today')}</button>`;
+  if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()" title="${t('tip_reset')}">${t('reset_today')}</button>`;
   el.innerHTML = html;
 }
 
@@ -202,6 +202,7 @@ function vitalsRow(label, key, value, type) {
   let html = `<div class="vital-row">`;
   html += `<span class="vital-label">${label}</span>`;
 
+  const tipKey = type === 'bp' ? 'tip_bp' : type === 'weight' ? 'tip_weight' : 'tip_temp';
   if (value) {
     const display = type === 'bp'
       ? `${value.sys}/${value.dia}${bpHigh(value) ? ` <span style="color:#c00">↑ ${t('take_med')}</span>` : ''}`
@@ -209,17 +210,17 @@ function vitalsRow(label, key, value, type) {
       ? `${value.value}°C`
       : `${value.value} kg`;
     const alertCls = (type === 'bp' && bpHigh(value)) || (type === 'temp' && value.value >= 37.5) ? ' alert' : '';
-    html += `<span class="vital-locked${alertCls}">${display} <button class="log-del" onclick="window._tracker.clearVital('${key}','${type}')">×</button></span>`;
+    html += `<span class="vital-locked${alertCls}" title="${t(tipKey)}">${display} <button class="log-del" title="${t('tip_del')}" onclick="window._tracker.clearVital('${key}','${type}')">×</button></span>`;
   } else if (type === 'bp') {
-    html += `<input class="vital-input" id="bp${key}Sys" type="number" inputmode="numeric" placeholder="sys" style="width:40px">`;
+    html += `<input class="vital-input" id="bp${key}Sys" type="number" inputmode="numeric" placeholder="sys" style="width:40px" title="${t('tip_bp')}">`;
     html += `<span class="vital-slash">/</span>`;
-    html += `<input class="vital-input" id="bp${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px">`;
+    html += `<input class="vital-input" id="bp${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px" title="${t('tip_bp')}">`;
     html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','bp')">${t('ok_btn')}</button>`;
   } else {
     const ph    = type === 'weight' ? 'kg'  : '°C';
     const step  = type === 'weight' ? '0.1' : '0.1';
     const width = type === 'weight' ? '56px' : '48px';
-    html += `<input class="vital-input wide" id="${key}Val" type="number" inputmode="decimal" step="${step}" placeholder="${ph}" style="width:${width}">`;
+    html += `<input class="vital-input wide" id="${key}Val" type="number" inputmode="decimal" step="${step}" placeholder="${ph}" style="width:${width}" title="${t(tipKey)}">`;
     html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','${type}')">${t('ok_btn')}</button>`;
   }
 
@@ -321,7 +322,7 @@ function renderFluidCol(type, elId, title, target) {
   [100, 200, 250, 500].forEach(ml => {
     html += `<button class="fluid-btn" onclick="window._tracker.addFluid('${type}',${ml})">+${ml}</button>`;
   });
-  html += `<button class="fluid-btn misc" onclick="window._tracker.addCustomFluid('${type}')">...</button>`;
+  html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" onclick="window._tracker.addCustomFluid('${type}')">...</button>`;
   html += `</div>`;
 
   entries.slice().reverse().forEach((entry, ri) => {
@@ -330,7 +331,7 @@ function renderFluidCol(type, elId, title, target) {
       <span class="log-time">${entry.time || t('night')}</span>
       ${entry.label ? `<span class="log-label">${entry.label}</span>` : ''}
       <span class="log-amount">${entry.amount} ml</span>
-      <button class="log-del" onclick="window._tracker.delFluid('${type}',${idx})">×</button>
+      <button class="log-del" title="${t('tip_del')}" onclick="window._tracker.delFluid('${type}',${idx})">×</button>
     </div>`;
   });
 

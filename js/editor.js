@@ -140,19 +140,19 @@ function renderSettings() {
     <div class="editor-settings">
       <h3>${t('settings_title')}</h3>
       <div class="editor-field">
-        <label>${t('water_target')}</label>
+        <label title="${t('tip_water_target')}">${t('water_target')}</label>
         <input type="number" value="${wt}" placeholder="${t('ml')}" id="settingWaterTarget"
-          oninput="localStorage.setItem('mt_water_target', this.value)">
+          title="${t('tip_water_target')}" oninput="localStorage.setItem('mt_water_target', this.value)">
       </div>
       <div class="editor-field">
-        <label>${t('day_starts')}</label>
+        <label title="${t('tip_day_start')}">${t('day_starts')}</label>
         <input type="number" value="${ds}" min="0" max="6" id="settingDayStart"
-          oninput="localStorage.setItem('mt_day_start', this.value)">
+          title="${t('tip_day_start')}" oninput="localStorage.setItem('mt_day_start', this.value)">
       </div>
       <div class="editor-field">
-        <label>${t('bp_readings_label')}</label>
+        <label title="${t('tip_bp_times')}">${t('bp_readings_label')}</label>
         <input type="number" value="${bt}" min="1" max="4" id="settingBpTimes"
-          oninput="localStorage.setItem('mt_bp_times', this.value)">
+          title="${t('tip_bp_times')}" oninput="localStorage.setItem('mt_bp_times', this.value)">
       </div>
     </div>`;
 }

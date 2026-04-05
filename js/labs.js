@@ -49,12 +49,12 @@ export async function renderLabs() {
       </div>
       <div class="labs-form-row">
         <div class="labs-input-group">
-          <span class="labs-label">${t('labs_creatinine')}</span>
-          <input class="labs-input" type="number" step="0.01" inputmode="decimal" id="labCreatinine" placeholder="mg/dL">
+          <span class="labs-label" title="${t('tip_creatinine')}">${t('labs_creatinine')}</span>
+          <input class="labs-input" type="number" step="0.01" inputmode="decimal" id="labCreatinine" placeholder="mg/dL" title="${t('tip_creatinine')}">
         </div>
         <div class="labs-input-group">
-          <span class="labs-label">${t('labs_tacrolimus')}</span>
-          <input class="labs-input" type="number" step="0.1" inputmode="decimal" id="labTacrolimus" placeholder="ng/mL">
+          <span class="labs-label" title="${t('tip_tacrolimus')}">${t('labs_tacrolimus')}</span>
+          <input class="labs-input" type="number" step="0.1" inputmode="decimal" id="labTacrolimus" placeholder="ng/mL" title="${t('tip_tacrolimus')}">
         </div>
       </div>
       <div class="labs-form-row">
@@ -82,7 +82,7 @@ export async function renderLabs() {
             ${lab.tacrolimus ? `FK: <strong>${lab.tacrolimus}</strong>` : ''}
           </span>
           <span class="labs-entry-notes">${lab.notes}</span>
-          <button class="log-del" onclick="window._labs.deleteLab('${lab.date}')">×</button>
+          <button class="log-del" title="${t('tip_del')}" onclick="window._labs.deleteLab('${lab.date}')">×</button>
         </div>`;
     });
   }
