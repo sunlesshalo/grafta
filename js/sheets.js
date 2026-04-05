@@ -46,66 +46,63 @@ async function gapiCall(label, fn) {
  * Returns spreadsheet ID, creating the spreadsheet on first call.
  * ID is cached in localStorage so we never create duplicates.
  */
+let _verified = false; // true once we've confirmed the sheet ID this session
+
 export async function getSpreadsheetId() {
   const cached = localStorage.getItem(KEY_SHEET);
+
+  // First call each session: always verify via Drive (even if cached)
+  if (!_verified) {
+    _verified = true;
+    const correct = await findBestSpreadsheet();
+    if (correct) {
+      localStorage.setItem(KEY_SHEET, correct);
+      return correct;
+    }
+    // Nothing on Drive — create only if we also have no cache
+    if (!cached) return createSpreadsheet();
+  }
+
   if (cached) return cached;
 
-  // Search Drive for an existing spreadsheet before creating a new one
-  const existing = await findExistingSpreadsheet();
-  if (existing) {
-    localStorage.setItem(KEY_SHEET, existing);
-    return existing;
-  }
+  // Should never reach here, but safety net
   return createSpreadsheet();
 }
 
 /**
- * Called after loadConfig() if config is empty — checks if a different
- * spreadsheet on Drive has the data (fixes wrong-spreadsheet-cached).
+ * Search Drive for "Med Tracker" spreadsheets. If multiple exist,
+ * return the one with actual Config data. Never creates anything.
  */
-export async function recheckSpreadsheet() {
-  const current = localStorage.getItem(KEY_SHEET);
-  if (!current) return false;
-
-  const better = await findExistingSpreadsheet();
-  if (better && better !== current) {
-    console.log('[sheets] switching to spreadsheet with data:', better);
-    localStorage.setItem(KEY_SHEET, better);
-    return true; // caller should reload config
-  }
-  return false;
-}
-
-async function findExistingSpreadsheet() {
+async function findBestSpreadsheet() {
   await waitForGapi();
   try {
     const res = await gapiCall('drive.files.list', () =>
       window.gapi.client.drive.files.list({
         q: `name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
         fields: 'files(id,name)',
-        orderBy: 'createdTime',   // oldest first — the original has the data
+        orderBy: 'createdTime',   // oldest first
         spaces: 'drive',
       })
     );
     const files = res.result.files || [];
     if (files.length === 0) return null;
 
-    // If multiple spreadsheets exist, find the one with actual config data
+    // Prefer the one with actual med config data
     for (const file of files) {
       try {
         const config = await getRange(file.id, `${S.CONFIG}!A:A`);
         if (config.length > 1) { // has rows beyond header
-          console.log('[sheets] found spreadsheet with data:', file.id);
+          console.log('[sheets] using spreadsheet with data:', file.id);
           return file.id;
         }
       } catch { /* skip inaccessible */ }
     }
 
-    // Fallback: return the oldest one
+    // All empty — return the oldest
     console.log('[sheets] using oldest spreadsheet:', files[0].id);
     return files[0].id;
   } catch (e) {
-    console.warn('[sheets] Drive search failed, will create new:', e);
+    console.warn('[sheets] Drive search failed:', e);
   }
   return null;
 }
