@@ -37,7 +37,7 @@ function bindMobTabs() {
 
 function switchMobTab(idx) {
   document.querySelectorAll('.mob-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-  const cols = ['colMeds','colWater','colUrine','colHealth','colLabs'];
+  const cols = ['colMeds','colWater','colUrine','colLabs'];
   cols.forEach((id, i) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -86,7 +86,6 @@ export function renderAll() {
   renderMeds();
   renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
   renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
-  renderHealth();
 }
 
 // ── Meds column ───────────────────────────────────────────────────────────────
@@ -108,11 +107,15 @@ async function renderMeds() {
 
   let html = `<div class="col-title">${t('meds_title')} <span style="float:right;font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></div>`;
 
+  // Vitals always visible at top of main column
+  html += renderVitals(s);
+
   if (allMeds.length === 0) {
     html += `<div style="padding:24px 0;text-align:center;color:#999;font-size:13px">
       ${t('no_meds_yet')}<br>
       <button onclick="window._app.openEditor()" style="margin-top:12px;background:#000;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">${t('setup_schedule')}</button>
     </div>`;
+    html += renderNotes(s);
     el.innerHTML = html;
     return;
   }
@@ -150,6 +153,7 @@ async function renderMeds() {
     html += `</div>`;
   });
 
+  html += renderNotes(s);
   if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()">${t('reset_today')}</button>`;
   el.innerHTML = html;
 }
@@ -176,23 +180,7 @@ export function resetDay() {
   }
 }
 
-// ── Health column (desktop: embedded in meds col via section; mobile: own tab) ──
-
-function renderHealth() {
-  const el = document.getElementById('colHealth');
-  if (!el) return;
-
-  const s = state();
-  let html = `<div class="col-title">${t('health_title')}</div>`;
-  html += renderVitals(s);
-  html += renderNotes(s);
-
-  el.innerHTML = html;
-
-  // Also update the desktop vitals section in the meds col
-  const vitalsEl = document.getElementById('desktopVitals');
-  if (vitalsEl) vitalsEl.innerHTML = renderVitals(s) + renderNotes(s);
-}
+// ── Vitals + Notes ────────────────────────────────────────────────────────────
 
 function renderVitals(s) {
   const bpCount = _settings.bp_times || 2;

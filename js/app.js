@@ -206,7 +206,7 @@ function closeEditorView() {
 // Labs tab click triggers renderLabs lazily
 document.addEventListener('click', e => {
   const tab = e.target.closest('.mob-tab');
-  if (tab && tab.dataset.tab === '4') renderLabs();
+  if (tab && tab.dataset.tab === '3') renderLabs();
 });
 
 // ── Views ─────────────────────────────────────────────────────────────────────
@@ -218,20 +218,6 @@ function showView(id) {
   });
 }
 
-// ── Desktop: inject health section into meds col ──────────────────────────────
-function setupDesktopSections() {
-  const colMeds = document.getElementById('colMeds');
-  if (!colMeds) return;
-  const colLabs  = document.getElementById('colLabs');
-  const colUrine = document.getElementById('colUrine');
-  if (colLabs && colUrine && window.innerWidth > 700) {
-    colLabs.style.display = 'block';
-    colLabs.style.borderLeft = '1px solid #ddd';
-  }
-}
-
-window.addEventListener('resize', setupDesktopSections);
-setupDesktopSections();
 
 // ── PWA ───────────────────────────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {

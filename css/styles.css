@@ -174,8 +174,7 @@ body {
   min-height: calc(100dvh - 48px);
 }
 
-/* Desktop: health and labs are appended inside colMeds via JS */
-#colHealth, #colLabs { display: none; }
+#colLabs { display: none; }
 
 .col {
   padding: 8px;
@@ -216,8 +215,8 @@ body {
   .col { border-right: none; display: none; padding: 8px 12px; }
   .col.active { display: block; }
 
-  #colHealth, #colLabs { display: none; }
-  #colHealth.active, #colLabs.active { display: block; }
+  #colLabs { display: none; }
+  #colLabs.active { display: block; }
 }
 
 /* ── Column titles ── */

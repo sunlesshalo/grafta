@@ -351,7 +351,7 @@ export function applyStaticTranslations() {
   if (reconnectBtn)  reconnectBtn.textContent  = t('reconnect_btn');
 
   // Mobile tabs
-  const tabKeys = ['tab_meds','tab_fluids','tab_urine','tab_health','tab_labs'];
+  const tabKeys = ['tab_meds','tab_fluids','tab_urine','tab_labs'];
   document.querySelectorAll('.mob-tab').forEach((tab, i) => {
     if (tabKeys[i]) tab.textContent = t(tabKeys[i]);
   });
