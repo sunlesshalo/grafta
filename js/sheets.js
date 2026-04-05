@@ -59,13 +59,12 @@ export async function getSpreadsheetId() {
       localStorage.setItem(KEY_SHEET, correct);
       return correct;
     }
-    // Nothing on Drive — create only if we also have no cache
-    if (!cached) return createSpreadsheet();
+    // Nothing on Drive — cached ID is stale, clear it and create fresh
+    localStorage.removeItem(KEY_SHEET);
+    return createSpreadsheet();
   }
 
   if (cached) return cached;
-
-  // Should never reach here, but safety net
   return createSpreadsheet();
 }
 
