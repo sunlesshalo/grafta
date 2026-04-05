@@ -31,13 +31,19 @@ async function gapiCall(label, fn) {
   try {
     return await fn();
   } catch (e) {
-    // gapi error structure: { result: { error: { message, code, status } }, status, body }
     const msg = e?.result?.error?.message || e?.body || e?.message || JSON.stringify(e);
     const code = e?.result?.error?.code || e?.status || '?';
     console.error(`[sheets] ${label} failed (${code}):`, msg, e);
     if (code === 401) { requestReconnect(); }
+    if (code === 404) { handleSpreadsheetGone(); }
     throw new Error(`${label}: ${code} ${msg}`);
   }
+}
+
+function handleSpreadsheetGone() {
+  console.warn('[sheets] spreadsheet not found — clearing cached ID');
+  localStorage.removeItem(KEY_SHEET);
+  _verified = false; // force re-lookup on next getSpreadsheetId()
 }
 
 // ── Spreadsheet lifecycle ─────────────────────────────────────────────────────
