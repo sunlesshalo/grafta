@@ -77,6 +77,11 @@
   <div class="editor-bar">
     <button class="editor-back" onclick="_app.closeEditor()">← Back</button>
     <span class="editor-title">Med Schedule</span>
+    <select id="langSelectEditor" class="lang-select" onchange="_app.setLang(this.value)">
+      <option value="en">English</option>
+      <option value="ro">Română</option>
+      <option value="hu">Magyar</option>
+    </select>
     <button class="editor-save" id="editorSaveBtn" onclick="_editor.save()">Save</button>
   </div>
   <div id="editorBody" class="editor-body"></div>

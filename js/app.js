@@ -170,6 +170,7 @@ function updateDayLabel() {
 
 function openEditorView() {
   showView('viewEditor');
+  applyStaticTranslations(); // sync editor bar + lang select to current language
   openEditor(async () => {
     // Set viewing date if not set (first run — editor opened before tracker)
     if (!_viewingDate) {

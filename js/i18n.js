@@ -369,7 +369,7 @@ export function applyStaticTranslations() {
   if (signoutBtn) signoutBtn.textContent = t('signout');
 
   // Sync language selects to current lang
-  ['langSelect', 'langSelectSignin'].forEach(id => {
+  ['langSelect', 'langSelectSignin', 'langSelectEditor'].forEach(id => {
     const sel = document.getElementById(id);
     if (sel) sel.value = _lang;
   });
