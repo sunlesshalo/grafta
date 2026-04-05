@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>Med Tracker</title>
+</head>
+<body>
+
+<!-- ── Sign-in view ── -->
+<div id="viewSignin" class="view view-signin hidden">
+  <div class="signin-wrap">
+    <h1 class="signin-title">Med Tracker</h1>
+    <p class="signin-sub">Track your meds, vitals, and labs.<br>Your data stays in your own Google Drive.</p>
+    <button id="signinBtn" class="signin-btn">Sign in with Google</button>
+    <p class="signin-note">We only access files this app creates.</p>
+  </div>
+</div>
+
+<!-- ── Reconnect banner ── -->
+<div id="reconnectBanner" class="reconnect-banner hidden">
+  Session expired — <button id="reconnectBtn">Reconnect</button>
+</div>
+
+<!-- ── Tracker view ── -->
+<div id="viewTracker" class="view hidden">
+
+  <div class="day-nav" id="dayNav">
+    <button id="prevBtn" onclick="_app.prevDay()">&larr;</button>
+    <div class="day-label" id="dayLabel">
+      <span class="sync-dot" id="syncDot"></span>
+    </div>
+    <div class="day-nav-right">
+      <button id="nextBtn" onclick="_app.nextDay()">&rarr;</button>
+      <button id="editorBtn" class="gear-btn" onclick="_app.openEditor()" title="Edit med schedule">&#9881;</button>
+      <button id="signoutBtn" class="gear-btn" onclick="_app.signOut()" title="Sign out" style="font-size:13px;color:#999">out</button>
+    </div>
+  </div>
+
+  <div class="mob-tabs" id="mobTabs">
+    <div class="mob-tab active" data-tab="0">Meds</div>
+    <div class="mob-tab" data-tab="1">Fluids</div>
+    <div class="mob-tab" data-tab="2">Urine</div>
+    <div class="mob-tab" data-tab="3">Health</div>
+    <div class="mob-tab" data-tab="4">Labs</div>
+  </div>
+
+  <div class="grid">
+    <div class="col active" id="colMeds"></div>
+    <div class="col" id="colWater"></div>
+    <div class="col" id="colUrine"></div>
+    <div class="col" id="colHealth"></div>
+    <div class="col" id="colLabs"></div>
+  </div>
+
+</div>
+
+<!-- ── Med editor overlay ── -->
+<div id="viewEditor" class="view view-editor hidden">
+  <div class="editor-bar">
+    <button class="editor-back" onclick="_app.closeEditor()">&#8592; Back</button>
+    <span class="editor-title">Med Schedule</span>
+    <button class="editor-save" id="editorSaveBtn" onclick="_editor.save()">Save</button>
+  </div>
+  <div id="editorBody" class="editor-body"></div>
+</div>
+
+<!-- GIS -->
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
