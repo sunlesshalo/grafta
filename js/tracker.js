@@ -249,7 +249,6 @@ function vitalsRow(label, key, value, type) {
 
 function renderNotes(s) {
   return `<div class="notes-box">
-    <div class="notes-label">${t('notes_label')}</div>
     <textarea class="notes-input" id="dayNotes" placeholder="${t('notes_ph')}"
       oninput="window._tracker.saveNotes(this.value)">${s.notes || ''}</textarea>
   </div>`;
