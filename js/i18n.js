@@ -24,6 +24,7 @@ const LANGS = {
     days:                ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
     months:              ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     // Meds column
+    vitals_title:        'Vitals',
     meds_title:          'Meds',
     no_meds_yet:         'No meds scheduled yet.',
     setup_schedule:      'Set up schedule',
@@ -215,6 +216,7 @@ const LANGS = {
     days:                ['Dum','Lun','Mar','Mie','Joi','Vin','Sâm'],
     months:              ['Ian','Feb','Mar','Apr','Mai','Iun','Iul','Aug','Sep','Oct','Nov','Dec'],
     // Meds column
+    vitals_title:        'Semne vitale',
     meds_title:          'Medicamente',
     no_meds_yet:         'Niciun medicament programat încă.',
     setup_schedule:      'Configurați programul',
@@ -406,6 +408,7 @@ const LANGS = {
     days:                ['Vas','Hét','Ked','Sze','Csü','Pén','Szo'],
     months:              ['Jan','Feb','Már','Ápr','Máj','Jún','Júl','Aug','Sze','Okt','Nov','Dec'],
     // Meds column
+    vitals_title:        'Értékek',
     meds_title:          'Gyógyszer',
     no_meds_yet:         'Még nincs ütemezett gyógyszer.',
     setup_schedule:      'Ütemterv beállítása',

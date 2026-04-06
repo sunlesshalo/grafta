@@ -108,10 +108,9 @@ async function renderMeds() {
 
   const cur = getCurrentTimeBlock(schedule);
 
-  let html = `<div class="col-title">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" onclick="window._tracker.expandAll()">${t('expand_all')}</button><span style="font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></span></div>`;
-
-  // Vitals always visible at top of main column
+  let html = `<div class="col-title">${t('vitals_title')}</div>`;
   html += renderVitals(s);
+  html += `<div class="col-title" style="margin-top:8px">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" onclick="window._tracker.expandAll()">${t('expand_all')}</button><span style="font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></span></div>`;
 
   if (allMeds.length === 0) {
     html += `<div style="padding:24px 0;text-align:center;color:#999;font-size:13px">
