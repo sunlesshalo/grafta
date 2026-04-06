@@ -71,6 +71,7 @@ export async function getSpreadsheetId() {
     const correct = await findBestSpreadsheet();
     if (correct) {
       localStorage.setItem(KEY_SHEET, correct);
+      migrateHeaders(correct).catch(e => console.warn('[sheets] header migration skipped:', e));
       return correct;
     }
     // Drive found nothing — if we have a cache, it's stale
@@ -140,6 +141,18 @@ async function renameSpreadsheet(id, newName) {
     })
   );
   console.log('[sheets] renamed spreadsheet to:', newName);
+}
+
+/** Ensure sheet headers match current HEADERS (adds missing columns). */
+async function migrateHeaders(spreadsheetId) {
+  await waitForGapi();
+  const expected = HEADERS[S.DAILY];
+  const rows = await getRange(spreadsheetId, `${S.DAILY}!1:1`);
+  const current = rows[0] || [];
+  if (current.length >= expected.length) return; // up to date
+  // Write the full header row
+  await updateRange(spreadsheetId, `${S.DAILY}!A1`, [expected]);
+  console.log(`[sheets] migrated Daily headers: ${current.length} → ${expected.length} columns`);
 }
 
 async function createSpreadsheet() {
@@ -286,7 +299,8 @@ export async function upsertDailyRow(spreadsheetId, date, rowValues) {
   const rows = await getRange(spreadsheetId, `${S.DAILY}!A:A`);
   const idx = rows.findIndex((r, i) => i > 0 && r[0] === date);
   if (idx >= 0) {
-    const range = `${S.DAILY}!A${idx + 1}:Q${idx + 1}`;
+    const endCol = String.fromCharCode(64 + rowValues.length); // A=1..S=19
+    const range = `${S.DAILY}!A${idx + 1}:${endCol}${idx + 1}`;
     await updateRange(spreadsheetId, range, [rowValues]);
   } else {
     await appendRows(spreadsheetId, S.DAILY, [rowValues]);
