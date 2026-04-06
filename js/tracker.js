@@ -373,7 +373,7 @@ function renderFluidCol(type, elId, title, target) {
   }
 
   html += `<div class="fluid-btns">`;
-  [100, 200, 250, 500].forEach(ml => {
+  [100, 150, 200, 250, 500].forEach(ml => {
     html += `<button class="fluid-btn" onclick="window._tracker.addFluid('${type}',${ml})">+${ml}</button>`;
   });
   html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" onclick="window._tracker.addCustomFluid('${type}')">+ ml</button>`;
