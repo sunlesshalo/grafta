@@ -8,6 +8,7 @@
   <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/report-print.css">
   <title>Med Tracker</title>
 </head>
 <body>
@@ -50,6 +51,8 @@
     <div class="day-nav-right">
       <button id="nextBtn" onclick="_app.nextDay()">&rarr;</button>
       <button id="editorBtn" class="gear-btn" onclick="_app.openEditor()" title="Edit med schedule">&#9881;</button>
+      <button id="chartsBtn" class="gear-btn" onclick="_app.openCharts()" title="Charts">&#128202;</button>
+      <button id="reportsBtn" class="gear-btn" onclick="_app.openReports()" title="Reports">&#128203;</button>
       <select id="langSelect" class="lang-select" onchange="_app.setLang(this.value)">
         <option value="en">EN</option>
         <option value="ro">RO</option>
@@ -96,6 +99,47 @@
   <div id="editorBody" class="editor-body"></div>
 </div>
 
+<!-- ── Charts overlay ── -->
+<div id="viewCharts" class="view view-overlay hidden">
+  <div class="overlay-bar">
+    <button class="overlay-back" onclick="_app.closeCharts()">← Back</button>
+    <span class="overlay-title" id="chartsTitleEl">Charts</span>
+    <div></div>
+  </div>
+  <div class="charts-range-bar" id="chartsRangeBar">
+    <button class="range-btn active" data-days="7">7d</button>
+    <button class="range-btn" data-days="14">14d</button>
+    <button class="range-btn" data-days="30">30d</button>
+    <button class="range-btn" data-days="90">90d</button>
+    <button class="range-btn" data-days="0" id="rangeAllBtn">All</button>
+  </div>
+  <div id="chartsBody" class="charts-body"></div>
+</div>
+
+<!-- ── Reports overlay ── -->
+<div id="viewReports" class="view view-overlay hidden">
+  <div class="overlay-bar">
+    <button class="overlay-back" onclick="_app.closeReports()">← Back</button>
+    <span class="overlay-title" id="reportsTitleEl">Reports</span>
+    <button id="reportPrintBtn" class="overlay-action hidden" onclick="_reports.print()">Print / PDF</button>
+  </div>
+  <div class="reports-controls">
+    <select id="reportPeriod">
+      <option value="7">Last 7 days</option>
+      <option value="30" selected>Last 30 days</option>
+      <option value="90">Last 90 days</option>
+      <option value="custom">Custom range</option>
+    </select>
+    <div id="reportCustomRange" class="hidden reports-date-range">
+      <input type="date" id="reportFrom">
+      <span>—</span>
+      <input type="date" id="reportTo">
+    </div>
+    <button id="reportGenerateBtn" onclick="_reports.generate()">Generate Report</button>
+  </div>
+  <div id="reportBody" class="report-body"></div>
+</div>
+
 <!-- Tooltip popup -->
 <div id="tipPopup" class="tip-popup hidden"></div>
 
@@ -104,6 +148,8 @@
 
 <!-- GIS -->
 <script src="https://accounts.google.com/gsi/client" async></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

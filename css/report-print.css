@@ -1,0 +1,45 @@
+/* ── Print / PDF styles for Medical Reports ── */
+@media print {
+
+  /* Hide everything except the report */
+  body > *:not(#viewReports) { display: none !important; }
+  #viewReports { display: block !important; position: static !important; overflow: visible !important; }
+  .overlay-bar,
+  .reports-controls { display: none !important; }
+  #reportBody { overflow: visible !important; padding: 0 !important; }
+
+  /* Report document */
+  .report {
+    max-width: 100%;
+    padding: 0;
+    font-size: 11pt;
+  }
+
+  .report-header {
+    border-bottom: 2px solid #000;
+    padding-bottom: 8pt;
+    margin-bottom: 12pt;
+  }
+
+  .report-title { font-size: 18pt; }
+  .report-meta  { font-size: 10pt; gap: 16pt; }
+
+  .report-section { margin-bottom: 16pt; page-break-inside: avoid; }
+  .report-section h2 { font-size: 9pt; border-bottom: 1px solid #000; padding-bottom: 2pt; margin-bottom: 6pt; }
+
+  .report-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  .report-table td, .report-table th { border: 1px solid #ccc; padding: 3pt 6pt; }
+  .report-table th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .report-table-full { page-break-inside: auto; }
+  .report-table-full tr { page-break-inside: avoid; }
+
+  .report-flag-row td { color: #c00 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .report-alerts li   { color: #c00 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .report-ok          { color: #090 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Page setup */
+  @page {
+    margin: 18mm 14mm;
+    size: A4;
+  }
+}

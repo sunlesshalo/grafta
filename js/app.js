@@ -7,20 +7,28 @@ import { loadConfig, getCachedMeds, resolveScheduleForDate } from './schedule.js
 import { initTracker, renderDay, renderAll as trackerRenderAll } from './tracker.js';
 import { openEditor, render as editorRender } from './editor.js';
 import { renderLabs } from './labs.js';
+import { initCharts, openCharts, setRange } from './charts.js';
+import { initReports, generate as generateReport, print as printReport } from './reports.js';
 import * as tracker from './tracker.js';
 import * as editor  from './editor.js';
 import * as labs    from './labs.js';
+import * as reports from './reports.js';
 import { t, tArr, setLang, getLang, applyStaticTranslations } from './i18n.js';
 
 // ── Expose globals for inline onclick handlers ────────────────────────────────
 window._tracker = tracker;
 window._editor  = editor;
 window._labs    = labs;
+window._reports = reports;
 window._app     = {
   prevDay,
   nextDay,
   openEditor: openEditorView,
   closeEditor: closeEditorView,
+  openCharts:  openChartsView,
+  closeCharts: closeChartsView,
+  openReports: openReportsView,
+  closeReports: closeReportsView,
   signOut: () => { signOut(); showView('viewSignin'); },
   setLang: (lang) => {
     setLang(lang);
@@ -56,6 +64,12 @@ initAuth(async (signedIn) => {
 document.getElementById('signinBtn')?.addEventListener('click', signIn);
 document.getElementById('reconnectBtn')?.addEventListener('click', reconnect);
 
+// Range buttons in Charts view
+document.getElementById('chartsRangeBar')?.addEventListener('click', e => {
+  const btn = e.target.closest('.range-btn');
+  if (btn) setRange(parseInt(btn.dataset.days));
+});
+
 // ── Sign-in flow ──────────────────────────────────────────────────────────────
 
 async function onSignedIn() {
@@ -86,6 +100,8 @@ async function onSignedIn() {
 
     // Init tracker with settings
     initTracker({ settings: _settings, onOpenEditor: openEditorView });
+    initCharts(_settings);
+    initReports();
 
     // If no meds yet — go straight to editor
     if (getCachedMeds().length === 0) {
@@ -206,6 +222,46 @@ function closeEditorView() {
   setSyncStatus('ok');
 }
 
+// ── Charts ────────────────────────────────────────────────────────────────────
+
+function openChartsView() {
+  showView('viewCharts');
+  openCharts();
+}
+
+function closeChartsView() {
+  showView('viewTracker');
+}
+
+// ── Reports ───────────────────────────────────────────────────────────────────
+
+function openReportsView() {
+  showView('viewReports');
+  applyReportsTranslations();
+}
+
+function closeReportsView() {
+  showView('viewTracker');
+}
+
+function applyReportsTranslations() {
+  const periodSel = document.getElementById('reportPeriod');
+  if (periodSel) {
+    const opts = [
+      { value: '7',      label: t('reports_7d') },
+      { value: '30',     label: t('reports_30d') },
+      { value: '90',     label: t('reports_90d') },
+      { value: 'custom', label: t('reports_custom') },
+    ];
+    const current = periodSel.value;
+    periodSel.innerHTML = opts.map(o => `<option value="${o.value}"${o.value === current ? ' selected' : ''}>${o.label}</option>`).join('');
+  }
+  const genBtn   = document.getElementById('reportGenerateBtn');
+  const printBtn = document.getElementById('reportPrintBtn');
+  if (genBtn)   genBtn.textContent   = t('reports_generate');
+  if (printBtn) printBtn.textContent = t('reports_print');
+}
+
 // ── Labs ──────────────────────────────────────────────────────────────────────
 
 // Labs tab click triggers renderLabs lazily
@@ -254,7 +310,7 @@ function showWelcome() {
 // ── Views ─────────────────────────────────────────────────────────────────────
 
 function showView(id) {
-  ['viewSignin','viewTracker','viewEditor'].forEach(v => {
+  ['viewSignin','viewTracker','viewEditor','viewCharts','viewReports'].forEach(v => {
     const el = document.getElementById(v);
     if (el) el.classList.toggle('hidden', v !== id);
   });
