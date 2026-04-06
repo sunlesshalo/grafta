@@ -201,15 +201,25 @@ body {
   margin-left: 6px;
 }
 
-/* ── Desktop 3-col grid (shows cols 0-2 only; health+labs below meds col) ── */
+/* ── Desktop 3-col grid ── */
+/* Row 1: Meds | Fluids  | Urine          */
+/* Row 2: Meds | Notes   | Labs           */
+/* Meds column spans both rows            */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas:
+    "meds water urine"
+    "meds notes labs";
   min-height: calc(100dvh - 48px);
+  align-items: start;
 }
 
-/* Desktop: colLabs auto-places at row 2, col 1 (below Meds) */
-#colLabs { border-top: 2px solid #000; border-right: 1px solid #ddd; }
+#colMeds  { grid-area: meds;  border-right: 1px solid #ddd; }
+#colWater { grid-area: water; }
+#colUrine { grid-area: urine; }
+#colNotes { grid-area: notes; border-top: 2px solid #000; border-right: 1px solid #ddd; }
+#colLabs  { grid-area: labs;  border-top: 2px solid #000; }
 
 .col {
   padding: 8px;
@@ -250,7 +260,10 @@ body {
   .col { border-right: none; display: none; padding: 8px 12px; }
   .col.active { display: block; }
 
-  #colLabs { display: none; }
+  #colNotes { display: none; border-top: none; }
+  #colNotes.active { display: block; }
+
+  #colLabs { display: none; border-top: none; }
   #colLabs.active { display: block; }
 }
 

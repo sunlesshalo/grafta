@@ -40,12 +40,11 @@ function bindMobTabs() {
 
 function switchMobTab(idx) {
   document.querySelectorAll('.mob-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
-  const cols = ['colMeds','colWater','colUrine','colLabs'];
+  const cols = ['colMeds','colWater','colUrine','colNotes','colLabs'];
   cols.forEach((id, i) => {
     const el = document.getElementById(id);
     if (!el) return;
     el.classList.toggle('active', i === idx);
-    if (i >= 3) el.style.display = i === idx ? 'block' : 'none';
   });
 }
 
@@ -89,6 +88,7 @@ export function renderAll() {
   renderMeds();
   renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
   renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
+  renderNotesCol(state());
 }
 
 // ── Meds column ───────────────────────────────────────────────────────────────
@@ -118,7 +118,6 @@ async function renderMeds() {
       ${t('no_meds_yet')}<br>
       <button onclick="window._app.openEditor()" style="margin-top:12px;background:#000;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">${t('setup_schedule')}</button>
     </div>`;
-    html += renderNotes(s);
     el.innerHTML = html;
     return;
   }
@@ -172,7 +171,6 @@ async function renderMeds() {
     html += `</div></div>`;
   });
 
-  html += renderNotes(s);
   if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()" title="${t('tip_reset')}">${t('reset_today')}</button>`;
   el.innerHTML = html;
 }
@@ -257,6 +255,14 @@ function renderNotes(s) {
   </div>`;
 }
 
+function renderNotesCol(s) {
+  const el = document.getElementById('colNotes');
+  if (!el) return;
+  let html = `<div class="col-title">${t('notes_label')}</div>`;
+  html += renderNotes(s);
+  el.innerHTML = html;
+}
+
 export function saveVital(key, type) {
   const s = state();
   if (type === 'bp') {
@@ -339,7 +345,15 @@ function renderFluidCol(type, elId, title, target) {
       </div>
     </div>`;
   } else {
-    html += `<div class="fluid-total">${total}<span class="fluid-sub"> ml</span></div>`;
+    html += `<div class="fluid-ring-wrap">
+      <svg viewBox="0 0 36 36" class="fluid-ring">
+        <circle cx="18" cy="18" r="15.915" fill="none" stroke="#f0f0f0" stroke-width="2.5"/>
+      </svg>
+      <div class="fluid-ring-label">
+        <div class="fluid-ring-num">${total}</div>
+        <div class="fluid-ring-sub">ml</div>
+      </div>
+    </div>`;
   }
 
   if (type === 'water' && target && _isToday) html += waterPace(total, target);
