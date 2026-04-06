@@ -166,6 +166,7 @@ const LANGS = {
     reports_30d:         'Last 30 days',
     reports_90d:         'Last 90 days',
     reports_custom:      'Custom range',
+    reports_lang:        'Report language',
     reports_generate:    'Generate Report',
     reports_print:       'Print / PDF',
     reports_header_title:'Medical Report',
@@ -367,6 +368,7 @@ const LANGS = {
     reports_30d:         'Ultimele 30 zile',
     reports_90d:         'Ultimele 90 zile',
     reports_custom:      'Interval personalizat',
+    reports_lang:        'Limba raportului',
     reports_generate:    'Generează raport',
     reports_print:       'Tipărire / PDF',
     reports_header_title:'Raport medical',
@@ -568,6 +570,7 @@ const LANGS = {
     reports_30d:         'Utolsó 30 nap',
     reports_90d:         'Utolsó 90 nap',
     reports_custom:      'Egyéni időszak',
+    reports_lang:        'Jelentés nyelve',
     reports_generate:    'Jelentés generálása',
     reports_print:       'Nyomtatás / PDF',
     reports_header_title:'Orvosi jelentés',
@@ -622,6 +625,13 @@ export function tArr(key) {
 }
 
 export function getLang() { return _lang; }
+
+/** Translate a key in a specific language (for reports). */
+export function tIn(lang, key, params = {}) {
+  const str = LANGS[lang]?.[key] ?? LANGS.en[key] ?? key;
+  if (typeof str !== 'string') return str;
+  return str.replace(/\{(\w+)\}/g, (_, k) => params[k] !== undefined ? params[k] : `{${k}}`);
+}
 
 export function setLang(lang) {
   if (!LANGS[lang]) return;

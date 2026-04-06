@@ -256,6 +256,10 @@ function applyReportsTranslations() {
     const current = periodSel.value;
     periodSel.innerHTML = opts.map(o => `<option value="${o.value}"${o.value === current ? ' selected' : ''}>${o.label}</option>`).join('');
   }
+  // Report language selector — default to app language
+  const langSel = document.getElementById('reportLang');
+  if (langSel) langSel.value = getLang();
+
   const genBtn   = document.getElementById('reportGenerateBtn');
   const printBtn = document.getElementById('reportPrintBtn');
   if (genBtn)   genBtn.textContent   = t('reports_generate');

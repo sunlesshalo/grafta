@@ -2,7 +2,13 @@
 
 import { getSpreadsheetId, getRange, S } from './sheets.js';
 import { getUserName, getUserEmail } from './auth.js';
-import { t } from './i18n.js';
+import { t, tIn, getLang } from './i18n.js';
+
+// Report-local translation: uses the report language selector, not the app language
+let _reportLang = null;
+function rt(key, params) {
+  return tIn(_reportLang || getLang(), key, params);
+}
 
 export function initReports() {
   const sel = document.getElementById('reportPeriod');
@@ -25,6 +31,7 @@ export async function generate() {
   if (body) body.innerHTML = `<div style="text-align:center;padding:48px 0"><div class="loading-spinner" style="margin:0 auto"></div></div>`;
 
   try {
+    _reportLang = document.getElementById('reportLang')?.value || getLang();
     const { from, to } = getDateRange();
     const { dailyData, labsData } = await fetchData(from, to);
     if (body) body.innerHTML = buildReport(dailyData, labsData, from, to);
@@ -183,11 +190,11 @@ function sectionHeader(patient, from, to) {
   const now = new Date().toLocaleDateString();
   return `
     <div class="report-header">
-      <h1 class="report-title">${t('reports_header_title')}</h1>
+      <h1 class="report-title">${rt('reports_header_title')}</h1>
       <div class="report-meta">
-        <span><strong>${t('reports_patient')}:</strong> ${patient}</span>
-        <span><strong>${t('reports_period_label')}:</strong> ${from} — ${to}</span>
-        <span><strong>${t('reports_generated')}:</strong> ${now}</span>
+        <span><strong>${rt('reports_patient')}:</strong> ${patient}</span>
+        <span><strong>${rt('reports_period_label')}:</strong> ${from} — ${to}</span>
+        <span><strong>${rt('reports_generated')}:</strong> ${now}</span>
       </div>
     </div>`;
 }
@@ -197,35 +204,35 @@ function sectionVitals({ bp, weight, temp, fmt }) {
 
   let rows = '';
   if (bp.readings > 0) {
-    rows += row(t('reports_stat_bp_avg'),      `${fmt(bp.avgSys, 0)} / ${fmt(bp.avgDia, 0)} mmHg`);
-    rows += row(t('reports_stat_bp_range'),    `${fmt(bp.minSys, 0)}–${fmt(bp.maxSys, 0)} / ${fmt(bp.minDia, 0)}–${fmt(bp.maxDia, 0)} mmHg`);
-    if (bp.avgPulse) rows += row(t('reports_stat_pulse_avg'), `${fmt(bp.avgPulse, 0)} bpm (${fmt(bp.minPulse, 0)}–${fmt(bp.maxPulse, 0)})`);
-    rows += row(t('reports_stat_bp_readings'), String(bp.readings));
+    rows += row(rt('reports_stat_bp_avg'),      `${fmt(bp.avgSys, 0)} / ${fmt(bp.avgDia, 0)} mmHg`);
+    rows += row(rt('reports_stat_bp_range'),    `${fmt(bp.minSys, 0)}–${fmt(bp.maxSys, 0)} / ${fmt(bp.minDia, 0)}–${fmt(bp.maxDia, 0)} mmHg`);
+    if (bp.avgPulse) rows += row(rt('reports_stat_pulse_avg'), `${fmt(bp.avgPulse, 0)} bpm (${fmt(bp.minPulse, 0)}–${fmt(bp.maxPulse, 0)})`);
+    rows += row(rt('reports_stat_bp_readings'), String(bp.readings));
   }
   if (weight.avg) {
-    rows += row(t('reports_stat_weight_avg'),   `${fmt(weight.avg)} kg`);
-    rows += row(t('reports_stat_weight_range'), `${fmt(weight.min)} – ${fmt(weight.max)} kg`);
+    rows += row(rt('reports_stat_weight_avg'),   `${fmt(weight.avg)} kg`);
+    rows += row(rt('reports_stat_weight_range'), `${fmt(weight.min)} – ${fmt(weight.max)} kg`);
     if (weight.delta !== null) {
       const sign = weight.delta >= 0 ? '+' : '';
-      rows += row(t('reports_stat_weight_delta'), `${sign}${fmt(weight.delta)} kg`);
+      rows += row(rt('reports_stat_weight_delta'), `${sign}${fmt(weight.delta)} kg`);
     }
   }
   if (temp.avg) {
-    rows += row(t('reports_stat_temp_avg'), `${fmt(temp.avg)} °C`);
-    rows += row(t('reports_stat_temp_max'), `${fmt(temp.max)} °C`);
-    if (temp.feverCount > 0) rows += row(t('reports_stat_fever_days'), `${temp.feverCount} ${t('reports_days')}`, true);
+    rows += row(rt('reports_stat_temp_avg'), `${fmt(temp.avg)} °C`);
+    rows += row(rt('reports_stat_temp_max'), `${fmt(temp.max)} °C`);
+    if (temp.feverCount > 0) rows += row(rt('reports_stat_fever_days'), `${temp.feverCount} ${rt('reports_days')}`, true);
   }
 
-  return section(t('reports_vitals_title'), `<table class="report-table"><tbody>${rows}</tbody></table>`);
+  return section(rt('reports_vitals_title'), `<table class="report-table"><tbody>${rows}</tbody></table>`);
 }
 
 function sectionFluids({ fluids, fmt }) {
   if (!fluids.daysTracked) return '';
   const rows =
-    row(t('reports_stat_avg_water'),   `${fmt(fluids.avgWater, 0)} ml / ${t('reports_days').replace(/s$/, '')}`) +
-    row(t('reports_stat_avg_urine'),   `${fmt(fluids.avgUrine, 0)} ml / ${t('reports_days').replace(/s$/, '')}`) +
-    row(t('reports_stat_fluid_days'),  `${fluids.daysTracked} ${t('reports_days')}`);
-  return section(t('reports_fluids_title'), `<table class="report-table"><tbody>${rows}</tbody></table>`);
+    row(rt('reports_stat_avg_water'),   `${fmt(fluids.avgWater, 0)} ml / ${rt('reports_days').replace(/s$/, '')}`) +
+    row(rt('reports_stat_avg_urine'),   `${fmt(fluids.avgUrine, 0)} ml / ${rt('reports_days').replace(/s$/, '')}`) +
+    row(rt('reports_stat_fluid_days'),  `${fluids.daysTracked} ${rt('reports_days')}`);
+  return section(rt('reports_fluids_title'), `<table class="report-table"><tbody>${rows}</tbody></table>`);
 }
 
 function sectionLabs(labsData, { labs, fmt }) {
@@ -236,10 +243,10 @@ function sectionLabs(labsData, { labs, fmt }) {
   let summaryRows = '';
   if (labs.creatinine.last !== null) {
     const flag = labs.creatinine.last > 1.2;
-    summaryRows += row(`${t('labs_creatinine')} (mg/dL)`, `${fmt(labs.creatinine.last)}${labs.creatinine.trend ? icon(labs.creatinine.trend) : ''}`, flag);
+    summaryRows += row(`${rt('labs_creatinine')} (mg/dL)`, `${fmt(labs.creatinine.last)}${labs.creatinine.trend ? icon(labs.creatinine.trend) : ''}`, flag);
   }
   if (labs.tacrolimus.last !== null) {
-    summaryRows += row(`${t('labs_tacrolimus')} (ng/mL)`, `${fmt(labs.tacrolimus.last)}${labs.tacrolimus.trend ? icon(labs.tacrolimus.trend) : ''}`);
+    summaryRows += row(`${rt('labs_tacrolimus')} (ng/mL)`, `${fmt(labs.tacrolimus.last)}${labs.tacrolimus.trend ? icon(labs.tacrolimus.trend) : ''}`);
   }
 
   const histRows = labsData.map(r => `
@@ -252,21 +259,21 @@ function sectionLabs(labsData, { labs, fmt }) {
 
   const inner = `
     ${summaryRows ? `<table class="report-table"><tbody>${summaryRows}</tbody></table>` : ''}
-    <h3 class="report-sub-title">${t('reports_history')}</h3>
+    <h3 class="report-sub-title">${rt('reports_history')}</h3>
     <table class="report-table report-table-full"><thead>
-      <tr><th>${t('labs_date')}</th><th>${t('labs_creatinine')} (mg/dL)</th><th>${t('labs_tacrolimus')} (ng/mL)</th><th>${t('field_notes')}</th></tr>
+      <tr><th>${rt('labs_date')}</th><th>${rt('labs_creatinine')} (mg/dL)</th><th>${rt('labs_tacrolimus')} (ng/mL)</th><th>${rt('field_notes')}</th></tr>
     </thead><tbody>${histRows}</tbody></table>`;
 
-  return section(t('reports_labs_title'), inner);
+  return section(rt('reports_labs_title'), inner);
 }
 
 function sectionAdherence({ meds }) {
   if (!meds.totalPoss) return '';
   const flag = meds.pct !== null && meds.pct < 90;
   const rows =
-    row(t('reports_stat_meds_taken'), `${meds.totalDone} / ${meds.totalPoss}`) +
-    row(t('reports_stat_adherence'),  `${meds.pct}%`, flag);
-  return section(t('reports_meds_title'), `<table class="report-table"><tbody>${rows}</tbody></table>`);
+    row(rt('reports_stat_meds_taken'), `${meds.totalDone} / ${meds.totalPoss}`) +
+    row(rt('reports_stat_adherence'),  `${meds.pct}%`, flag);
+  return section(rt('reports_meds_title'), `<table class="report-table"><tbody>${rows}</tbody></table>`);
 }
 
 function sectionAlerts({ alerts, fmt }) {
@@ -274,24 +281,24 @@ function sectionAlerts({ alerts, fmt }) {
 
   if (alerts.highBP.length > 0) {
     const sample = alerts.highBP.slice(0, 3).map(r => r.date).join(', ');
-    items.push(`<li>⚠ ${t('reports_alert_high_bp')}: ${alerts.highBP.length} ${t('reports_days')} (${sample}${alerts.highBP.length > 3 ? '…' : ''})</li>`);
+    items.push(`<li>⚠ ${rt('reports_alert_high_bp')}: ${alerts.highBP.length} ${rt('reports_days')} (${sample}${alerts.highBP.length > 3 ? '…' : ''})</li>`);
   }
   alerts.weightJumps.forEach(j => {
     const sign = j.to > j.from ? '+' : '';
-    items.push(`<li>⚠ ${t('reports_alert_weight_jump')}: ${j.date} (${j.from} → ${j.to} kg, ${sign}${fmt(j.delta)} kg)</li>`);
+    items.push(`<li>⚠ ${rt('reports_alert_weight_jump')}: ${j.date} (${j.from} → ${j.to} kg, ${sign}${fmt(j.delta)} kg)</li>`);
   });
   if (alerts.feverDays.length > 0) {
-    items.push(`<li>⚠ ${t('reports_alert_fever')}: ${alerts.feverDays.map(r => r.date).join(', ')}</li>`);
+    items.push(`<li>⚠ ${rt('reports_alert_fever')}: ${alerts.feverDays.map(r => r.date).join(', ')}</li>`);
   }
   if (alerts.incompleteMedsDays.length > 0) {
-    items.push(`<li>⚠ ${t('reports_alert_missed_meds')}: ${alerts.incompleteMedsDays.length} ${t('reports_days')}</li>`);
+    items.push(`<li>⚠ ${rt('reports_alert_missed_meds')}: ${alerts.incompleteMedsDays.length} ${rt('reports_days')}</li>`);
   }
 
   const content = items.length
     ? `<ul class="report-alerts">${items.join('')}</ul>`
-    : `<p class="report-ok">✓ ${t('reports_no_alerts')}</p>`;
+    : `<p class="report-ok">✓ ${rt('reports_no_alerts')}</p>`;
 
-  return section(t('reports_alerts_title'), content);
+  return section(rt('reports_alerts_title'), content);
 }
 
 function sectionDailyTable(daily) {
@@ -312,18 +319,18 @@ function sectionDailyTable(daily) {
   const inner = `
     <table class="report-table report-table-full">
       <thead><tr>
-        <th>${t('labs_date')}</th>
+        <th>${rt('labs_date')}</th>
         <th>BP AM</th><th>BP PM</th>
-        <th>${t('vital_wt')}</th>
-        <th>${t('vital_temp')}</th>
-        <th>${t('fluids_title')}</th>
-        <th>${t('urine_title')}</th>
-        <th>${t('meds_title')}</th>
+        <th>${rt('vital_wt')}</th>
+        <th>${rt('vital_temp')}</th>
+        <th>${rt('fluids_title')}</th>
+        <th>${rt('urine_title')}</th>
+        <th>${rt('meds_title')}</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 
-  return section(t('reports_daily_table'), inner);
+  return section(rt('reports_daily_table'), inner);
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
