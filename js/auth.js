@@ -147,10 +147,11 @@ function scheduleRefresh(expiresInSeconds) {
 
 function silentRefresh() {
   if (!tokenClient) return;
-  // login_hint tells GIS exactly which account to use — no account picker ever shown
   const hint = localStorage.getItem(KEY_EMAIL);
+  // prompt:'none' = no UI ever; if Google can't silently grant, returns error →
+  // handleTokenResponse shows reconnect banner instead of popping up the chooser
   tokenClient.requestAccessToken({
-    prompt: '',
+    prompt: 'none',
     ...(hint ? { login_hint: hint } : {}),
   });
 }
