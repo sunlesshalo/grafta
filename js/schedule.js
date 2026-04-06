@@ -1,7 +1,7 @@
 // ── schedule.js — Parse config rows, resolve meds for a given date ──
 
 import { getConfig, saveConfig, appendConfigHistory, getConfigHistory, getSpreadsheetId } from './sheets.js';
-import { getCurrentConfigVersion, bumpConfigVersion } from './store.js';
+import { getCurrentConfigVersion, bumpConfigVersion, syncConfigVersion } from './store.js';
 
 // Cached in-memory config (loaded once, updated on save)
 let _meds = null;  // array of med objects
@@ -113,6 +113,16 @@ export async function loadConfig() {
   const sheetId = await getSpreadsheetId();
   const rows    = await getConfig(sheetId);
   _meds = parseConfigRows(rows);
+
+  // Sync config version from sheet history (handles new device / cross-device)
+  if (getCurrentConfigVersion() === 0 && _meds.length > 0) {
+    const history = await getConfigHistory(sheetId);
+    if (history.length > 1) {
+      const maxVersion = Math.max(...history.slice(1).map(r => parseInt(r[0], 10) || 0));
+      if (maxVersion > 0) syncConfigVersion(maxVersion);
+    }
+  }
+
   return _meds;
 }
 

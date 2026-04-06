@@ -242,6 +242,10 @@ export function getCurrentConfigVersion() {
   return parseInt(localStorage.getItem(KEY_CFG_VER) || '0', 10);
 }
 
+export function syncConfigVersion(v) {
+  localStorage.setItem(KEY_CFG_VER, String(v));
+}
+
 export function bumpConfigVersion() {
   const v = getCurrentConfigVersion() + 1;
   localStorage.setItem(KEY_CFG_VER, String(v));
