@@ -95,11 +95,9 @@ export function initAuth(callback) {
       onAuthChange && onAuthChange(true);
     });
   } else if (localStorage.getItem(KEY_EMAIL)) {
-    // Token expired but user was signed in before — try silent refresh
+    // Token expired but user was signed in before — refresh silently (no UI)
     console.log('[auth] token expired, attempting silent refresh');
-    waitForGapi().then(() => {
-      tokenClient.requestAccessToken({ prompt: '' });
-    });
+    waitForGapi().then(() => silentRefresh());
   } else {
     onAuthChange && onAuthChange(false);
   }
@@ -109,9 +107,15 @@ export function initAuth(callback) {
 
 function handleTokenResponse(response) {
   if (response.error) {
-    console.warn('Auth error:', response.error);
+    console.warn('[auth] token error:', response.error);
     clearToken();
-    onAuthChange && onAuthChange(false);
+    // If we still have the user's email, this was a background refresh failure.
+    // Show the reconnect banner instead of dropping back to sign-in screen.
+    if (localStorage.getItem(KEY_EMAIL)) {
+      document.getElementById('reconnectBanner')?.classList.remove('hidden');
+    } else {
+      onAuthChange && onAuthChange(false);
+    }
     return;
   }
   console.log('[auth] token received, scopes granted:', response.scope);
@@ -137,13 +141,18 @@ function storeToken(token, expiresIn) {
 
 function scheduleRefresh(expiresInSeconds) {
   if (refreshTimer) clearTimeout(refreshTimer);
-  const delay = Math.max(0, (expiresInSeconds - 300) * 1000); // 5 min before expiry
+  const delay = Math.max(0, (expiresInSeconds - 600) * 1000); // 10 min before expiry
   refreshTimer = setTimeout(silentRefresh, delay);
 }
 
 function silentRefresh() {
   if (!tokenClient) return;
-  tokenClient.requestAccessToken({ prompt: '' });
+  // login_hint tells GIS exactly which account to use — no account picker ever shown
+  const hint = localStorage.getItem(KEY_EMAIL);
+  tokenClient.requestAccessToken({
+    prompt: '',
+    ...(hint ? { login_hint: hint } : {}),
+  });
 }
 
 function clearToken() {
@@ -155,9 +164,14 @@ function clearToken() {
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export function signIn() {
-  // If user previously signed in, skip account picker — just refresh silently
-  const hadSession = !!localStorage.getItem(KEY_EMAIL);
-  tokenClient.requestAccessToken({ prompt: hadSession ? '' : 'select_account' });
+  const hint = localStorage.getItem(KEY_EMAIL);
+  if (hint) {
+    // Returning user — silent refresh, no UI at all
+    tokenClient.requestAccessToken({ prompt: '', login_hint: hint });
+  } else {
+    // First time — let them pick their account
+    tokenClient.requestAccessToken({ prompt: 'select_account' });
+  }
 }
 
 export function signOut() {
@@ -194,7 +208,11 @@ export function requestReconnect() {
 
 export function reconnect() {
   document.getElementById('reconnectBanner')?.classList.add('hidden');
-  tokenClient.requestAccessToken({ prompt: '' });
+  const hint = localStorage.getItem(KEY_EMAIL);
+  tokenClient.requestAccessToken({
+    prompt: '',
+    ...(hint ? { login_hint: hint } : {}),
+  });
 }
 
 // ── User info ─────────────────────────────────────────────────────────────────
