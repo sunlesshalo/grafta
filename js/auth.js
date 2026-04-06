@@ -94,6 +94,12 @@ export function initAuth(callback) {
       console.log('[auth] restored session, gapi token set');
       onAuthChange && onAuthChange(true);
     });
+  } else if (localStorage.getItem(KEY_EMAIL)) {
+    // Token expired but user was signed in before — try silent refresh
+    console.log('[auth] token expired, attempting silent refresh');
+    waitForGapi().then(() => {
+      tokenClient.requestAccessToken({ prompt: '' });
+    });
   } else {
     onAuthChange && onAuthChange(false);
   }
@@ -149,7 +155,9 @@ function clearToken() {
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export function signIn() {
-  tokenClient.requestAccessToken({ prompt: 'select_account' });
+  // If user previously signed in, skip account picker — just refresh silently
+  const hadSession = !!localStorage.getItem(KEY_EMAIL);
+  tokenClient.requestAccessToken({ prompt: hadSession ? '' : 'select_account' });
 }
 
 export function signOut() {
