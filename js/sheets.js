@@ -2,7 +2,7 @@
 
 import { getToken, requestReconnect, waitForGapi } from './auth.js';
 
-const SHEET_NAME  = 'Med Tracker';
+const SHEET_NAME  = 'Med Tracker v2';
 const KEY_SHEET   = 'mt_sheet_id'; // localStorage key for spreadsheet ID
 
 // Sheet names
@@ -85,23 +85,31 @@ export async function getSpreadsheetId() {
 async function findBestSpreadsheet() {
   await waitForGapi();
   try {
+    // Search for v2 name first, then fall back to legacy name
     const res = await gapiCall('drive.files.list', () =>
       window.gapi.client.drive.files.list({
-        q: `name='${SHEET_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
+        q: `(name='${SHEET_NAME}' or name='Med Tracker') and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
         fields: 'files(id,name)',
-        orderBy: 'createdTime',   // oldest first
+        orderBy: 'createdTime',
         spaces: 'drive',
       })
     );
     const files = res.result.files || [];
     if (files.length === 0) return null;
 
-    // Prefer the one with actual med config data
-    for (const file of files) {
+    // Prefer "Med Tracker v2" named ones first, then any with data
+    const v2Files = files.filter(f => f.name === SHEET_NAME);
+    const candidates = v2Files.length > 0 ? v2Files : files;
+
+    for (const file of candidates) {
       try {
         const config = await getRange(file.id, `${S.CONFIG}!A:A`);
         if (config.length > 1) { // has rows beyond header
           console.log('[sheets] using spreadsheet with data:', file.id);
+          // Rename to v2 if it has the old name
+          if (file.name !== SHEET_NAME) {
+            renameSpreadsheet(file.id, SHEET_NAME).catch(() => {});
+          }
           return file.id;
         }
       } catch { /* skip inaccessible */ }
@@ -114,6 +122,17 @@ async function findBestSpreadsheet() {
     console.warn('[sheets] Drive search failed:', e);
   }
   return null;
+}
+
+async function renameSpreadsheet(id, newName) {
+  await waitForGapi();
+  await gapiCall('drive.files.update', () =>
+    window.gapi.client.drive.files.update({
+      fileId: id,
+      resource: { name: newName },
+    })
+  );
+  console.log('[sheets] renamed spreadsheet to:', newName);
 }
 
 async function createSpreadsheet() {
