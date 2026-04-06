@@ -334,10 +334,33 @@ body {
 .notes-input:focus { outline: none; border-color: #000; }
 
 /* ── Meds ── */
-.time-group { margin-bottom: 6px; }
-.time-label { font-size: 11px; font-weight: 700; color: #000; padding: 2px 0; }
-.time-group.current .time-label { text-decoration: underline; }
-.time-group.all-done .time-label { color: #bbb; }
+.time-group { margin-bottom: 4px; border-radius: 4px; overflow: hidden; }
+.time-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #000;
+  padding: 3px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.time-label:active { background: #f0f0f0; }
+.time-group.current > .time-label { background: #f5f5f5; text-decoration: underline; }
+.time-group.all-done > .time-label { color: #bbb; }
+.time-group.collapsed > .time-label { opacity: 0.65; }
+.time-group-body { padding: 0 2px; }
+.time-group.collapsed .time-group-body { display: none; }
+.time-progress { font-size: 10px; font-weight: 600; color: #bbb; }
+.time-progress.done { color: #090; }
+
+/* Time-of-day accent */
+.time-morning  > .time-label { border-left: 2px solid #e8900a; padding-left: 6px; }
+.time-afternoon > .time-label { border-left: 2px solid #1a6cc8; padding-left: 6px; }
+.time-evening  > .time-label { border-left: 2px solid #7c3fb5; padding-left: 6px; }
 
 .med {
   display: flex;
@@ -1018,6 +1041,40 @@ body {
 
 .report-ok { font-size: 13px; color: #090; font-weight: 600; }
 
+/* ── Fluid ring ── */
+.fluid-ring-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 6px;
+}
+.fluid-ring {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+.fluid-ring-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.fluid-ring-num { font-size: 22px; font-weight: 800; line-height: 1; }
+.fluid-ring-sub { font-size: 10px; color: #999; margin-top: 3px; }
+
+/* Improve fluid type selector active state */
+.fluid-type-btn.active {
+  background: #000;
+  border-color: #000;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
 /* ── Responsive mobile tweaks ── */
 @media (max-width: 700px) {
   .fluid-total { font-size: 36px; }
@@ -1025,7 +1082,9 @@ body {
   .fluid-btn  { padding: 12px 4px; font-size: 14px; min-height: 44px; }
   .med        { padding: 6px 0; font-size: 14px; min-height: 36px; align-items: center; }
   .med .box   { width: 22px; height: 22px; font-size: 14px; }
-  .time-label { font-size: 13px; padding: 4px 0; }
+  .time-label { font-size: 13px; padding: 5px 4px; }
+  .fluid-ring { width: 140px; height: 140px; }
+  .fluid-ring-num { font-size: 26px; }
   .vital-input { width: 44px; font-size: 15px; padding: 6px 2px; min-height: 36px; }
   .vital-label { font-size: 13px; }
   .vital-input.wide { width: 56px; }

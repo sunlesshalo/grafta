@@ -125,8 +125,8 @@ async function renderMeds() {
 
   schedule.forEach((block, bi) => {
     const allDone = block.meds.every(med => s.checked[med.id]);
-    html += `<div class="time-group${bi === cur ? ' current' : ''}${allDone ? ' all-done' : ''}">`;
-    html += `<div class="time-label">${block.time}</div>`;
+    const doneCnt = block.meds.filter(med => s.checked[med.id]).length;
+    const isCurrent = bi === cur;
 
     // Which BP applies to this time block?
     const bpArr = s.bp || [];
@@ -134,6 +134,22 @@ async function renderMeds() {
     const bp = blockHour < 12
       ? (bpArr[0] || null)
       : (bpArr[bpArr.length - 1] || bpArr[0] || null);
+
+    // Time-of-day color class
+    let timeColorClass = '';
+    if (blockHour >= 5 && blockHour < 10)       timeColorClass = ' time-morning';
+    else if (blockHour >= 16 && blockHour < 20) timeColorClass = ' time-afternoon';
+    else if (blockHour >= 20)                   timeColorClass = ' time-evening';
+
+    // Auto-collapse completed blocks (except current)
+    const collapsed = (allDone && !isCurrent) ? ' collapsed' : '';
+
+    html += `<div class="time-group${isCurrent ? ' current' : ''}${allDone ? ' all-done' : ''}${timeColorClass}${collapsed}" id="tg-${bi}">`;
+    html += `<div class="time-label" onclick="window._tracker.toggleTimeGroup('${bi}')">
+      <span>${block.time}</span>
+      <span class="time-progress${allDone ? ' done' : ''}">${doneCnt}/${block.meds.length}${allDone ? ' ✓' : ''}</span>
+    </div>`;
+    html += `<div class="time-group-body">`;
 
     block.meds.forEach(med => {
       const on   = !!s.checked[med.id];
@@ -153,12 +169,17 @@ async function renderMeds() {
       html += `</span></div>`;
     });
 
-    html += `</div>`;
+    html += `</div></div>`;
   });
 
   html += renderNotes(s);
   if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()" title="${t('tip_reset')}">${t('reset_today')}</button>`;
   el.innerHTML = html;
+}
+
+export function toggleTimeGroup(bi) {
+  const el = document.getElementById(`tg-${bi}`);
+  if (el) el.classList.toggle('collapsed');
 }
 
 export function toggleMed(medId) {
@@ -303,9 +324,23 @@ function renderFluidCol(type, elId, title, target) {
   const total   = entries.reduce((a, e) => a + e.amount, 0);
 
   let html = `<div class="col-title">${title}</div>`;
-  html += `<div class="fluid-total">${total}<span class="fluid-sub"> ml`;
-  if (target) html += ` / ${target}`;
-  html += `</span></div>`;
+  if (target) {
+    const pct = Math.min(100, Math.round((total / target) * 100));
+    const ringColor = pct >= 100 ? '#090' : '#000';
+    html += `<div class="fluid-ring-wrap">
+      <svg viewBox="0 0 36 36" class="fluid-ring">
+        <circle cx="18" cy="18" r="15.915" fill="none" stroke="#f0f0f0" stroke-width="2.5"/>
+        <circle cx="18" cy="18" r="15.915" fill="none" stroke="${ringColor}" stroke-width="2.5"
+          stroke-dasharray="${pct} 100" stroke-linecap="round" transform="rotate(-90 18 18)"/>
+      </svg>
+      <div class="fluid-ring-label">
+        <div class="fluid-ring-num">${total}</div>
+        <div class="fluid-ring-sub">ml / ${target}</div>
+      </div>
+    </div>`;
+  } else {
+    html += `<div class="fluid-total">${total}<span class="fluid-sub"> ml</span></div>`;
+  }
 
   if (type === 'water' && target && _isToday) html += waterPace(total, target);
 
@@ -322,7 +357,7 @@ function renderFluidCol(type, elId, title, target) {
   [100, 200, 250, 500].forEach(ml => {
     html += `<button class="fluid-btn" onclick="window._tracker.addFluid('${type}',${ml})">+${ml}</button>`;
   });
-  html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" onclick="window._tracker.addCustomFluid('${type}')">...</button>`;
+  html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" onclick="window._tracker.addCustomFluid('${type}')">+ ml</button>`;
   html += `</div>`;
 
   entries.slice().reverse().forEach((entry, ri) => {
