@@ -473,10 +473,46 @@ body {
   font-size: 11px;
   padding: 2px 0;
   border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
 }
+.log-entry:active { background: #f5f5f5; }
 .log-time   { color: #999; }
 .log-label  { color: #888; font-style: italic; flex: 1; padding: 0 6px; }
 .log-amount { font-weight: 600; }
+
+/* ── Fluid edit dialog ── */
+.edit-fluid-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.edit-fluid-dialog {
+  background: #fff; border-radius: 12px; padding: 20px;
+  width: 90%; max-width: 320px; box-shadow: 0 4px 24px rgba(0,0,0,.2);
+}
+.edit-fluid-header {
+  font-weight: 700; font-size: 15px; margin-bottom: 12px; text-align: center;
+}
+.edit-fluid-types {
+  display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; justify-content: center;
+}
+.edit-fluid-amount-row {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 16px; justify-content: center;
+}
+.edit-fluid-input {
+  width: 80px; text-align: center; font-size: 18px; font-weight: 700;
+  border: 1px solid #ccc; border-radius: 8px; padding: 8px;
+}
+.edit-fluid-actions {
+  display: flex; gap: 8px; justify-content: center;
+}
+.edit-fluid-cancel, .edit-fluid-save {
+  padding: 8px 24px; border-radius: 8px; border: 1px solid #ccc;
+  font-size: 14px; cursor: pointer;
+}
+.edit-fluid-save {
+  background: #000; color: #fff; border-color: #000;
+}
 
 /* ── Drink type selector ── */
 .fluid-type-row {

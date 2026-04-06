@@ -175,12 +175,11 @@ function silentRefresh() {
   if (!tokenClient || refreshInFlight) return;
   refreshInFlight = true;
   const hint = localStorage.getItem(KEY_EMAIL);
-  // prompt:'' lets Google pick the least-intrusive flow (often a hidden iframe
-  // or redirect). Unlike prompt:'none', this works even when third-party cookies
-  // are blocked — the worst case is a brief flash, not a hard failure.
-  // With login_hint set, the user is never shown an account picker.
+  // prompt:'none' = truly silent, no UI. If it fails (e.g. third-party cookies
+  // blocked), handleTokenResponse shows the reconnect banner which the user
+  // taps once to re-auth with prompt:''.
   tokenClient.requestAccessToken({
-    prompt: '',
+    prompt: 'none',
     ...(hint ? { login_hint: hint } : {}),
   });
 }

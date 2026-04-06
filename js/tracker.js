@@ -378,11 +378,11 @@ function renderFluidCol(type, elId, title, target) {
 
   entries.slice().reverse().forEach((entry, ri) => {
     const idx = entries.length - 1 - ri;
-    html += `<div class="log-entry">
+    html += `<div class="log-entry" onclick="window._tracker.editFluid('${type}',${idx})" title="${t('tip_edit_fluid')}">
       <span class="log-time">${entry.time || t('night')}</span>
       ${entry.label ? `<span class="log-label">${entry.label}</span>` : ''}
       <span class="log-amount">${entry.amount} ml</span>
-      <button class="log-del" title="${t('tip_del')}" onclick="window._tracker.delFluid('${type}',${idx})">×</button>
+      <button class="log-del" title="${t('tip_del')}" onclick="event.stopPropagation();window._tracker.delFluid('${type}',${idx})">×</button>
     </div>`;
   });
 
@@ -416,4 +416,72 @@ export function delFluid(type, idx) {
   save(s);
   renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
   renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
+}
+
+export function editFluid(type, idx) {
+  const s = state();
+  const entry = s[type]?.[idx];
+  if (!entry) return;
+
+  // Build edit dialog
+  const overlay = document.createElement('div');
+  overlay.className = 'edit-fluid-overlay';
+
+  let labelHtml = '';
+  if (type === 'water') {
+    labelHtml = `<div class="edit-fluid-types">`;
+    DRINK_TYPES.forEach(key => {
+      const active = t(key) === entry.label ? ' active' : '';
+      labelHtml += `<button class="fluid-type-btn${active}" data-drink="${key}">${t(key)}</button>`;
+    });
+    labelHtml += `</div>`;
+  }
+
+  overlay.innerHTML = `
+    <div class="edit-fluid-dialog">
+      <div class="edit-fluid-header">${t('edit_fluid_title')}</div>
+      ${labelHtml}
+      <div class="edit-fluid-amount-row">
+        <input type="number" class="edit-fluid-input" value="${entry.amount}" min="1" inputmode="numeric">
+        <span>ml</span>
+      </div>
+      <div class="edit-fluid-actions">
+        <button class="edit-fluid-cancel">${t('cancel_btn')}</button>
+        <button class="edit-fluid-save">${t('ok_btn')}</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  const input = overlay.querySelector('.edit-fluid-input');
+  input.select();
+
+  // Label selection
+  let selectedLabel = entry.label || null;
+  overlay.querySelectorAll('[data-drink]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      overlay.querySelectorAll('[data-drink]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedLabel = t(btn.dataset.drink);
+    });
+  });
+
+  // Cancel
+  const close = () => overlay.remove();
+  overlay.querySelector('.edit-fluid-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+  // Save
+  overlay.querySelector('.edit-fluid-save').addEventListener('click', () => {
+    const newAmount = parseInt(input.value, 10);
+    if (!newAmount || newAmount < 1) return;
+    const fresh = state();
+    if (!fresh[type]?.[idx]) { close(); return; }
+    fresh[type][idx].amount = newAmount;
+    if (type === 'water' && selectedLabel) fresh[type][idx].label = selectedLabel;
+    save(fresh);
+    renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
+    renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
+    close();
+  });
 }

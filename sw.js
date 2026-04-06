@@ -1,4 +1,4 @@
-const CACHE = 'mt-v2-35';
+const CACHE = 'mt-v2-36';
 const PRECACHE = ['/', '/css/styles.css', '/css/report-print.css', '/js/auth.js', '/js/sheets.js', '/js/store.js', '/js/schedule.js', '/js/tracker.js', '/js/editor.js', '/js/labs.js', '/js/charts.js', '/js/reports.js', '/js/i18n.js', '/js/app.js', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {

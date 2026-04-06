@@ -76,6 +76,7 @@ const LANGS = {
     notes_label:         'Notes',
     night:               'night',
     ok_btn:              'OK',
+    cancel_btn:          'Cancel',
     take_med:            'take med',
     // Fluids
     fluids_title:        'Fluids',
@@ -127,6 +128,8 @@ const LANGS = {
     tip_tacrolimus:      'Tacrolimus (ng/mL) — immunosuppressant level. Target range set by your doctor.',
     tip_reset:           'Clear all meds, fluids and vitals for today',
     tip_del:             'Delete',
+    tip_edit_fluid:      'Tap to edit',
+    edit_fluid_title:    'Edit entry',
     tip_custom_fluid:    'Add a custom amount (ml)',
     // Charts
     nav_charts:          'Charts',
@@ -269,6 +272,7 @@ const LANGS = {
     notes_label:         'Notițe',
     night:               'noapte',
     ok_btn:              'OK',
+    cancel_btn:          'Anulare',
     take_med:            'ia medicamentul',
     // Fluids
     fluids_title:        'Lichide',
@@ -320,6 +324,8 @@ const LANGS = {
     tip_tacrolimus:      'Tacrolimus (ng/mL) — nivel imunosupresor. Valoare țintă conform medicului.',
     tip_reset:           'Șterge toate datele de azi (medicamente, lichide, vitale)',
     tip_del:             'Șterge',
+    tip_edit_fluid:      'Apasă pentru editare',
+    edit_fluid_title:    'Editare intrare',
     tip_custom_fluid:    'Adaugă o cantitate personalizată (ml)',
     // Charts
     nav_charts:          'Grafice',
@@ -462,6 +468,7 @@ const LANGS = {
     notes_label:         'Megjegyzések',
     night:               'éjszaka',
     ok_btn:              'OK',
+    cancel_btn:          'Mégse',
     take_med:            'vegye be a gyógyszert',
     // Fluids
     fluids_title:        'Folyadék',
@@ -513,6 +520,8 @@ const LANGS = {
     tip_tacrolimus:      'Takrolimusz (ng/mL) — immunszuppresszív szint. Célérték: orvos szerint.',
     tip_reset:           'Törli a mai gyógyszerek, folyadékok és vitálisok adatait',
     tip_del:             'Törlés',
+    tip_edit_fluid:      'Koppints a szerkesztéshez',
+    edit_fluid_title:    'Bejegyzés szerkesztése',
     tip_custom_fluid:    'Egyedi mennyiség hozzáadása (ml)',
     // Charts
     nav_charts:          'Grafikonok',
