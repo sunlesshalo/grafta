@@ -417,6 +417,19 @@ body {
   cursor: pointer;
 }
 
+.expand-all-btn {
+  background: none;
+  border: none;
+  color: #bbb;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.expand-all-btn:hover { color: #666; }
+
 /* ── Fluid / Urine ── */
 .fluid-total { text-align: center; padding: 8px 0; font-size: 28px; font-weight: 800; }
 .fluid-sub { font-size: 11px; color: #999; font-weight: 400; }

@@ -108,7 +108,7 @@ async function renderMeds() {
 
   const cur = getCurrentTimeBlock(schedule);
 
-  let html = `<div class="col-title">${t('meds_title')} <span style="float:right;font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></div>`;
+  let html = `<div class="col-title">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" onclick="window._tracker.expandAll()">${t('expand_all')}</button><span style="font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></span></div>`;
 
   // Vitals always visible at top of main column
   html += renderVitals(s);
@@ -178,6 +178,10 @@ async function renderMeds() {
 export function toggleTimeGroup(bi) {
   const el = document.getElementById(`tg-${bi}`);
   if (el) el.classList.toggle('collapsed');
+}
+
+export function expandAll() {
+  document.querySelectorAll('.time-group.collapsed').forEach(el => el.classList.remove('collapsed'));
 }
 
 export function toggleMed(medId) {
