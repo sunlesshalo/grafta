@@ -1,6 +1,6 @@
 // ── sheets.js — Google Sheets v4 + Drive v3 via gapi.client ──
 
-import { getToken, requestReconnect, waitForGapi } from './auth.js';
+import { getToken, ensureToken, requestReconnect, waitForGapi } from './auth.js';
 
 const SHEET_NAME  = 'Med Tracker v2';
 const KEY_SHEET   = 'mt_sheet_id'; // localStorage key for spreadsheet ID
@@ -28,6 +28,13 @@ const HEADERS = {
 // This wraps any gapi call to produce a proper Error with a useful message.
 
 async function gapiCall(label, fn) {
+  // Pre-flight: if token is expired, try refreshing before the call
+  if (!getToken()) {
+    const ok = await ensureToken();
+    if (!ok) { requestReconnect(); throw new Error(`${label}: no valid token`); }
+    // Re-set token on gapi client after refresh
+    window.gapi.client.setToken({ access_token: getToken() });
+  }
   try {
     return await fn();
   } catch (e) {

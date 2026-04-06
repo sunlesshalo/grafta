@@ -24,6 +24,7 @@ let tokenClient = null;
 let refreshTimer = null;
 let onAuthChange = null; // callback(isSignedIn)
 let gapiReady = false;
+let refreshInFlight = false; // prevent concurrent refresh attempts
 
 // ── gapi loading ─────────────────────────────────────────────────────────────
 
@@ -101,11 +102,36 @@ export function initAuth(callback) {
   } else {
     onAuthChange && onAuthChange(false);
   }
+
+  // ── Foreground recovery ──────────────────────────────────────────────────────
+  // setTimeout dies when mobile tabs sleep. When the user comes back,
+  // check the token immediately and refresh if needed.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    if (!localStorage.getItem(KEY_EMAIL)) return; // not signed in
+    const t = getToken();
+    if (t) {
+      // Token still valid — but reschedule refresh in case timer died
+      const expiry = parseInt(localStorage.getItem(KEY_EXPIRY) || '0', 10);
+      const remaining = Math.floor((expiry - Date.now()) / 1000);
+      if (remaining < 660) { // less than 11 min left, refresh now
+        console.log('[auth] tab resumed, token expiring soon — refreshing');
+        silentRefresh();
+      } else {
+        scheduleRefresh(remaining);
+      }
+    } else {
+      // Token expired while tab was asleep — refresh immediately
+      console.log('[auth] tab resumed, token expired — refreshing');
+      silentRefresh();
+    }
+  });
 }
 
 // ── Token handling ────────────────────────────────────────────────────────────
 
 function handleTokenResponse(response) {
+  refreshInFlight = false;
   if (response.error) {
     console.warn('[auth] token error:', response.error);
     clearToken();
@@ -146,12 +172,15 @@ function scheduleRefresh(expiresInSeconds) {
 }
 
 function silentRefresh() {
-  if (!tokenClient) return;
+  if (!tokenClient || refreshInFlight) return;
+  refreshInFlight = true;
   const hint = localStorage.getItem(KEY_EMAIL);
-  // prompt:'none' = no UI ever; if Google can't silently grant, returns error →
-  // handleTokenResponse shows reconnect banner instead of popping up the chooser
+  // prompt:'' lets Google pick the least-intrusive flow (often a hidden iframe
+  // or redirect). Unlike prompt:'none', this works even when third-party cookies
+  // are blocked — the worst case is a brief flash, not a hard failure.
+  // With login_hint set, the user is never shown an account picker.
   tokenClient.requestAccessToken({
-    prompt: 'none',
+    prompt: '',
     ...(hint ? { login_hint: hint } : {}),
   });
 }
@@ -200,6 +229,24 @@ export function isSignedIn() { return !!getToken(); }
 export function getUserEmail() { return localStorage.getItem(KEY_EMAIL) || ''; }
 export function getUserName() { return localStorage.getItem(KEY_NAME) || ''; }
 export function getUserId() { return localStorage.getItem(KEY_UID) || ''; }
+
+/**
+ * Ensures we have a valid token before making an API call.
+ * If the token expired (e.g. tab was sleeping), triggers a refresh and waits
+ * a moment for it to complete. Returns true if token is (now) valid.
+ */
+export async function ensureToken() {
+  if (getToken()) return true;
+  if (!localStorage.getItem(KEY_EMAIL)) return false; // not signed in
+  // Token expired — kick off a refresh and wait briefly
+  silentRefresh();
+  // Wait up to 5s for the refresh to complete
+  for (let i = 0; i < 25; i++) {
+    await new Promise(r => setTimeout(r, 200));
+    if (getToken()) return true;
+  }
+  return false; // refresh didn't complete in time
+}
 
 /** Called when a Sheets API returns 401 — show the reconnect banner */
 export function requestReconnect() {
