@@ -277,6 +277,11 @@ body {
   border-bottom: 2px solid #000;
   margin-bottom: 6px;
 }
+.col-title-meds {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 2px solid #000;
+}
 @media (max-width: 700px) { .col-title { font-size: 13px; } }
 
 /* ── Vitals block ── */
@@ -466,6 +471,11 @@ body {
 .fluid-btn:active { background: #000; color: #fff; }
 .fluid-btn.misc { border-color: #999; color: #666; }
 
+.log-scroll {
+  max-height: 200px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .log-entry {
   display: flex;
   justify-content: space-between;
@@ -476,6 +486,7 @@ body {
   cursor: pointer;
 }
 .log-entry:active { background: #f5f5f5; }
+.pulse-display { color: #e07020; font-weight: 600; }
 .log-time   { color: #999; }
 .log-label  { color: #888; font-style: italic; flex: 1; padding: 0 6px; }
 .log-amount { font-weight: 600; }

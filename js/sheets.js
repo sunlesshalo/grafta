@@ -17,7 +17,7 @@ export const S = {
 // Column headers per sheet
 const HEADERS = {
   [S.CONFIG]:   ['id','time','name','dose','dose_alt','alt_rule','conditional','notes','active','created_at'],
-  [S.DAILY]:    ['date','bp_am_sys','bp_am_dia','bp_pm_sys','bp_pm_dia','weight','temp','meds_done','meds_total','water_ml','urine_ml','checked_json','water_json','urine_json','notes','config_version','last_sync'],
+  [S.DAILY]:    ['date','bp_am_sys','bp_am_dia','bp_pm_sys','bp_pm_dia','weight','temp','meds_done','meds_total','water_ml','urine_ml','checked_json','water_json','urine_json','notes','config_version','last_sync','pulse_am','pulse_pm'],
   [S.LABS]:     ['date','creatinine','tacrolimus','notes'],
   [S.HISTORY]:  ['version','date','config_json'],
   [S.SETTINGS]: ['key','value'],

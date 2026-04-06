@@ -84,6 +84,8 @@ async function fetchData(from, to) {
       meds_total: parseInt(r[8])   || 0,
       water_ml:   parseInt(r[9])   || 0,
       urine_ml:   parseInt(r[10])  || 0,
+      pulse_am:   parseInt(r[17])  || null,
+      pulse_pm:   parseInt(r[18])  || null,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
@@ -111,6 +113,7 @@ function calcStats(daily, labs) {
   const bpRows  = daily.filter(r => r.bp_am_sys);
   const sysList = bpRows.map(r => r.bp_am_sys);
   const diaList = bpRows.map(r => r.bp_am_dia);
+  const pulseList = daily.filter(r => r.pulse_am).map(r => r.pulse_am);
 
   const wtList  = daily.filter(r => r.weight).map(r => r.weight);
   const tmpList = daily.filter(r => r.temp).map(r => r.temp);
@@ -145,7 +148,7 @@ function calcStats(daily, labs) {
   const incompleteMedsDays = daily.filter(r => r.meds_total > 0 && r.meds_done < r.meds_total);
 
   return {
-    bp: { avgSys: avg(sysList), avgDia: avg(diaList), minSys: min(sysList), maxSys: max(sysList), minDia: min(diaList), maxDia: max(diaList), readings: bpRows.length },
+    bp: { avgSys: avg(sysList), avgDia: avg(diaList), minSys: min(sysList), maxSys: max(sysList), minDia: min(diaList), maxDia: max(diaList), readings: bpRows.length, avgPulse: avg(pulseList), minPulse: min(pulseList), maxPulse: max(pulseList) },
     weight: { avg: avg(wtList), min: min(wtList), max: max(wtList), first: wtList[0] ?? null, last: wtList[wtList.length-1] ?? null, delta: wtList.length >= 2 ? wtList[wtList.length-1] - wtList[0] : null },
     temp: { avg: avg(tmpList), max: max(tmpList), feverCount: feverDays.length },
     fluids: { avgWater: avg(waterDays.map(r => r.water_ml)), avgUrine: avg(urineDays.map(r => r.urine_ml)), daysTracked: waterDays.length },
@@ -196,6 +199,7 @@ function sectionVitals({ bp, weight, temp, fmt }) {
   if (bp.readings > 0) {
     rows += row(t('reports_stat_bp_avg'),      `${fmt(bp.avgSys, 0)} / ${fmt(bp.avgDia, 0)} mmHg`);
     rows += row(t('reports_stat_bp_range'),    `${fmt(bp.minSys, 0)}–${fmt(bp.maxSys, 0)} / ${fmt(bp.minDia, 0)}–${fmt(bp.maxDia, 0)} mmHg`);
+    if (bp.avgPulse) rows += row(t('reports_stat_pulse_avg'), `${fmt(bp.avgPulse, 0)} bpm (${fmt(bp.minPulse, 0)}–${fmt(bp.maxPulse, 0)})`);
     rows += row(t('reports_stat_bp_readings'), String(bp.readings));
   }
   if (weight.avg) {
@@ -296,8 +300,8 @@ function sectionDailyTable(daily) {
   const rows = daily.map(r => `
     <tr>
       <td>${r.date}</td>
-      <td>${r.bp_am_sys ? `${r.bp_am_sys}/${r.bp_am_dia}` : '—'}</td>
-      <td>${r.bp_pm_sys ? `${r.bp_pm_sys}/${r.bp_pm_dia}` : '—'}</td>
+      <td>${r.bp_am_sys ? `${r.bp_am_sys}/${r.bp_am_dia}` : '—'}${r.pulse_am ? ` <small>♥${r.pulse_am}</small>` : ''}</td>
+      <td>${r.bp_pm_sys ? `${r.bp_pm_sys}/${r.bp_pm_dia}` : '—'}${r.pulse_pm ? ` <small>♥${r.pulse_pm}</small>` : ''}</td>
       <td>${r.weight    ? `${r.weight} kg`  : '—'}</td>
       <td>${r.temp      ? `${r.temp}°C`     : '—'}</td>
       <td>${r.water_ml  ? `${r.water_ml} ml`: '—'}</td>

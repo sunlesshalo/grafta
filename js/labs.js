@@ -72,6 +72,7 @@ export async function renderLabs() {
   if (_labs.length === 0) {
     html += `<p style="color:#999;font-size:12px;padding:8px 0">${t('labs_no_results')}</p>`;
   } else {
+    html += `<div class="log-scroll">`;
     _labs.forEach(lab => {
       html += `
         <div class="labs-entry">
@@ -85,6 +86,7 @@ export async function renderLabs() {
           <button class="log-del" title="${t('tip_del')}" onclick="window._labs.deleteLab('${lab.date}')">×</button>
         </div>`;
     });
+    html += `</div>`;
   }
 
   el.innerHTML = html;

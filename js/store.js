@@ -118,6 +118,8 @@ function buildRow(state) {
     state.notes || '',
     state.config_version ?? 0,
     new Date().toISOString(),
+    bp[0]?.pulse ?? '',
+    bp[1]?.pulse ?? '',
   ];
 }
 
@@ -128,12 +130,11 @@ export function parseSheetRow(row) {
   const safe = (i, fallback = null) => row[i] !== undefined && row[i] !== '' ? row[i] : fallback;
   const num  = (i) => { const v = row[i]; return v !== '' && v !== undefined ? Number(v) : null; };
 
+  const bp0 = num(1) ? { sys: num(1), dia: num(2), ...(num(17) ? { pulse: num(17) } : {}) } : null;
+  const bp1 = num(3) ? { sys: num(3), dia: num(4), ...(num(18) ? { pulse: num(18) } : {}) } : null;
   return {
     date:    safe(0),
-    bp:      [
-      num(1) ? { sys: num(1), dia: num(2) } : null,
-      num(3) ? { sys: num(3), dia: num(4) } : null,
-    ].filter(Boolean),
+    bp:      [bp0, bp1].filter(Boolean),
     weight:  num(5) ? { value: num(5) }               : null,
     temp:    num(6) ? { value: num(6) }               : null,
     checked: tryParse(safe(11), {}),

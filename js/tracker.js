@@ -110,7 +110,7 @@ async function renderMeds() {
 
   let html = `<div class="col-title">${t('vitals_title')}</div>`;
   html += renderVitals(s);
-  html += `<div class="col-title" style="margin-top:8px">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" onclick="window._tracker.expandAll()">${t('expand_all')}</button><span style="font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></span></div>`;
+  html += `<div class="col-title col-title-meds">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" onclick="window._tracker.expandAll()">${t('expand_all')}</button><span style="font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></span></div>`;
 
   if (allMeds.length === 0) {
     html += `<div style="padding:24px 0;text-align:center;color:#999;font-size:13px">
@@ -226,8 +226,9 @@ function vitalsRow(label, key, value, type) {
   html += `<span class="vital-label">${label} <span class="tip-icon" data-tip-key="${tipKey}">i</span></span>`;
 
   if (value) {
+    const pulseStr = type === 'bp' && value.pulse ? ` <span class="pulse-display">♥${value.pulse}</span>` : '';
     const display = type === 'bp'
-      ? `${value.sys}/${value.dia}${bpHigh(value) ? ` <span style="color:#c00">↑ ${t('take_med')}</span>` : ''}`
+      ? `${value.sys}/${value.dia}${pulseStr}${bpHigh(value) ? ` <span style="color:#c00">↑ ${t('take_med')}</span>` : ''}`
       : type === 'temp'
       ? `${value.value}°C`
       : `${value.value} kg`;
@@ -237,6 +238,7 @@ function vitalsRow(label, key, value, type) {
     html += `<input class="vital-input" id="bp${key}Sys" type="number" inputmode="numeric" placeholder="sys" style="width:40px" title="${t('tip_bp')}">`;
     html += `<span class="vital-slash">/</span>`;
     html += `<input class="vital-input" id="bp${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px" title="${t('tip_bp')}">`;
+    html += `<input class="vital-input" id="bp${key}Pulse" type="number" inputmode="numeric" placeholder="♥" style="width:36px" title="${t('tip_pulse')}">`;
     html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','bp')">${t('ok_btn')}</button>`;
   } else {
     const ph    = type === 'weight' ? 'kg'  : '°C';
@@ -271,9 +273,10 @@ export function saveVital(key, type) {
     const idx = parseInt(key, 10);
     const sys = parseInt(document.getElementById(`bp${idx}Sys`)?.value, 10);
     const dia = parseInt(document.getElementById(`bp${idx}Dia`)?.value, 10);
+    const pulse = parseInt(document.getElementById(`bp${idx}Pulse`)?.value, 10);
     if (!sys || !dia) return;
     if (!s.bp) s.bp = [];
-    s.bp[idx] = { sys, dia, time: nowTime() };
+    s.bp[idx] = { sys, dia, time: nowTime(), ...(pulse ? { pulse } : {}) };
   } else {
     const val = parseFloat(document.getElementById(key + 'Val')?.value);
     if (!val) return;
@@ -376,6 +379,7 @@ function renderFluidCol(type, elId, title, target) {
   html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" onclick="window._tracker.addCustomFluid('${type}')">+ ml</button>`;
   html += `</div>`;
 
+  html += `<div class="log-scroll">`;
   entries.slice().reverse().forEach((entry, ri) => {
     const idx = entries.length - 1 - ri;
     html += `<div class="log-entry" onclick="window._tracker.editFluid('${type}',${idx})" title="${t('tip_edit_fluid')}">
@@ -385,6 +389,7 @@ function renderFluidCol(type, elId, title, target) {
       <button class="log-del" title="${t('tip_del')}" onclick="event.stopPropagation();window._tracker.delFluid('${type}',${idx})">×</button>
     </div>`;
   });
+  html += `</div>`;
 
   el.innerHTML = html;
 }

@@ -52,6 +52,8 @@ async function fetchAllData() {
       meds_total: parseInt(r[8])   || null,
       water_ml:   parseInt(r[9])   || 0,
       urine_ml:   parseInt(r[10])  || 0,
+      pulse_am:   parseInt(r[17])  || null,
+      pulse_pm:   parseInt(r[18])  || null,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
@@ -210,12 +212,23 @@ function renderBPChart(body, data, labels) {
     datasets.push({ label: t('charts_dia_pm'), data: data.map(r => r.bp_pm_dia), borderColor: '#66b', borderWidth: 1.5, borderDash: [3,2], pointRadius: 2, tension: 0.3, spanGaps: false });
   }
 
+  if (data.some(r => r.pulse_am)) {
+    datasets.push({ label: t('charts_pulse_am'), data: data.map(r => r.pulse_am), borderColor: '#e07020', borderWidth: 2, pointRadius: 3, tension: 0.3, spanGaps: false, yAxisID: 'yPulse' });
+  }
+  if (_settings.bp_times > 1 && data.some(r => r.pulse_pm)) {
+    datasets.push({ label: t('charts_pulse_pm'), data: data.map(r => r.pulse_pm), borderColor: '#e0a060', borderWidth: 1.5, borderDash: [3,2], pointRadius: 2, tension: 0.3, spanGaps: false, yAxisID: 'yPulse' });
+  }
+
   datasets.push({ label: '140', data: labels.map(() => 140), borderColor: 'rgba(200,0,0,0.25)', borderWidth: 1, borderDash: [6,4], pointRadius: 0, fill: false, tension: 0 });
   datasets.push({ label: '90', data: labels.map(() => 90), borderColor: 'rgba(0,80,200,0.25)', borderWidth: 1, borderDash: [6,4], pointRadius: 0, fill: false, tension: 0 });
 
+  const hasPulse = data.some(r => r.pulse_am || r.pulse_pm);
   const opts = { ...baseOpts('mmHg') };
   opts.scales.y.suggestedMin = 60;
   opts.scales.y.suggestedMax = 180;
+  if (hasPulse) {
+    opts.scales.yPulse = { position: 'right', title: { display: true, text: 'bpm' }, suggestedMin: 40, suggestedMax: 120, grid: { drawOnChartArea: false } };
+  }
 
   const canvas = document.getElementById(canvasId);
   register(new Chart(canvas.getContext('2d'), { type: 'line', data: { labels, datasets }, options: opts }));
