@@ -13,6 +13,7 @@ const LANGS = {
     tab_fluids:          'Fluids',
     tab_urine:           'Urine',
     tab_health:          'Health',
+    tab_notes:           'Notes',
     tab_labs:            'Labs',
     // Editor bar
     editor_back:         '← Back',
@@ -205,6 +206,7 @@ const LANGS = {
     tab_fluids:          'Lichide',
     tab_urine:           'Urină',
     tab_health:          'Sănătate',
+    tab_notes:           'Notițe',
     tab_labs:            'Analize',
     // Editor bar
     editor_back:         '← Înapoi',
@@ -397,6 +399,7 @@ const LANGS = {
     tab_fluids:          'Folyadék',
     tab_urine:           'Vizelet',
     tab_health:          'Egészség',
+    tab_notes:           'Megjegyzések',
     tab_labs:            'Labor',
     // Editor bar
     editor_back:         '← Vissza',
@@ -621,7 +624,7 @@ export function applyStaticTranslations() {
   if (reconnectBtn)  reconnectBtn.textContent  = t('reconnect_btn');
 
   // Mobile tabs
-  const tabKeys = ['tab_meds','tab_fluids','tab_urine','tab_labs'];
+  const tabKeys = ['tab_meds','tab_fluids','tab_urine','tab_notes','tab_labs'];
   document.querySelectorAll('.mob-tab').forEach((tab, i) => {
     if (tabKeys[i]) tab.textContent = t(tabKeys[i]);
   });
