@@ -135,6 +135,7 @@ const LANGS = {
     // Charts
     nav_charts:          'Charts',
     nav_reports:         'Reports',
+    range_all:           'All',
     charts_title:        'Charts',
     charts_bp:           'Blood Pressure',
     charts_fluids:       'Fluid Balance',
@@ -335,6 +336,7 @@ const LANGS = {
     // Charts
     nav_charts:          'Grafice',
     nav_reports:         'Rapoarte',
+    range_all:           'Tot',
     charts_title:        'Grafice',
     charts_bp:           'Tensiune arterială',
     charts_fluids:       'Bilanț lichide',
@@ -535,6 +537,7 @@ const LANGS = {
     // Charts
     nav_charts:          'Grafikonok',
     nav_reports:         'Jelentések',
+    range_all:           'Mind',
     charts_title:        'Grafikonok',
     charts_bp:           'Vérnyomás',
     charts_fluids:       'Folyadékmérleg',
@@ -657,6 +660,22 @@ export function applyStaticTranslations() {
   if (editorBack)  editorBack.textContent  = t('editor_back');
   if (editorTitle) editorTitle.textContent = t('editor_title');
   if (editorSave && !editorSave.disabled)  editorSave.textContent = t('btn_save');
+
+  // Charts overlay
+  const chartsBack  = document.querySelector('#viewCharts .overlay-back');
+  const chartsTitle = document.getElementById('chartsTitleEl');
+  const rangeAll    = document.getElementById('rangeAllBtn');
+  if (chartsBack)  chartsBack.textContent  = t('editor_back');
+  if (chartsTitle) chartsTitle.textContent = t('charts_title');
+  if (rangeAll)    rangeAll.textContent    = t('range_all');
+
+  // Reports overlay
+  const reportsBack  = document.querySelector('#viewReports .overlay-back');
+  const reportsTitle = document.getElementById('reportsTitleEl');
+  const reportPrint  = document.getElementById('reportPrintBtn');
+  if (reportsBack)  reportsBack.textContent  = t('editor_back');
+  if (reportsTitle) reportsTitle.textContent = t('reports_title');
+  if (reportPrint && !reportPrint.classList.contains('hidden')) reportPrint.textContent = t('reports_print');
 
   // Sign out button
   const signoutBtn = document.getElementById('signoutBtn');
