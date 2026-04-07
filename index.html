@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/report-print.css">
   <title>Med Tracker</title>
+  <script defer src="https://analytics.grafta.health/script.js" data-website-id="77f73aa2-ab3f-45f2-bd02-dd8303393985"></script>
 </head>
 <body>
 
@@ -38,6 +39,15 @@
 <!-- ── Offline banner ── -->
 <div id="offlineBanner" class="offline-banner hidden">
   <span id="offlineText">Offline — changes saved locally</span>
+</div>
+
+<!-- ── Analytics consent banner ── -->
+<div id="consentBanner" class="consent-banner hidden">
+  <span id="consentText"></span>
+  <div class="consent-btns">
+    <button id="consentAccept" class="consent-btn accept"></button>
+    <button id="consentDecline" class="consent-btn decline"></button>
+  </div>
 </div>
 
 <!-- ── Tracker view ── -->
