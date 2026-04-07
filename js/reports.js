@@ -3,6 +3,7 @@
 import { getSpreadsheetId, getRange, S } from './sheets.js';
 import { getUserName, getUserEmail } from './auth.js';
 import { t, tIn, getLang } from './i18n.js';
+import { track } from './analytics.js';
 
 // Report-local translation: uses the report language selector, not the app language
 let _reportLang = null;
@@ -33,6 +34,8 @@ export async function generate() {
   try {
     _reportLang = document.getElementById('reportLang')?.value || getLang();
     const { from, to } = getDateRange();
+    const period = document.getElementById('reportPeriod')?.value || '30';
+    track('report_generate', { period, report_lang: _reportLang });
     const { dailyData, labsData } = await fetchData(from, to);
     if (body) body.innerHTML = buildReport(dailyData, labsData, from, to);
 
@@ -47,6 +50,7 @@ export async function generate() {
 }
 
 export function print() {
+  track('report_print');
   window.print();
 }
 

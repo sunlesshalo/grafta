@@ -201,6 +201,10 @@ const LANGS = {
     reports_alert_weight_jump: 'Weight jump ≥1 kg',
     reports_alert_fever:       'Fever',
     reports_alert_missed_meds: 'Incomplete med days',
+    // Analytics consent
+    consent_text:    'We use privacy-friendly analytics (no cookies, no personal data) to improve the app.',
+    consent_accept:  'OK',
+    consent_decline: 'No thanks',
   },
 
   ro: {
@@ -403,6 +407,10 @@ const LANGS = {
     reports_alert_weight_jump: 'Salt greutate ≥1 kg',
     reports_alert_fever:       'Febră',
     reports_alert_missed_meds: 'Zile cu medicație incompletă',
+    // Analytics consent
+    consent_text:    'Folosim analize prietenoase cu intimitatea (fără cookie-uri, fără date personale) pentru a îmbunătăți aplicația.',
+    consent_accept:  'OK',
+    consent_decline: 'Nu, mulțumesc',
   },
 
   hu: {
@@ -605,6 +613,10 @@ const LANGS = {
     reports_alert_weight_jump: 'Testsúly-ugrás ≥1 kg',
     reports_alert_fever:       'Láz',
     reports_alert_missed_meds: 'Hiányos gyógyszer-napok',
+    // Analytics consent
+    consent_text:    'Adatvédelemre odafigyelő elemzést használunk (nincs cookie, nincs személyes adat) az alkalmazás fejlesztéséhez.',
+    consent_accept:  'OK',
+    consent_decline: 'Nem, köszönöm',
   },
 };
 

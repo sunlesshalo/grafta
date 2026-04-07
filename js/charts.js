@@ -2,6 +2,7 @@
 
 import { getSpreadsheetId, getRange, S } from './sheets.js';
 import { t } from './i18n.js';
+import { track } from './analytics.js';
 
 let _instances  = [];
 let _range      = 7;   // days; 0 = all
@@ -19,6 +20,7 @@ export async function openCharts() {
 
 export function setRange(days) {
   _range = days;
+  track('charts_range', { range: days });
   updateRangeBtns();
   renderCharts();
 }

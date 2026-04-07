@@ -1,6 +1,8 @@
 // ── auth.js — Google Identity Services + gapi client ──
 // Matches tunetnaplo/googleClient.js pattern: GIS for tokens, gapi for API calls
 
+import { track } from './analytics.js';
+
 export const CLIENT_ID = '895613216498-qqks3mo718amhfvjt5uo08gtlocat4l2.apps.googleusercontent.com';
 export const API_KEY = 'AIzaSyCrGdsalmXhL-8E30LgEiZ73DxSd3xJw-M';
 
@@ -154,6 +156,7 @@ function handleTokenResponse(response) {
   });
 
   fetchUserInfo(response.access_token).then(() => {
+    track('auth_signin', { method: 'google' });
     onAuthChange && onAuthChange(true);
   });
 }
@@ -254,6 +257,7 @@ export function requestReconnect() {
 }
 
 export function reconnect() {
+  track('auth_reconnect');
   document.getElementById('reconnectBanner')?.classList.add('hidden');
   const hint = localStorage.getItem(KEY_EMAIL);
   tokenClient.requestAccessToken({

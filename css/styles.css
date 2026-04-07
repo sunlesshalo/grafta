@@ -1168,3 +1168,17 @@ body {
   .labs-input { font-size: 15px; padding: 6px 6px; }
   .labs-add-btn { padding: 10px 18px; font-size: 14px; min-height: 40px; }
 }
+
+/* ── Analytics consent banner ── */
+.consent-banner {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+  background: #111; color: #fff;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  font-size: 13px; line-height: 1.4;
+}
+.consent-banner.hidden { display: none; }
+.consent-btns { display: flex; gap: 8px; margin-left: auto; }
+.consent-btn { border: none; border-radius: 4px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.consent-btn.accept { background: #fff; color: #111; }
+.consent-btn.decline { background: transparent; color: #aaa; text-decoration: underline; }

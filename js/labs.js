@@ -2,6 +2,7 @@
 
 import { getSpreadsheetId, getLabs, appendLab, deleteLabRow } from './sheets.js';
 import { t, tArr } from './i18n.js';
+import { track } from './analytics.js';
 
 let _labs = []; // [{ date, creatinine, tacrolimus, notes }]
 let _loaded = false;
@@ -167,6 +168,8 @@ export async function addLab() {
     const sheetId = await getSpreadsheetId();
     await appendLab(sheetId, date, creatinine, tacrolimus, notes);
 
+    track('lab_added', { has_creatinine: !!creatinine, has_tacrolimus: !!tacrolimus });
+
     // Update local cache
     const idx = _labs.findIndex(l => l.date === date);
     const entry = { date, creatinine, tacrolimus, notes };
@@ -189,6 +192,7 @@ export async function addLab() {
 
 export async function deleteLab(date) {
   if (!confirm(t('labs_delete_confirm', { date }))) return;
+  track('lab_deleted');
   try {
     const sheetId = await getSpreadsheetId();
     await deleteLabRow(sheetId, date);

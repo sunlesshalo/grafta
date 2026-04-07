@@ -14,6 +14,7 @@ import * as editor  from './editor.js';
 import * as labs    from './labs.js';
 import * as reports from './reports.js';
 import { t, tArr, setLang, getLang, applyStaticTranslations } from './i18n.js';
+import { initAnalytics, track, trackPageview, showConsentBanner, setConsent } from './analytics.js';
 
 // ── Expose globals for inline onclick handlers ────────────────────────────────
 window._tracker = tracker;
@@ -29,9 +30,18 @@ window._app     = {
   closeCharts: closeChartsView,
   openReports: openReportsView,
   closeReports: closeReportsView,
-  signOut: () => { signOut(); showView('viewSignin'); },
+  signOut: () => { track('auth_signout'); signOut(); showView('viewSignin'); trackPageview('/app/signin'); },
   setLang: (lang) => {
+    const prev = getLang();
     setLang(lang);
+    track('lang_change', { from: prev, to: lang });
+    // Update consent banner text if visible
+    const ct = document.getElementById('consentText');
+    if (ct) ct.textContent = t('consent_text');
+    const ca = document.getElementById('consentAccept');
+    if (ca) ca.textContent = t('consent_accept');
+    const cd = document.getElementById('consentDecline');
+    if (cd) cd.textContent = t('consent_decline');
     updateDayLabel();
     if (!document.getElementById('viewTracker').classList.contains('hidden')) {
       trackerRenderAll();
@@ -52,12 +62,26 @@ let _isToday     = false;
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
 applyStaticTranslations();
+showConsentBanner();
+// Apply consent banner translations
+const consentText = document.getElementById('consentText');
+const consentAcceptBtn = document.getElementById('consentAccept');
+const consentDeclineBtn = document.getElementById('consentDecline');
+if (consentText) consentText.textContent = t('consent_text');
+if (consentAcceptBtn) consentAcceptBtn.textContent = t('consent_accept');
+if (consentDeclineBtn) consentDeclineBtn.textContent = t('consent_decline');
+initAnalytics();
+
+// Consent banner buttons
+document.getElementById('consentAccept')?.addEventListener('click', () => setConsent(true));
+document.getElementById('consentDecline')?.addEventListener('click', () => setConsent(false));
 
 initAuth(async (signedIn) => {
   if (signedIn) {
     await onSignedIn();
   } else {
     showView('viewSignin');
+    trackPageview('/app/signin');
   }
 });
 
@@ -74,6 +98,7 @@ document.getElementById('chartsRangeBar')?.addEventListener('click', e => {
 
 async function onSignedIn() {
   showView('viewTracker');
+  trackPageview('/app/tracker');
   setSyncStatus('saving');
 
   try {
@@ -103,8 +128,15 @@ async function onSignedIn() {
     initCharts(_settings);
     initReports();
 
+    const medCount = getCachedMeds().length;
+    const firstDay = _settings.first_day;
+    const daysSinceFirst = firstDay
+      ? Math.floor((Date.now() - new Date(firstDay + 'T00:00:00').getTime()) / 86400000)
+      : 0;
+    track('session_start', { has_meds: medCount > 0, med_count: medCount, days_since_first: daysSinceFirst });
+
     // If no meds yet — go straight to editor
-    if (getCachedMeds().length === 0) {
+    if (medCount === 0) {
       setSyncStatus('ok');
       hideLoading();
       showWelcome();
@@ -167,12 +199,18 @@ function goToDate(dateKey) {
 
 export function prevDay() {
   if (!_viewingDate || _viewingDate <= firstDay()) return;
-  goToDate(shiftDate(_viewingDate, -1));
+  const next = shiftDate(_viewingDate, -1);
+  const daysBack = Math.floor((Date.now() - new Date(next + 'T12:00:00').getTime()) / 86400000);
+  track('day_navigate', { direction: 'prev', days_back: daysBack });
+  goToDate(next);
 }
 
 export function nextDay() {
   if (!_viewingDate || _isToday) return;
-  goToDate(shiftDate(_viewingDate, 1));
+  const next = shiftDate(_viewingDate, 1);
+  const daysBack = Math.floor((Date.now() - new Date(next + 'T12:00:00').getTime()) / 86400000);
+  track('day_navigate', { direction: 'next', days_back: daysBack });
+  goToDate(next);
 }
 
 // ── Day label ─────────────────────────────────────────────────────────────────
@@ -200,6 +238,8 @@ function updateDayLabel() {
 
 function openEditorView() {
   showView('viewEditor');
+  trackPageview('/app/editor');
+  track('editor_open', { med_count: getCachedMeds().length });
   applyStaticTranslations(); // sync editor bar + lang select to current language
   openEditor(async () => {
     // Set viewing date if not set (first run — editor opened before tracker)
@@ -218,6 +258,7 @@ function openEditorView() {
 
 function closeEditorView() {
   showView('viewTracker');
+  trackPageview('/app/tracker');
   renderDay(_viewingDate, _isToday);
   setSyncStatus('ok');
 }
@@ -226,6 +267,8 @@ function closeEditorView() {
 
 function openChartsView() {
   showView('viewCharts');
+  trackPageview('/app/charts');
+  track('charts_open', { range: 7 });
   openCharts();
 }
 
@@ -237,6 +280,7 @@ function closeChartsView() {
 
 function openReportsView() {
   showView('viewReports');
+  trackPageview('/app/reports');
   applyReportsTranslations();
 }
 

@@ -3,6 +3,7 @@
 import { getState, setState, setSyncStatus } from './store.js';
 import { resolveScheduleForDate, isConditionalMet, getScheduleForVersion, getCachedMeds } from './schedule.js';
 import { t } from './i18n.js';
+import { track, trackAdherenceSnapshot } from './analytics.js';
 
 let _viewingDate  = null;
 let _isToday      = false;
@@ -39,6 +40,8 @@ function bindMobTabs() {
 }
 
 function switchMobTab(idx) {
+  const tabs = ['meds','fluids','urine','notes','labs'];
+  track('tab_switch', { tab: tabs[idx] || 'unknown' });
   document.querySelectorAll('.mob-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
   const cols = ['colMeds','colWater','colUrine','colNotes','colLabs'];
   cols.forEach((id, i) => {
@@ -187,11 +190,17 @@ export function toggleMed(medId) {
   const s = state();
   s.checked[medId] = !s.checked[medId];
   save(s);
+
+  const totalMeds = Object.keys(s.checked).length;
+  track('dose_toggle', { action: s.checked[medId] ? 'check' : 'uncheck', is_today: _isToday });
+  trackAdherenceSnapshot(s.checked, totalMeds, _isToday);
+
   renderMeds();
 }
 
 export function resetDay() {
   if (confirm(t('reset_confirm'))) {
+    track('day_reset');
     const s = { ...getState(_viewingDate) };
     s.checked = {};
     s.water   = [];
@@ -282,6 +291,7 @@ export function saveVital(key, type) {
     if (!val) return;
     s[key] = { value: val, time: nowTime() };
   }
+  track('vital_logged', { type });
   save(s);
   renderAll();
 }
@@ -295,6 +305,7 @@ export function clearVital(key, type) {
   } else {
     s[key] = null;
   }
+  track('vital_cleared', { type });
   save(s);
   renderAll();
 }
@@ -399,25 +410,36 @@ export function setFluidLabel(key) {
   renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
 }
 
-export function addFluid(type, ml) {
+export function addFluid(type, ml, method = 'quick') {
   const s = state();
   if (!s[type]) s[type] = [];
   const entry = { amount: ml, time: isNight() ? null : nowTime() };
   if (type === 'water') entry.label = t(_waterLabel);
   s[type].push(entry);
+  track('fluid_add', { type, method });
   save(s);
+
+  // Check if water target reached
+  if (type === 'water') {
+    const total = s.water.reduce((a, e) => a + e.amount, 0);
+    if (total >= _settings.water_target) {
+      track('water_target_reached', { target_ml: _settings.water_target });
+    }
+  }
+
   renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
   renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
 }
 
 export function addCustomFluid(type) {
   const val = prompt(t('fluid_ml_prompt'));
-  if (val && !isNaN(val) && Number(val) > 0) addFluid(type, Number(val));
+  if (val && !isNaN(val) && Number(val) > 0) addFluid(type, Number(val), 'custom');
 }
 
 export function delFluid(type, idx) {
   const s = state();
   s[type].splice(idx, 1);
+  track('fluid_delete', { type });
   save(s);
   renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
   renderFluidCol('urine', 'colUrine', t('urine_title'),  null);

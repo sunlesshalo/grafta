@@ -3,6 +3,7 @@
 import { getCachedMeds, setCachedMeds, saveSchedule, generateId } from './schedule.js';
 import { getSpreadsheetId, setSetting } from './sheets.js';
 import { t } from './i18n.js';
+import { track } from './analytics.js';
 
 let _meds         = [];   // working copy
 let _openMedId    = null; // id of med with inline edit open
@@ -189,12 +190,14 @@ export function addMed(time) {
   };
   _meds.push(med);
   _openMedId = med.id;
+  track('editor_add_med');
   render();
 }
 
 export function addTimeSlot() {
   const time = prompt(t('editor_time_prompt'), t('editor_time_default'));
   if (!time || !/^\d{2}:\d{2}$/.test(time)) return;
+  track('editor_add_time_slot');
   addMed(time);
 }
 
@@ -202,6 +205,7 @@ export function deleteMed(id) {
   const med = _meds.find(m => m.id === id);
   if (!med) return;
   if (!confirm(t('editor_delete_confirm', { name: med.name || t('unnamed') }))) return;
+  track('editor_delete_med');
   med.active = false;
   _openMedId = null;
   render();
@@ -226,8 +230,11 @@ export async function save() {
   }
 
   try {
-    await saveSchedule(_meds.filter(m => m.active !== false));
-    setCachedMeds(_meds.filter(m => m.active !== false));
+    const activeMeds = _meds.filter(m => m.active !== false);
+    await saveSchedule(activeMeds);
+    setCachedMeds(activeMeds);
+    const uniqueSlots = new Set(activeMeds.map(m => m.time)).size;
+    track('editor_save', { med_count: activeMeds.length, time_slots: uniqueSlots });
 
     // Push settings to Sheets so they sync across devices
     const sheetId = await getSpreadsheetId();

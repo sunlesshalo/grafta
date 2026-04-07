@@ -1,6 +1,7 @@
 // ── store.js — localStorage + Sheets sync orchestration ──
 
 import { getSpreadsheetId, upsertDailyRow, getDailyRow } from './sheets.js';
+import { track } from './analytics.js';
 
 const KEY_PREFIX  = 'mt_day_';
 const KEY_PENDING = 'mt_pending';
@@ -88,6 +89,7 @@ async function flushSync() {
       setSyncStatus('ok');
     } else {
       setSyncStatus('fail');
+      track('sync_fail');
       addToPending(date, state);
       if (window._showError) window._showError('Sync failed — saved locally, will retry');
     }
