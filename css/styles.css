@@ -406,13 +406,19 @@ body {
 .med .box.on::after { content: '\2713'; }
 .med.done { color: #bbb; text-decoration: line-through; }
 .med-note { font-size: 10px; color: #999; font-style: italic; }
-.med.conditional .box { border-color: #ddd; }
-.med.conditional .med-note { color: #ddd; }
+.med.conditional-inactive { opacity: 0.35; pointer-events: none; }
+.med.conditional-inactive .box { border-color: #ddd; }
+.med.conditional-inactive .med-note { color: #bbb; }
 .med.conditional-active .med-note { color: #c00; }
 
-.reset-btn {
-  display: block;
+.day-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
   margin: 8px auto;
+}
+
+.reset-btn, .new-day-btn {
   background: none;
   border: 1px solid #eee;
   color: #ccc;
@@ -421,6 +427,7 @@ body {
   border-radius: 3px;
   cursor: pointer;
 }
+.new-day-btn { color: #666; border-color: #ccc; }
 
 .expand-all-btn {
   background: none;

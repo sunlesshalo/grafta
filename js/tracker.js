@@ -106,8 +106,23 @@ async function renderMeds() {
     ? []
     : await getScheduleForVersion(s.config_version || 0).then(meds => resolveScheduleForDate(meds, _viewingDate));
 
-  const totalMeds = schedule.reduce((a, b) => a + b.meds.length, 0);
-  const doneMeds  = Object.values(s.checked).filter(Boolean).length;
+  // Build a set of conditional meds whose condition is NOT met (inactive)
+  const inactiveConditional = new Set();
+  schedule.forEach(block => {
+    const bpArr = s.bp || [];
+    const blockHour = parseInt(block.time.split(':')[0], 10);
+    const bp = blockHour < 12
+      ? (bpArr[0] || null)
+      : (bpArr[bpArr.length - 1] || bpArr[0] || null);
+    block.meds.forEach(med => {
+      if (med.conditional && !isConditionalMet(med.conditional, bp)) {
+        inactiveConditional.add(med.id);
+      }
+    });
+  });
+
+  const totalMeds = schedule.reduce((a, b) => a + b.meds.filter(m => !inactiveConditional.has(m.id)).length, 0);
+  const doneMeds  = Object.entries(s.checked).filter(([id, v]) => v && !inactiveConditional.has(id)).length;
 
   const cur = getCurrentTimeBlock(schedule);
 
@@ -125,8 +140,9 @@ async function renderMeds() {
   }
 
   schedule.forEach((block, bi) => {
-    const allDone = block.meds.every(med => s.checked[med.id]);
-    const doneCnt = block.meds.filter(med => s.checked[med.id]).length;
+    const activeMeds = block.meds.filter(med => !inactiveConditional.has(med.id));
+    const allDone = activeMeds.length > 0 && activeMeds.every(med => s.checked[med.id]);
+    const doneCnt = activeMeds.filter(med => s.checked[med.id]).length;
     const isCurrent = bi === cur;
 
     // Which BP applies to this time block?
@@ -148,7 +164,7 @@ async function renderMeds() {
     html += `<div class="time-group${isCurrent ? ' current' : ''}${allDone ? ' all-done' : ''}${timeColorClass}${collapsed}" id="tg-${bi}">`;
     html += `<div class="time-label" onclick="window._tracker.toggleTimeGroup('${bi}')">
       <span>${block.time}</span>
-      <span class="time-progress${allDone ? ' done' : ''}">${doneCnt}/${block.meds.length}${allDone ? ' ✓' : ''}</span>
+      <span class="time-progress${allDone ? ' done' : ''}">${doneCnt}/${activeMeds.length}${allDone ? ' ✓' : ''}</span>
     </div>`;
     html += `<div class="time-group-body">`;
 
@@ -156,13 +172,15 @@ async function renderMeds() {
       const on   = !!s.checked[med.id];
       const cond = med.conditional;
       const condMet = cond ? isConditionalMet(cond, bp) : false;
+      const inactive = cond && !condMet;
       let cls = 'med';
-      if (on)               cls += ' done';
-      if (cond && !condMet) cls += ' conditional';
+      if (inactive)         cls += ' conditional-inactive';
+      else if (on)          cls += ' done';
       if (cond && condMet)  cls += ' conditional-active';
 
-      html += `<div class="${cls}" data-med-id="${med.id}" onclick="window._tracker.toggleMed('${med.id}')">`;
-      html += `<span class="box${on ? ' on' : ''}"></span>`;
+      const clickHandler = inactive ? '' : `onclick="window._tracker.toggleMed('${med.id}')"`;
+      html += `<div class="${cls}" data-med-id="${med.id}" ${clickHandler}>`;
+      html += `<span class="box${on && !inactive ? ' on' : ''}"></span>`;
       html += `<span>${med.name || `<em style="color:#999">${t('unnamed')}</em>`}`;
       if (med.dose) html += ` <span style="color:#666">${med.dose}</span>`;
       if (cond)     html += ` <span class="med-note">${cond}</span>`;
@@ -173,7 +191,10 @@ async function renderMeds() {
     html += `</div></div>`;
   });
 
+  html += `<div class="day-actions">`;
   if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()" title="${t('tip_reset')}">${t('reset_today')}</button>`;
+  html += `<button class="new-day-btn" onclick="window._app.newDay()" title="${t('tip_new_day')}">${t('new_day')}</button>`;
+  html += `</div>`;
   el.innerHTML = html;
 }
 

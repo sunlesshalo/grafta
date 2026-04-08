@@ -32,6 +32,8 @@ const LANGS = {
     expand_all:          'expand all',
     reset_today:         'reset today',
     reset_confirm:       'Reset all data for today?',
+    new_day:             'new day',
+    tip_new_day:         'Start tracking the new calendar day',
     unnamed:             'unnamed',
     // Editor
     editor_no_meds:      'No meds yet. Add a time slot to get started.',
@@ -238,6 +240,8 @@ const LANGS = {
     expand_all:          'extinde tot',
     reset_today:         'resetează azi',
     reset_confirm:       'Resetați toate datele pentru azi?',
+    new_day:             'zi nouă',
+    tip_new_day:         'Începe urmărirea zilei calendaristice noi',
     unnamed:             'fără nume',
     // Editor
     editor_no_meds:      'Niciun medicament. Adăugați un interval de timp.',
@@ -444,6 +448,8 @@ const LANGS = {
     expand_all:          'mind kinyit',
     reset_today:         'mai nap visszaállítása',
     reset_confirm:       'Visszaállítja a mai nap összes adatát?',
+    new_day:             'új nap',
+    tip_new_day:         'Új naptári nap követésének indítása',
     unnamed:             'névtelen',
     // Editor
     editor_no_meds:      'Még nincs gyógyszer. Adjon hozzá időpontot a kezdéshez.',

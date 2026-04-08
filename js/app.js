@@ -24,6 +24,7 @@ window._reports = reports;
 window._app     = {
   prevDay,
   nextDay,
+  newDay,
   openEditor: openEditorView,
   closeEditor: closeEditorView,
   openCharts:  openChartsView,
@@ -211,6 +212,13 @@ export function nextDay() {
   const daysBack = Math.floor((Date.now() - new Date(next + 'T12:00:00').getTime()) / 86400000);
   track('day_navigate', { direction: 'next', days_back: daysBack });
   goToDate(next);
+}
+
+export function newDay() {
+  // Navigate to the real calendar date (ignoring day_start_hour)
+  const realToday = new Date().toISOString().slice(0, 10);
+  track('new_day', { from: _viewingDate, to: realToday });
+  goToDate(realToday);
 }
 
 // ── Day label ─────────────────────────────────────────────────────────────────
