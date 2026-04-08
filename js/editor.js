@@ -135,12 +135,18 @@ function renderInlineEdit(med) {
 }
 
 function renderSettings() {
+  const pn = localStorage.getItem('mt_patient_name') || '';
   const wt = localStorage.getItem('mt_water_target') || '3000';
   const ds = localStorage.getItem('mt_day_start')    || '5';
   const bt = localStorage.getItem('mt_bp_times')     || '2';
   return `
     <div class="editor-settings">
       <h3>${t('settings_title')}</h3>
+      <div class="editor-field">
+        <label>${t('patient_name')}</label>
+        <input type="text" value="${pn}" placeholder="${t('patient_name_ph')}" id="settingPatientName"
+          oninput="localStorage.setItem('mt_patient_name', this.value)">
+      </div>
       <div class="editor-field">
         <label>${t('water_target')} <span class="tip-icon" data-tip-key="tip_water_target">i</span></label>
         <input type="number" value="${wt}" placeholder="${t('ml')}" id="settingWaterTarget"
@@ -238,10 +244,12 @@ export async function save() {
 
     // Push settings to Sheets so they sync across devices
     const sheetId = await getSpreadsheetId();
+    const pn = localStorage.getItem('mt_patient_name');
     const wt = localStorage.getItem('mt_water_target');
     const ds = localStorage.getItem('mt_day_start');
     const bt = localStorage.getItem('mt_bp_times');
     await Promise.all([
+      pn ? setSetting(sheetId, 'patient_name', pn) : null,
       wt ? setSetting(sheetId, 'water_target', wt) : null,
       ds ? setSetting(sheetId, 'day_start_hour', ds) : null,
       bt ? setSetting(sheetId, 'bp_times', bt) : null,

@@ -65,6 +65,8 @@ const LANGS = {
     save_failed:         'Save failed: ',
     // Settings
     settings_title:      'Settings',
+    patient_name:        'Patient name',
+    patient_name_ph:     'Name for reports',
     water_target:        'Water target',
     day_starts:          'Day starts',
     bp_readings_label:   'BP readings/day',
@@ -273,6 +275,8 @@ const LANGS = {
     save_failed:         'Salvare eșuată: ',
     // Settings
     settings_title:      'Setări',
+    patient_name:        'Numele pacientului',
+    patient_name_ph:     'Nume pentru rapoarte',
     water_target:        'Țintă apă',
     day_starts:          'Ziua începe',
     bp_readings_label:   'Măsurători tensiune/zi',
@@ -481,6 +485,8 @@ const LANGS = {
     save_failed:         'Mentési hiba: ',
     // Settings
     settings_title:      'Beállítások',
+    patient_name:        'Beteg neve',
+    patient_name_ph:     'Név a jelentésekhez',
     water_target:        'Vízfogyasztási cél',
     day_starts:          'Nap kezdete',
     bp_readings_label:   'Vérnyomásmérések/nap',

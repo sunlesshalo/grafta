@@ -123,6 +123,7 @@ async function onSignedIn() {
     localStorage.setItem('mt_water_target', String(_settings.water_target));
     localStorage.setItem('mt_day_start',    String(_settings.day_start_hour));
     localStorage.setItem('mt_bp_times',     String(_settings.bp_times ?? 2));
+    if (_settings.patient_name) localStorage.setItem('mt_patient_name', _settings.patient_name);
 
     // Init tracker with settings
     initTracker({ settings: _settings, onOpenEditor: openEditorView });

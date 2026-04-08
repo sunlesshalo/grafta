@@ -1,7 +1,7 @@
 // ── reports.js — Medical Reports ──
 
 import { getSpreadsheetId, getRange, S } from './sheets.js';
-import { getUserName, getUserEmail } from './auth.js';
+import { getUserEmail } from './auth.js';
 import { t, tIn, getLang } from './i18n.js';
 import { track } from './analytics.js';
 
@@ -176,14 +176,13 @@ function calcStats(daily, labs) {
 // ── HTML assembly ──────────────────────────────────────────────────────────────
 
 function buildReport(dailyData, labsData, from, to) {
-  const patient = getUserName() || getUserEmail() || 'Patient';
+  const patient = localStorage.getItem('mt_patient_name') || getUserEmail() || 'Patient';
   const stats   = calcStats(dailyData, labsData);
   return `
     <div class="report">
       ${sectionHeader(patient, from, to)}
       ${sectionVitals(stats)}
       ${sectionFluids(stats)}
-      ${sectionLabs(labsData, stats)}
       ${sectionAdherence(stats)}
       ${sectionAlerts(stats)}
       ${sectionDailyTable(dailyData)}

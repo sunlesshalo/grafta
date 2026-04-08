@@ -248,6 +248,7 @@ export async function getSettings(spreadsheetId) {
     if (row[0] === 'first_day')      settings.first_day       = row[1];
     if (row[0] === 'lang')           settings.lang            = row[1];
     if (row[0] === 'bp_times')       settings.bp_times        = parseInt(row[1], 10) || 2;
+    if (row[0] === 'patient_name')   settings.patient_name    = row[1] || '';
   }
   return settings;
 }
