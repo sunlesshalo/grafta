@@ -2,7 +2,7 @@
 
 import { initAuth, signIn, signOut, reconnect, isSignedIn, getUserId } from './auth.js';
 import { getSpreadsheetId, getSettings, setSetting } from './sheets.js';
-import { getState, retryPending, syncAndMerge, setSyncStatus, getCurrentConfigVersion } from './store.js';
+import { getState, setState, retryPending, syncAndMerge, setSyncStatus, getCurrentConfigVersion } from './store.js';
 import { loadConfig, getCachedMeds, resolveScheduleForDate } from './schedule.js';
 import { initTracker, renderDay, renderAll as trackerRenderAll } from './tracker.js';
 import { openEditor, render as editorRender } from './editor.js';
@@ -257,9 +257,11 @@ function openEditorView() {
       _isToday = true;
       updateDayLabel();
     }
-    // After save: update config version on current day state
-    const s = getState(_viewingDate);
+    // After save: stamp new config version on today only — never rewrite history
+    const today = todayKey();
+    const s = getState(today);
     s.config_version = getCurrentConfigVersion();
+    setState(today, s);
     // Re-render tracker
     closeEditorView();
   });

@@ -185,7 +185,8 @@ function mergeStates(local, remote) {
   m.weight = remote.weight || local.weight;
   m.temp   = remote.temp   || local.temp;
   m.notes  = remote.notes  || local.notes;
-  m.config_version = Math.max(local.config_version || 0, remote.config_version || 0);
+  // Config version is immutable once set — never upgrade historical days
+  m.config_version = local.config_version || remote.config_version || 0;
 
   // BP: per-index merge (each slot is a specific reading)
   const lBp = local.bp || [], rBp = remote.bp || [];
