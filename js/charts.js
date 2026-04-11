@@ -36,7 +36,7 @@ function updateRangeBtns() {
 async function fetchAllData() {
   const sheetId = await getSpreadsheetId();
   const [daily, labs] = await Promise.all([
-    getRange(sheetId, `${S.DAILY}!A:K`),  // date…urine_ml
+    getRange(sheetId, `${S.DAILY}!A:S`),  // date…pulse_pm
     getRange(sheetId, `${S.LABS}!A:D`),
   ]);
 

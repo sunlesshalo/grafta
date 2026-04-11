@@ -4,6 +4,7 @@ import { getState, setState, setSyncStatus } from './store.js';
 import { resolveScheduleForDate, isConditionalMet, getScheduleForVersion, getCachedMeds } from './schedule.js';
 import { t } from './i18n.js';
 import { track, trackAdherenceSnapshot } from './analytics.js';
+import { escapeHtml } from './util.js';
 
 let _viewingDate  = null;
 let _isToday      = false;
@@ -178,13 +179,14 @@ async function renderMeds() {
       else if (on)          cls += ' done';
       if (cond && condMet)  cls += ' conditional-active';
 
-      const clickHandler = inactive ? '' : `onclick="window._tracker.toggleMed('${med.id}')"`;
-      html += `<div class="${cls}" data-med-id="${med.id}" ${clickHandler}>`;
+      const safeId = escapeHtml(med.id);
+      const clickHandler = inactive ? '' : `onclick="window._tracker.toggleMed('${safeId}')"`;
+      html += `<div class="${cls}" data-med-id="${safeId}" ${clickHandler}>`;
       html += `<span class="box${on && !inactive ? ' on' : ''}"></span>`;
-      html += `<span>${med.name || `<em style="color:#999">${t('unnamed')}</em>`}`;
-      if (med.dose) html += ` <span style="color:#666">${med.dose}</span>`;
-      if (cond)     html += ` <span class="med-note">${cond}</span>`;
-      if (med.notes && !cond) html += ` <span class="med-note">${med.notes}</span>`;
+      html += `<span>${med.name ? escapeHtml(med.name) : `<em style="color:#999">${t('unnamed')}</em>`}`;
+      if (med.dose) html += ` <span style="color:#666">${escapeHtml(med.dose)}</span>`;
+      if (cond)     html += ` <span class="med-note">${escapeHtml(cond)}</span>`;
+      if (med.notes && !cond) html += ` <span class="med-note">${escapeHtml(med.notes)}</span>`;
       html += `</span></div>`;
     });
 
@@ -284,8 +286,8 @@ function vitalsRow(label, key, value, type) {
 
 function renderNotes(s) {
   return `<div class="notes-box">
-    <textarea class="notes-input" id="dayNotes" placeholder="${t('notes_ph')}"
-      oninput="window._tracker.saveNotes(this.value)">${s.notes || ''}</textarea>
+    <textarea class="notes-input" id="dayNotes" placeholder="${escapeHtml(t('notes_ph'))}"
+      oninput="window._tracker.saveNotes(this.value)">${escapeHtml(s.notes || '')}</textarea>
   </div>`;
 }
 
@@ -414,11 +416,11 @@ function renderFluidCol(type, elId, title, target) {
   html += `<div class="log-scroll">`;
   entries.slice().reverse().forEach((entry, ri) => {
     const idx = entries.length - 1 - ri;
-    html += `<div class="log-entry" onclick="window._tracker.editFluid('${type}',${idx})" title="${t('tip_edit_fluid')}">
-      <span class="log-time">${entry.time || t('night')}</span>
-      ${entry.label ? `<span class="log-label">${entry.label}</span>` : ''}
-      <span class="log-amount">${entry.amount} ml</span>
-      <button class="log-del" title="${t('tip_del')}" onclick="event.stopPropagation();window._tracker.delFluid('${type}',${idx})">×</button>
+    html += `<div class="log-entry" onclick="window._tracker.editFluid('${type}',${idx})" title="${escapeHtml(t('tip_edit_fluid'))}">
+      <span class="log-time">${escapeHtml(entry.time || t('night'))}</span>
+      ${entry.label ? `<span class="log-label">${escapeHtml(entry.label)}</span>` : ''}
+      <span class="log-amount">${Number(entry.amount) || 0} ml</span>
+      <button class="log-del" title="${escapeHtml(t('tip_del'))}" onclick="event.stopPropagation();window._tracker.delFluid('${type}',${idx})">×</button>
     </div>`;
   });
   html += `</div>`;
@@ -487,15 +489,15 @@ export function editFluid(type, idx) {
 
   overlay.innerHTML = `
     <div class="edit-fluid-dialog">
-      <div class="edit-fluid-header">${t('edit_fluid_title')}</div>
+      <div class="edit-fluid-header">${escapeHtml(t('edit_fluid_title'))}</div>
       ${labelHtml}
       <div class="edit-fluid-amount-row">
-        <input type="number" class="edit-fluid-input" value="${entry.amount}" min="1" inputmode="numeric">
+        <input type="number" class="edit-fluid-input" value="${Number(entry.amount) || 0}" min="1" inputmode="numeric">
         <span>ml</span>
       </div>
       <div class="edit-fluid-actions">
-        <button class="edit-fluid-cancel">${t('cancel_btn')}</button>
-        <button class="edit-fluid-save">${t('ok_btn')}</button>
+        <button class="edit-fluid-cancel">${escapeHtml(t('cancel_btn'))}</button>
+        <button class="edit-fluid-save">${escapeHtml(t('ok_btn'))}</button>
       </div>
     </div>`;
 

@@ -4,6 +4,7 @@ import { getSpreadsheetId, getRange, S } from './sheets.js';
 import { getUserEmail } from './auth.js';
 import { t, tIn, getLang } from './i18n.js';
 import { track } from './analytics.js';
+import { escapeHtml } from './util.js';
 
 // Report-local translation: uses the report language selector, not the app language
 let _reportLang = null;
@@ -77,7 +78,7 @@ function getDateRange() {
 async function fetchData(from, to) {
   const sheetId = await getSpreadsheetId();
   const [daily, labs] = await Promise.all([
-    getRange(sheetId, `${S.DAILY}!A:K`),
+    getRange(sheetId, `${S.DAILY}!A:S`),
     getRange(sheetId, `${S.LABS}!A:D`),
   ]);
 
@@ -195,9 +196,9 @@ function sectionHeader(patient, from, to) {
     <div class="report-header">
       <h1 class="report-title">${rt('reports_header_title')}</h1>
       <div class="report-meta">
-        <span><strong>${rt('reports_patient')}:</strong> ${patient}</span>
-        <span><strong>${rt('reports_period_label')}:</strong> ${from} — ${to}</span>
-        <span><strong>${rt('reports_generated')}:</strong> ${now}</span>
+        <span><strong>${rt('reports_patient')}:</strong> ${escapeHtml(patient)}</span>
+        <span><strong>${rt('reports_period_label')}:</strong> ${escapeHtml(from)} — ${escapeHtml(to)}</span>
+        <span><strong>${rt('reports_generated')}:</strong> ${escapeHtml(now)}</span>
       </div>
     </div>`;
 }
@@ -254,10 +255,10 @@ function sectionLabs(labsData, { labs, fmt }) {
 
   const histRows = labsData.map(r => `
     <tr>
-      <td>${r.date}</td>
-      <td>${r.creatinine !== null ? fmt(r.creatinine) : '—'}</td>
-      <td>${r.tacrolimus !== null ? fmt(r.tacrolimus) : '—'}</td>
-      <td>${r.notes || ''}</td>
+      <td>${escapeHtml(r.date)}</td>
+      <td>${r.creatinine !== null ? escapeHtml(fmt(r.creatinine)) : '—'}</td>
+      <td>${r.tacrolimus !== null ? escapeHtml(fmt(r.tacrolimus)) : '—'}</td>
+      <td>${escapeHtml(r.notes || '')}</td>
     </tr>`).join('');
 
   const inner = `
@@ -283,15 +284,15 @@ function sectionAlerts({ alerts, fmt }) {
   const items = [];
 
   if (alerts.highBP.length > 0) {
-    const sample = alerts.highBP.slice(0, 3).map(r => r.date).join(', ');
+    const sample = alerts.highBP.slice(0, 3).map(r => escapeHtml(r.date)).join(', ');
     items.push(`<li>⚠ ${rt('reports_alert_high_bp')}: ${alerts.highBP.length} ${rt('reports_days')} (${sample}${alerts.highBP.length > 3 ? '…' : ''})</li>`);
   }
   alerts.weightJumps.forEach(j => {
     const sign = j.to > j.from ? '+' : '';
-    items.push(`<li>⚠ ${rt('reports_alert_weight_jump')}: ${j.date} (${j.from} → ${j.to} kg, ${sign}${fmt(j.delta)} kg)</li>`);
+    items.push(`<li>⚠ ${rt('reports_alert_weight_jump')}: ${escapeHtml(j.date)} (${escapeHtml(fmt(j.from))} → ${escapeHtml(fmt(j.to))} kg, ${sign}${escapeHtml(fmt(j.delta))} kg)</li>`);
   });
   if (alerts.feverDays.length > 0) {
-    items.push(`<li>⚠ ${rt('reports_alert_fever')}: ${alerts.feverDays.map(r => r.date).join(', ')}</li>`);
+    items.push(`<li>⚠ ${rt('reports_alert_fever')}: ${alerts.feverDays.map(r => escapeHtml(r.date)).join(', ')}</li>`);
   }
   if (alerts.incompleteMedsDays.length > 0) {
     items.push(`<li>⚠ ${rt('reports_alert_missed_meds')}: ${alerts.incompleteMedsDays.length} ${rt('reports_days')}</li>`);
@@ -307,16 +308,17 @@ function sectionAlerts({ alerts, fmt }) {
 function sectionDailyTable(daily) {
   if (daily.length === 0) return '';
 
+  const n = v => Number(v) || 0;
   const rows = daily.map(r => `
     <tr>
-      <td>${r.date}</td>
-      <td>${r.bp_am_sys ? `${r.bp_am_sys}/${r.bp_am_dia}` : '—'}${r.pulse_am ? ` <small>♥${r.pulse_am}</small>` : ''}</td>
-      <td>${r.bp_pm_sys ? `${r.bp_pm_sys}/${r.bp_pm_dia}` : '—'}${r.pulse_pm ? ` <small>♥${r.pulse_pm}</small>` : ''}</td>
-      <td>${r.weight    ? `${r.weight} kg`  : '—'}</td>
-      <td>${r.temp      ? `${r.temp}°C`     : '—'}</td>
-      <td>${r.water_ml  ? `${r.water_ml} ml`: '—'}</td>
-      <td>${r.urine_ml  ? `${r.urine_ml} ml`: '—'}</td>
-      <td>${r.meds_total ? `${r.meds_done}/${r.meds_total}` : '—'}</td>
+      <td>${escapeHtml(r.date)}</td>
+      <td>${r.bp_am_sys ? `${n(r.bp_am_sys)}/${n(r.bp_am_dia)}` : '—'}${r.pulse_am ? ` <small>♥${n(r.pulse_am)}</small>` : ''}</td>
+      <td>${r.bp_pm_sys ? `${n(r.bp_pm_sys)}/${n(r.bp_pm_dia)}` : '—'}${r.pulse_pm ? ` <small>♥${n(r.pulse_pm)}</small>` : ''}</td>
+      <td>${r.weight    ? `${n(r.weight)} kg`  : '—'}</td>
+      <td>${r.temp      ? `${n(r.temp)}°C`     : '—'}</td>
+      <td>${r.water_ml  ? `${n(r.water_ml)} ml`: '—'}</td>
+      <td>${r.urine_ml  ? `${n(r.urine_ml)} ml`: '—'}</td>
+      <td>${r.meds_total ? `${n(r.meds_done)}/${n(r.meds_total)}` : '—'}</td>
     </tr>`).join('');
 
   const inner = `

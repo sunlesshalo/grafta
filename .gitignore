@@ -1,2 +1,9 @@
-.cache/
 .vercel
+
+# Dev-agent dogfood scaffold (not yet committed to project repo)
+.claude/
+memory/
+CLAUDE.md
+SPEC.md
+tasks/
+.tmp/

@@ -113,7 +113,6 @@ async function findBestSpreadsheet() {
       try {
         const config = await getRange(file.id, `${S.CONFIG}!A:A`);
         if (config.length > 1) { // has rows beyond header
-          console.log('[sheets] using spreadsheet with data:', file.id);
           // Rename to v2 if it has the old name
           if (file.name !== SHEET_NAME) {
             renameSpreadsheet(file.id, SHEET_NAME).catch(() => {});
@@ -124,7 +123,6 @@ async function findBestSpreadsheet() {
     }
 
     // All empty — return the oldest
-    console.log('[sheets] using oldest spreadsheet:', files[0].id);
     return files[0].id;
   } catch (e) {
     console.warn('[sheets] Drive search failed:', e);
@@ -140,7 +138,6 @@ async function renameSpreadsheet(id, newName) {
       resource: { name: newName },
     })
   );
-  console.log('[sheets] renamed spreadsheet to:', newName);
 }
 
 /** Ensure sheet headers match current HEADERS (adds missing columns). */
@@ -152,7 +149,6 @@ async function migrateHeaders(spreadsheetId) {
   if (current.length >= expected.length) return; // up to date
   // Write the full header row
   await updateRange(spreadsheetId, `${S.DAILY}!A1`, [expected]);
-  console.log(`[sheets] migrated Daily headers: ${current.length} → ${expected.length} columns`);
 }
 
 async function createSpreadsheet() {
@@ -168,7 +164,6 @@ async function createSpreadsheet() {
     })
   );
   const id = created.result.spreadsheetId;
-  console.log('[sheets] spreadsheet created:', id);
 
   // 2. Write headers to each sheet
   const data = Object.entries(HEADERS).map(([sheet, headers]) => ({
@@ -290,7 +285,7 @@ export async function getConfigHistory(spreadsheetId) {
 // ── Daily rows ────────────────────────────────────────────────────────────────
 
 export async function getDailyRow(spreadsheetId, date) {
-  const rows = await getRange(spreadsheetId, `${S.DAILY}!A:Q`);
+  const rows = await getRange(spreadsheetId, `${S.DAILY}!A:S`);
   const idx = rows.findIndex((r, i) => i > 0 && r[0] === date);
   if (idx < 0) return null;
   return { rowIndex: idx + 1, data: rows[idx] }; // 1-based sheet row

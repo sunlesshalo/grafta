@@ -3,6 +3,7 @@
 import { getSpreadsheetId, getLabs, appendLab, deleteLabRow } from './sheets.js';
 import { t, tArr } from './i18n.js';
 import { track } from './analytics.js';
+import { escapeHtml } from './util.js';
 
 let _labs = []; // [{ date, creatinine, tacrolimus, notes }]
 let _loaded = false;
@@ -75,16 +76,17 @@ export async function renderLabs() {
   } else {
     html += `<div class="log-scroll">`;
     _labs.forEach(lab => {
+      const safeDate = escapeHtml(lab.date);
       html += `
         <div class="labs-entry">
-          <span class="labs-entry-date">${formatDate(lab.date)}</span>
+          <span class="labs-entry-date">${escapeHtml(formatDate(lab.date))}</span>
           <span class="labs-entry-vals">
-            ${lab.creatinine ? `Cr: <strong>${lab.creatinine}</strong>` : ''}
+            ${lab.creatinine ? `Cr: <strong>${escapeHtml(lab.creatinine)}</strong>` : ''}
             ${lab.creatinine && lab.tacrolimus ? ' · ' : ''}
-            ${lab.tacrolimus ? `FK: <strong>${lab.tacrolimus}</strong>` : ''}
+            ${lab.tacrolimus ? `FK: <strong>${escapeHtml(lab.tacrolimus)}</strong>` : ''}
           </span>
-          <span class="labs-entry-notes">${lab.notes}</span>
-          <button class="log-del" title="${t('tip_del')}" onclick="window._labs.deleteLab('${lab.date}')">×</button>
+          <span class="labs-entry-notes">${escapeHtml(lab.notes)}</span>
+          <button class="log-del" title="${t('tip_del')}" onclick="window._labs.deleteLab('${safeDate}')">×</button>
         </div>`;
     });
     html += `</div>`;

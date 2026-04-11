@@ -4,6 +4,7 @@ import { getCachedMeds, setCachedMeds, saveSchedule, generateId } from './schedu
 import { getSpreadsheetId, setSetting } from './sheets.js';
 import { t } from './i18n.js';
 import { track } from './analytics.js';
+import { escapeHtml } from './util.js';
 
 let _meds         = [];   // working copy
 let _openMedId    = null; // id of med with inline edit open
@@ -56,8 +57,8 @@ export function render() {
   timeSlots.forEach(time => {
     html += `<div class="editor-time-group">`;
     html += `<div class="editor-time-header">
-      <span class="editor-time-label">${time}</span>
-      <button class="editor-add-med-btn" onclick="window._editor.addMed('${time}')">${t('add_med')}</button>
+      <span class="editor-time-label">${escapeHtml(time)}</span>
+      <button class="editor-add-med-btn" onclick="window._editor.addMed('${escapeHtml(time)}')">${t('add_med')}</button>
     </div>`;
 
     byTime[time].forEach(med => {
@@ -79,58 +80,59 @@ export function render() {
 
 function renderMedRow(med) {
   const altRules = getAltRules();
-  const altLabel = med.alt_rule
+  const altLabelRaw = med.alt_rule
     ? altRules.find(r => r.value === med.alt_rule)?.label || med.alt_rule
     : '';
   return `
     <div class="editor-med-row">
       <div style="flex:1">
-        <span class="editor-med-name">${med.name || `<em style="color:#999">${t('unnamed')}</em>`}</span>
-        ${med.dose ? `<span class="editor-med-dose"> ${med.dose}</span>` : ''}
-        ${altLabel && med.dose_alt ? `<span class="editor-med-alt"> / ${med.dose_alt} (${altLabel})</span>` : ''}
-        ${med.conditional ? `<span class="editor-med-cond"> — if ${med.conditional}</span>` : ''}
+        <span class="editor-med-name">${med.name ? escapeHtml(med.name) : `<em style="color:#999">${t('unnamed')}</em>`}</span>
+        ${med.dose ? `<span class="editor-med-dose"> ${escapeHtml(med.dose)}</span>` : ''}
+        ${altLabelRaw && med.dose_alt ? `<span class="editor-med-alt"> / ${escapeHtml(med.dose_alt)} (${escapeHtml(altLabelRaw)})</span>` : ''}
+        ${med.conditional ? `<span class="editor-med-cond"> — if ${escapeHtml(med.conditional)}</span>` : ''}
       </div>
-      <button class="editor-med-menu-btn" onclick="window._editor.toggleInline('${med.id}')">⋮</button>
+      <button class="editor-med-menu-btn" onclick="window._editor.toggleInline('${escapeHtml(med.id)}')">⋮</button>
     </div>`;
 }
 
 function renderInlineEdit(med) {
   const altRules   = getAltRules();
   const altOptions = altRules.map(r =>
-    `<option value="${r.value}"${r.value === med.alt_rule ? ' selected' : ''}>${r.label}</option>`
+    `<option value="${escapeHtml(r.value)}"${r.value === med.alt_rule ? ' selected' : ''}>${escapeHtml(r.label)}</option>`
   ).join('');
+  const safeId = escapeHtml(med.id);
 
   return `
-    <div class="editor-inline" id="inline-${med.id}">
+    <div class="editor-inline" id="inline-${safeId}">
       <div class="editor-field">
         <label>${t('field_name')}</label>
-        <input type="text" value="${esc(med.name)}" oninput="window._editor.update('${med.id}','name',this.value)">
+        <input type="text" value="${escapeHtml(med.name)}" oninput="window._editor.update('${safeId}','name',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_dose')}</label>
-        <input type="text" value="${esc(med.dose)}" placeholder="${t('field_dose_ph')}" oninput="window._editor.update('${med.id}','dose',this.value)">
+        <input type="text" value="${escapeHtml(med.dose)}" placeholder="${escapeHtml(t('field_dose_ph'))}" oninput="window._editor.update('${safeId}','dose',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_schedule')}</label>
-        <select onchange="window._editor.update('${med.id}','alt_rule',this.value)">${altOptions}</select>
+        <select onchange="window._editor.update('${safeId}','alt_rule',this.value)">${altOptions}</select>
       </div>
       <div class="editor-field">
         <label>${t('field_alt_dose')}</label>
-        <input type="text" value="${esc(med.dose_alt)}" placeholder="${t('field_dose_alt_ph')}" oninput="window._editor.update('${med.id}','dose_alt',this.value)">
+        <input type="text" value="${escapeHtml(med.dose_alt)}" placeholder="${escapeHtml(t('field_dose_alt_ph'))}" oninput="window._editor.update('${safeId}','dose_alt',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_time')}</label>
-        <input type="time" value="${esc(med.time)}" oninput="window._editor.update('${med.id}','time',this.value)">
+        <input type="time" value="${escapeHtml(med.time)}" oninput="window._editor.update('${safeId}','time',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_condition')}</label>
-        <input type="text" value="${esc(med.conditional)}" placeholder="${t('field_cond_ph')}" oninput="window._editor.update('${med.id}','conditional',this.value)">
+        <input type="text" value="${escapeHtml(med.conditional)}" placeholder="${escapeHtml(t('field_cond_ph'))}" oninput="window._editor.update('${safeId}','conditional',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_notes')}</label>
-        <input type="text" value="${esc(med.notes)}" oninput="window._editor.update('${med.id}','notes',this.value)">
+        <input type="text" value="${escapeHtml(med.notes)}" oninput="window._editor.update('${safeId}','notes',this.value)">
       </div>
-      <button class="editor-delete-btn" onclick="window._editor.deleteMed('${med.id}')">${t('editor_remove_med')}</button>
+      <button class="editor-delete-btn" onclick="window._editor.deleteMed('${safeId}')">${t('editor_remove_med')}</button>
     </div>`;
 }
 
@@ -144,28 +146,26 @@ function renderSettings() {
       <h3>${t('settings_title')}</h3>
       <div class="editor-field">
         <label>${t('patient_name')}</label>
-        <input type="text" value="${pn}" placeholder="${t('patient_name_ph')}" id="settingPatientName"
+        <input type="text" value="${escapeHtml(pn)}" placeholder="${escapeHtml(t('patient_name_ph'))}" id="settingPatientName"
           oninput="localStorage.setItem('mt_patient_name', this.value)">
       </div>
       <div class="editor-field">
         <label>${t('water_target')} <span class="tip-icon" data-tip-key="tip_water_target">i</span></label>
-        <input type="number" value="${wt}" placeholder="${t('ml')}" id="settingWaterTarget"
+        <input type="number" value="${Number(wt) || 3000}" placeholder="${escapeHtml(t('ml'))}" id="settingWaterTarget"
           oninput="localStorage.setItem('mt_water_target', this.value)">
       </div>
       <div class="editor-field">
         <label>${t('day_starts')} <span class="tip-icon" data-tip-key="tip_day_start">i</span></label>
-        <input type="number" value="${ds}" min="0" max="6" id="settingDayStart"
+        <input type="number" value="${Number(ds) || 5}" min="0" max="6" id="settingDayStart"
           oninput="localStorage.setItem('mt_day_start', this.value)">
       </div>
       <div class="editor-field">
         <label>${t('bp_readings_label')} <span class="tip-icon" data-tip-key="tip_bp_times">i</span></label>
-        <input type="number" value="${bt}" min="1" max="4" id="settingBpTimes"
+        <input type="number" value="${Number(bt) || 2}" min="1" max="4" id="settingBpTimes"
           oninput="localStorage.setItem('mt_bp_times', this.value)">
       </div>
     </div>`;
 }
-
-function esc(str) { return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 
 // ── Editor actions ─────────────────────────────────────────────────────────────
 

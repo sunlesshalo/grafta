@@ -49,7 +49,6 @@ async function initGapi() {
     discoveryDocs: DISCOVERY_DOCS,
   });
   gapiReady = true;
-  console.log('[auth] gapi client initialized');
 }
 
 /** Returns a promise that resolves when gapi.client is ready */
@@ -94,12 +93,10 @@ export function initAuth(callback) {
     scheduleRefresh(remaining);
     waitForGapi().then(() => {
       window.gapi.client.setToken({ access_token: token });
-      console.log('[auth] restored session, gapi token set');
       onAuthChange && onAuthChange(true);
     });
   } else if (localStorage.getItem(KEY_EMAIL)) {
     // Token expired but user was signed in before — refresh silently (no UI)
-    console.log('[auth] token expired, attempting silent refresh');
     waitForGapi().then(() => silentRefresh());
   } else {
     onAuthChange && onAuthChange(false);
@@ -117,14 +114,12 @@ export function initAuth(callback) {
       const expiry = parseInt(localStorage.getItem(KEY_EXPIRY) || '0', 10);
       const remaining = Math.floor((expiry - Date.now()) / 1000);
       if (remaining < 660) { // less than 11 min left, refresh now
-        console.log('[auth] tab resumed, token expiring soon — refreshing');
         silentRefresh();
       } else {
         scheduleRefresh(remaining);
       }
     } else {
       // Token expired while tab was asleep — refresh immediately
-      console.log('[auth] tab resumed, token expired — refreshing');
       silentRefresh();
     }
   });
@@ -146,13 +141,11 @@ function handleTokenResponse(response) {
     }
     return;
   }
-  console.log('[auth] token received, scopes granted:', response.scope);
   storeToken(response.access_token, response.expires_in);
 
   // Set token on gapi client
   waitForGapi().then(() => {
     window.gapi.client.setToken({ access_token: response.access_token });
-    console.log('[auth] gapi token set');
   });
 
   fetchUserInfo(response.access_token).then(() => {
