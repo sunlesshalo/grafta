@@ -1,4 +1,4 @@
-const CACHE = 'mt-v2-44';
+const CACHE = 'mt-v2-45';
 const PRECACHE = ['/', '/css/styles.css', '/css/report-print.css', '/js/auth.js', '/js/sheets.js', '/js/store.js', '/js/schedule.js', '/js/tracker.js', '/js/editor.js', '/js/labs.js', '/js/charts.js', '/js/reports.js', '/js/i18n.js', '/js/analytics.js', '/js/util.js', '/js/app.js', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -18,7 +18,7 @@ self.addEventListener('fetch', e => {
     e.respondWith(
       caches.match(e.request).then(cached => cached ||
         fetch(e.request).then(res => {
-          if (res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+          if (res.ok) { const clone = res.clone(); caches.open(CACHE).then(c => c.put(e.request, clone)); }
           return res;
         })
       )
