@@ -6,6 +6,37 @@ const LANGS = {
     signin_sub:          'Track your meds, vitals, and labs.<br>Your data stays in your own Google Drive.',
     signin_btn:          'Sign in with Google',
     signin_note:         'We only access files this app creates.',
+    // Landing page
+    lp_headline:          'After transplant,<br>track everything that matters.',
+    lp_sub:               'Medications, vitals, labs, fluids — logged daily, stored privately in your own Google Drive.',
+    lp_what_title:        'Everything your care team asks you to track',
+    lp_track_meds_name:   'Medications',
+    lp_track_meds_desc:   'Daily meds with dosage and schedule',
+    lp_track_vitals_name: 'Vitals',
+    lp_track_vitals_desc: 'Blood pressure, pulse, temperature, weight',
+    lp_track_labs_name:   'Lab results',
+    lp_track_labs_desc:   'Creatinine, tacrolimus, and all key markers',
+    lp_track_fluids_name: 'Fluids',
+    lp_track_fluids_desc: 'Fluid intake and urine output',
+    lp_track_notes_name:  'Notes',
+    lp_track_notes_desc:  'Symptoms, observations, anything worth logging',
+    lp_track_reports_name:'Reports',
+    lp_track_reports_desc:'Print-ready summaries for doctor visits',
+    lp_privacy_title:     'Your data stays yours.',
+    lp_privacy_p1:        'When you sign in, Grafta creates a spreadsheet inside your Google Drive. Every value you log lives there — not on our servers, not in our database.',
+    lp_privacy_p2:        "We don't have the ability to read your medical records. We never will.",
+    lp_privacy_c1:        '✓ \u00a0Stored in your Google Drive',
+    lp_privacy_c2:        '✓ \u00a0No Grafta server holds your values',
+    lp_privacy_c3:        '✓ \u00a0Works offline, syncs when back online',
+    lp_privacy_c4:        '✓ \u00a0Export or delete your sheet anytime',
+    lp_privacy_c5:        '✓ \u00a0EN / RO / HU language support',
+    lp_analytics_title:   'Honest about analytics',
+    lp_analytics_p1:      'To improve Grafta, we track how the app is used — which features you open, which buttons you tap. Not what you log. Your medication names, lab values, and notes are never sent anywhere.',
+    lp_analytics_p2:      "You'll be asked for your consent before any tracking begins. If you decline, the app works exactly the same way. The tracking helps us understand what's useful and secure funding to keep building.",
+    lp_cta_title:         'Start tracking in under a minute.',
+    lp_cta_p:             'Sign in with Google and your tracking spreadsheet is created automatically in your Drive.',
+    lp_cta_note:          'Free to use. No account needed beyond Google.',
+    lp_footer:            'Built for transplant recipients.',
     reconnect_text:      'Session expired —',
     reconnect_btn:       'Reconnect',
     // Tabs
@@ -113,7 +144,7 @@ const LANGS = {
     labs_last_n:         'last {n}',
     // Status
     offline_banner:      'Offline — changes saved locally',
-    welcome_title:       'Welcome to Med Tracker',
+    welcome_title:       'Welcome to Grafta',
     welcome_text:        'Add your medications, set the times, and start tracking. Your data is stored securely in your own Google Drive.',
     welcome_btn:         'Set up my meds',
     // Nav
@@ -216,6 +247,37 @@ const LANGS = {
     signin_sub:          'Urmărește-ți medicamentele, vitalele și analizele.<br>Datele rămân în Google Drive-ul tău.',
     signin_btn:          'Conectează-te cu Google',
     signin_note:         'Accesăm doar fișierele create de această aplicație.',
+    // Landing page
+    lp_headline:          'După transplant,<br>urmărește tot ce contează.',
+    lp_sub:               'Medicamente, vitale, analize, lichide — înregistrate zilnic, stocate privat în Google Drive-ul tău.',
+    lp_what_title:        'Tot ce echipa ta medicală îți cere să urmărești',
+    lp_track_meds_name:   'Medicamente',
+    lp_track_meds_desc:   'Medicamente zilnice cu doze și program',
+    lp_track_vitals_name: 'Vitale',
+    lp_track_vitals_desc: 'Tensiune arterială, puls, temperatură, greutate',
+    lp_track_labs_name:   'Rezultate de laborator',
+    lp_track_labs_desc:   'Creatinină, tacrolimus și toți markerii cheie',
+    lp_track_fluids_name: 'Lichide',
+    lp_track_fluids_desc: 'Aport de lichide și diureză',
+    lp_track_notes_name:  'Note',
+    lp_track_notes_desc:  'Simptome, observații, orice merită înregistrat',
+    lp_track_reports_name:'Rapoarte',
+    lp_track_reports_desc:'Rezumate printabile pentru vizitele la medic',
+    lp_privacy_title:     'Datele tale rămân ale tale.',
+    lp_privacy_p1:        'Când te conectezi, Grafta creează un tabel în Google Drive-ul tău. Fiecare valoare înregistrată rămâne acolo — nu pe serverele noastre, nu în baza noastră de date.',
+    lp_privacy_p2:        'Nu avem posibilitatea să-ți citim dosarul medical. Niciodată nu vom putea.',
+    lp_privacy_c1:        '✓ \u00a0Stocat în Google Drive-ul tău',
+    lp_privacy_c2:        '✓ \u00a0Niciun server Grafta nu stochează valorile tale',
+    lp_privacy_c3:        '✓ \u00a0Funcționează offline, sincronizare la reconectare',
+    lp_privacy_c4:        '✓ \u00a0Exportă sau șterge tabelul oricând',
+    lp_privacy_c5:        '✓ \u00a0Suport EN / RO / HU',
+    lp_analytics_title:   'Transparență despre analize',
+    lp_analytics_p1:      'Pentru a îmbunătăți Grafta, urmărim cum este folosită aplicația — ce funcții deschizi, ce butoane apeși. Nu ce înregistrezi. Numele medicamentelor, valorile de laborator și notele tale nu sunt trimise nicăieri.',
+    lp_analytics_p2:      'Vei fi întrebat pentru consimțământ înainte de orice urmărire. Dacă refuzi, aplicația funcționează exact la fel. Urmărirea ne ajută să înțelegem ce este util și să obținem finanțare pentru a continua dezvoltarea.',
+    lp_cta_title:         'Începe să urmărești în mai puțin de un minut.',
+    lp_cta_p:             'Conectează-te cu Google și tabelul tău de urmărire este creat automat în Drive.',
+    lp_cta_note:          'Gratuit. Nu ai nevoie de alt cont în afară de Google.',
+    lp_footer:            'Construit pentru beneficiarii de transplant.',
     reconnect_text:      'Sesiune expirată —',
     reconnect_btn:       'Reconectează-te',
     // Tabs
@@ -323,7 +385,7 @@ const LANGS = {
     labs_last_n:         'ultimele {n}',
     // Status
     offline_banner:      'Offline — modificările sunt salvate local',
-    welcome_title:       'Bun venit la Med Tracker',
+    welcome_title:       'Bun venit la Grafta',
     welcome_text:        'Adăugați medicamentele, setați orele și începeți urmărirea. Datele sunt stocate în siguranță în Google Drive-ul dvs.',
     welcome_btn:         'Configurează medicamentele',
     // Nav
@@ -426,6 +488,37 @@ const LANGS = {
     signin_sub:          'Kövesd nyomon gyógyszereidet, mérőszámaidat és laboreredményeidet.<br>Adataid a saját Google Drive-odon maradnak.',
     signin_btn:          'Bejelentkezés Google-lel',
     signin_note:         'Csak az alkalmazás által létrehozott fájlokhoz férünk hozzá.',
+    // Landing page
+    lp_headline:          'Átültetés után<br>kövesd nyomon, ami számít.',
+    lp_sub:               'Gyógyszerek, mérőszámok, labor, folyadék — napi szinten rögzítve, privát módon a Google Drive-odban tárolva.',
+    lp_what_title:        'Minden, amit az orvoscsapatod kér tőled',
+    lp_track_meds_name:   'Gyógyszerek',
+    lp_track_meds_desc:   'Napi gyógyszerek dózissal és menetrenddel',
+    lp_track_vitals_name: 'Mérőszámok',
+    lp_track_vitals_desc: 'Vérnyomás, pulzus, hőmérséklet, testsúly',
+    lp_track_labs_name:   'Laboreredmények',
+    lp_track_labs_desc:   'Kreatinin, tacrolimus és az összes kulcsjelző',
+    lp_track_fluids_name: 'Folyadék',
+    lp_track_fluids_desc: 'Folyadékbevitel és vizeletkibocsátás',
+    lp_track_notes_name:  'Megjegyzések',
+    lp_track_notes_desc:  'Tünetek, megfigyelések, bármi ami fontos',
+    lp_track_reports_name:'Jelentések',
+    lp_track_reports_desc:'Nyomtatható összefoglalók orvosi látogatásokhoz',
+    lp_privacy_title:     'Az adataid a tiéd maradnak.',
+    lp_privacy_p1:        'Bejelentkezéskor a Grafta létrehoz egy táblázatot a Google Drive-odban. Minden rögzített érték ott tárolódik — nem a mi szervereinken, nem az adatbázisunkban.',
+    lp_privacy_p2:        'Nincs lehetőségünk olvasni az orvosi adataidat. Soha nem lesz.',
+    lp_privacy_c1:        '✓ \u00a0A Google Drive-odban tárolva',
+    lp_privacy_c2:        '✓ \u00a0Grafta szerver nem tárolja az értékeidet',
+    lp_privacy_c3:        '✓ \u00a0Offline is működik, szinkronizál visszakapcsolódáskor',
+    lp_privacy_c4:        '✓ \u00a0A táblázatot bármikor exportálhatod vagy törölheted',
+    lp_privacy_c5:        '✓ \u00a0EN / RO / HU nyelvi támogatás',
+    lp_analytics_title:   'Átlátható analitika',
+    lp_analytics_p1:      'A Grafta fejlesztéséhez nyomon követjük, hogyan használják az alkalmazást — melyik funkciókat nyitod meg, melyik gombokra kattintasz. Nem azt, amit rögzítesz. A gyógyszerneveid, laborértékeid és megjegyzéseid soha nem kerülnek ki sehova.',
+    lp_analytics_p2:      'Beleegyezésedet fogják kérni mielőtt bármilyen nyomkövetés elkezdődik. Ha visszautasítod, az alkalmazás pontosan ugyanúgy működik. A nyomkövetés segít megérteni, mi hasznos, és finanszírozást szerezni a további fejlesztéshez.',
+    lp_cta_title:         'Kezdj el nyomon követni egy perc alatt.',
+    lp_cta_p:             'Jelentkezz be Google-lel és a nyomkövetési táblázatod automatikusan létrejön a Drive-ban.',
+    lp_cta_note:          'Ingyenes. Csak egy Google-fiókra van szükség.',
+    lp_footer:            'Transzplantált betegek számára készült.',
     reconnect_text:      'Munkamenet lejárt —',
     reconnect_btn:       'Újracsatlakozás',
     // Tabs
@@ -533,7 +626,7 @@ const LANGS = {
     labs_last_n:         'utolsó {n}',
     // Status
     offline_banner:      'Offline — a változások helyben mentve',
-    welcome_title:       'Üdvözöljük a Med Trackerben',
+    welcome_title:       'Üdvözöljük a Graftában',
     welcome_text:        'Adja hozzá gyógyszereit, állítsa be az időpontokat, és kezdje el a követést. Adatai biztonságosan a saját Google Drive-ján tárolódnak.',
     welcome_btn:         'Gyógyszerek beállítása',
     // Nav
@@ -667,13 +760,19 @@ export function setLang(lang) {
 
 /** Update all static HTML elements (sign-in, tabs, editor bar). */
 export function applyStaticTranslations() {
-  // Sign-in view
-  const signinSub  = document.querySelector('.signin-sub');
-  const signinBtn  = document.getElementById('signinBtn');
-  const signinNote = document.querySelector('.signin-note');
-  if (signinSub)  signinSub.innerHTML   = t('signin_sub');
-  if (signinBtn)  signinBtn.textContent = t('signin_btn');
-  if (signinNote) signinNote.textContent = t('signin_note');
+  // Generic data-i18n / data-i18n-html attributes (landing page + any future elements)
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const val = t(el.dataset.i18n);
+    if (val !== undefined) el.textContent = val;
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const val = t(el.dataset.i18nHtml);
+    if (val !== undefined) el.innerHTML = val;
+  });
+
+  // Sign-in view (primary button — not covered by data-i18n)
+  const signinBtn = document.getElementById('signinBtn');
+  if (signinBtn) signinBtn.textContent = t('signin_btn');
 
   // Reconnect banner
   const reconnectText = document.getElementById('reconnectText');

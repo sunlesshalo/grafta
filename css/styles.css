@@ -12,53 +12,221 @@ body {
 /* ── Views ── */
 .view { min-height: 100dvh; }
 
-/* ── Sign-in ── */
+/* ── Landing page (Sign-in view) ── */
+:root {
+  --lp-green:       #1B6B5A;
+  --lp-green-dark:  #145248;
+  --lp-green-light: #EEF7F5;
+  --lp-text:        #0F2622;
+  --lp-muted:       #4A6965;
+  --lp-border:      #D4EAE6;
+}
+
 .view-signin {
+  display: block;
+  overflow-y: auto;
+  background: #fff;
+  color: var(--lp-text);
+}
+
+/* Top bar */
+.lp-topbar {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--lp-border);
+  position: sticky;
+  top: 0;
   background: #fff;
+  z-index: 10;
 }
 
-.signin-wrap {
-  text-align: center;
-  padding: 32px 24px;
-  max-width: 360px;
-}
-
-.signin-title {
-  font-size: 28px;
+.lp-brand {
+  font-size: 20px;
   font-weight: 800;
-  margin-bottom: 12px;
+  color: var(--lp-green);
+  letter-spacing: -0.5px;
 }
 
-.signin-sub {
-  font-size: 15px;
-  color: #555;
-  line-height: 1.5;
-  margin-bottom: 32px;
+/* Hero */
+.lp-hero {
+  padding: 72px 24px 88px;
+  background: var(--lp-green-light);
 }
 
-.signin-btn {
+.lp-centered {
+  text-align: center;
+}
+
+.lp-headline {
+  font-size: clamp(26px, 5vw, 42px);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--lp-text);
+  margin-bottom: 18px;
+  letter-spacing: -0.5px;
+}
+
+.lp-sub {
+  font-size: 17px;
+  color: var(--lp-muted);
+  line-height: 1.65;
+  margin-bottom: 40px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Sign-in button */
+.lp-signin-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: #000;
+  background: var(--lp-green);
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 15px;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: 700;
-  padding: 14px 28px;
+  padding: 16px 32px;
   cursor: pointer;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  transition: background 0.15s;
+  font-family: inherit;
 }
 
-.signin-btn:active { background: #333; }
+.lp-signin-btn:hover  { background: var(--lp-green-dark); }
+.lp-signin-btn:active { background: var(--lp-green-dark); }
 
-.signin-note {
+.lp-signin-btn--light {
+  background: #fff;
+  color: var(--lp-green);
+}
+
+.lp-signin-btn--light:hover  { background: #f5f5f5; }
+.lp-signin-btn--light:active { background: #ebebeb; }
+
+.lp-signin-note {
   font-size: 12px;
-  color: #bbb;
+  color: #999;
+  display: block;
+  margin-top: 4px;
+}
+
+/* Sections */
+.lp-section {
+  padding: 64px 24px;
+}
+
+.lp-tinted {
+  background: var(--lp-green-light);
+}
+
+.lp-section-inner {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.lp-section h2 {
+  font-size: clamp(20px, 3.5vw, 28px);
+  font-weight: 800;
+  color: var(--lp-text);
+  margin-bottom: 16px;
+  letter-spacing: -0.3px;
+}
+
+.lp-section p {
+  font-size: 16px;
+  color: var(--lp-muted);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+
+.lp-section p:last-child { margin-bottom: 0; }
+
+/* Tracks grid */
+.lp-tracks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.lp-track-item {
+  background: var(--lp-green-light);
+  border: 1px solid var(--lp-border);
+  border-radius: 10px;
+  padding: 20px 16px;
+}
+
+.lp-track-icon {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.lp-track-item strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--lp-text);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.lp-track-item p {
+  font-size: 13px;
+  color: var(--lp-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Privacy two-col */
+.lp-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+@media (max-width: 580px) {
+  .lp-two-col { grid-template-columns: 1fr; }
+}
+
+.lp-privacy-card {
+  background: #fff;
+  border: 1px solid var(--lp-border);
+  border-radius: 12px;
+  padding: 8px 24px;
+}
+
+.lp-privacy-item {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lp-text);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--lp-border);
+}
+
+.lp-privacy-item:last-child { border-bottom: none; }
+
+/* CTA section */
+.lp-cta-section {
+  background: var(--lp-green) !important;
+  text-align: center;
+}
+
+.lp-cta-section h2            { color: #fff; }
+.lp-cta-section p { color: rgba(255,255,255,0.75); margin-bottom: 32px; }
+.lp-cta-section .lp-signin-note { color: rgba(255,255,255,0.5); margin-top: 14px; }
+
+/* Footer */
+.lp-footer {
+  padding: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--lp-muted);
+  border-top: 1px solid var(--lp-border);
 }
 
 /* ── Reconnect banner ── */
@@ -918,10 +1086,7 @@ body {
 
 .lang-select:hover { border-color: #aaa; color: #000; }
 
-.signin-lang {
-  margin-top: 20px;
-  text-align: center;
-}
+/* .signin-lang removed — lang selector moved to .lp-topbar */
 
 /* ── Overlay views (Charts + Reports) ── */
 .view-overlay {

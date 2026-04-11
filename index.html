@@ -11,25 +11,114 @@
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/report-print.css">
-  <title>Med Tracker</title>
+  <title>Grafta</title>
 </head>
 <body>
 
-<!-- ── Sign-in view ── -->
+<!-- ── Sign-in / Landing page ── -->
 <div id="viewSignin" class="view view-signin hidden">
-  <div class="signin-wrap">
-    <h1 class="signin-title">Med Tracker</h1>
-    <p class="signin-sub">Track your meds, vitals, and labs.<br>Your data stays in your own Google Drive.</p>
-    <button id="signinBtn" class="signin-btn">Sign in with Google</button>
-    <p class="signin-note">We only access files this app creates.</p>
-    <div class="signin-lang">
-      <select id="langSelectSignin" class="lang-select" onchange="_app.setLang(this.value)">
-        <option value="en">EN</option>
-        <option value="ro">RO</option>
-        <option value="hu">HU</option>
-      </select>
-    </div>
+
+  <!-- Top bar -->
+  <div class="lp-topbar">
+    <div class="lp-brand">grafta.health</div>
+    <select id="langSelectSignin" class="lang-select" onchange="_app.setLang(this.value)">
+      <option value="en">EN</option>
+      <option value="ro">RO</option>
+      <option value="hu">HU</option>
+    </select>
   </div>
+
+  <!-- Hero -->
+  <section class="lp-hero">
+    <div class="lp-section-inner lp-centered">
+      <h1 class="lp-headline" data-i18n-html="lp_headline">After transplant,<br>track everything that matters.</h1>
+      <p class="lp-sub" data-i18n-html="lp_sub">Medications, vitals, labs, fluids — logged daily, stored privately in your own Google Drive.</p>
+      <button id="signinBtn" class="lp-signin-btn">Sign in with Google</button>
+      <p class="lp-signin-note" data-i18n="signin_note">We only access files this app creates.</p>
+    </div>
+  </section>
+
+  <!-- What you track -->
+  <section class="lp-section">
+    <div class="lp-section-inner">
+      <h2 data-i18n="lp_what_title">Everything your care team asks you to track</h2>
+      <div class="lp-tracks-grid">
+        <div class="lp-track-item">
+          <span class="lp-track-icon">💊</span>
+          <strong data-i18n="lp_track_meds_name">Medications</strong>
+          <p data-i18n="lp_track_meds_desc">Daily meds with dosage and schedule</p>
+        </div>
+        <div class="lp-track-item">
+          <span class="lp-track-icon">🩺</span>
+          <strong data-i18n="lp_track_vitals_name">Vitals</strong>
+          <p data-i18n="lp_track_vitals_desc">Blood pressure, pulse, temperature, weight</p>
+        </div>
+        <div class="lp-track-item">
+          <span class="lp-track-icon">🧪</span>
+          <strong data-i18n="lp_track_labs_name">Lab results</strong>
+          <p data-i18n="lp_track_labs_desc">Creatinine, tacrolimus, and all key markers</p>
+        </div>
+        <div class="lp-track-item">
+          <span class="lp-track-icon">💧</span>
+          <strong data-i18n="lp_track_fluids_name">Fluids</strong>
+          <p data-i18n="lp_track_fluids_desc">Fluid intake and urine output</p>
+        </div>
+        <div class="lp-track-item">
+          <span class="lp-track-icon">📝</span>
+          <strong data-i18n="lp_track_notes_name">Notes</strong>
+          <p data-i18n="lp_track_notes_desc">Symptoms, observations, anything worth logging</p>
+        </div>
+        <div class="lp-track-item">
+          <span class="lp-track-icon">📊</span>
+          <strong data-i18n="lp_track_reports_name">Reports</strong>
+          <p data-i18n="lp_track_reports_desc">Print-ready summaries for doctor visits</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="lp-section lp-tinted">
+    <div class="lp-section-inner lp-two-col">
+      <div>
+        <h2 data-i18n="lp_privacy_title">Your data stays yours.</h2>
+        <p data-i18n="lp_privacy_p1">When you sign in, Grafta creates a spreadsheet inside your Google Drive. Every value you log lives there — not on our servers, not in our database.</p>
+        <p data-i18n="lp_privacy_p2">We don't have the ability to read your medical records. We never will.</p>
+      </div>
+      <div class="lp-privacy-card">
+        <div class="lp-privacy-item" data-i18n="lp_privacy_c1">✓ &nbsp;Stored in your Google Drive</div>
+        <div class="lp-privacy-item" data-i18n="lp_privacy_c2">✓ &nbsp;No Grafta server holds your values</div>
+        <div class="lp-privacy-item" data-i18n="lp_privacy_c3">✓ &nbsp;Works offline, syncs when back online</div>
+        <div class="lp-privacy-item" data-i18n="lp_privacy_c4">✓ &nbsp;Export or delete your sheet anytime</div>
+        <div class="lp-privacy-item" data-i18n="lp_privacy_c5">✓ &nbsp;EN / RO / HU language support</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Analytics transparency -->
+  <section class="lp-section">
+    <div class="lp-section-inner">
+      <h2 data-i18n="lp_analytics_title">Honest about analytics</h2>
+      <p data-i18n="lp_analytics_p1">To improve Grafta, we track how the app is used — which features you open, which buttons you tap. Not what you log. Your medication names, lab values, and notes are never sent anywhere.</p>
+      <p data-i18n="lp_analytics_p2">You'll be asked for your consent before any tracking begins. If you decline, the app works exactly the same way. The tracking helps us understand what's useful and secure funding to keep building.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="lp-section lp-cta-section">
+    <div class="lp-section-inner lp-centered">
+      <h2 data-i18n="lp_cta_title">Start tracking in under a minute.</h2>
+      <p data-i18n="lp_cta_p">Sign in with Google and your tracking spreadsheet is created automatically in your Drive.</p>
+      <button class="lp-signin-btn lp-signin-btn--light" data-i18n="signin_btn" onclick="document.getElementById('signinBtn').click()">Sign in with Google</button>
+      <p class="lp-signin-note" data-i18n="lp_cta_note">Free to use. No account needed beyond Google.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="lp-footer">
+    <p data-i18n="lp_footer">Built for transplant recipients.</p>
+  </footer>
+
 </div>
 
 <!-- ── Reconnect banner ── -->
