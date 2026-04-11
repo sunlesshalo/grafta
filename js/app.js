@@ -376,6 +376,9 @@ function showView(id) {
     const el = document.getElementById(v);
     if (el) el.classList.toggle('hidden', v !== id);
   });
+  if (id === 'viewSignin' && typeof window.__initGraftaLanding === 'function') {
+    window.__initGraftaLanding();
+  }
 }
 
 

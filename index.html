@@ -7,116 +7,230 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#ffffff">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net https://analytics.pinelines.eu; style-src 'self' 'unsafe-inline'; connect-src 'self' https://accounts.google.com https://www.googleapis.com https://sheets.googleapis.com https://oauth2.googleapis.com https://apis.google.com https://analytics.pinelines.eu https://cdn.jsdelivr.net https://www.google.com; img-src 'self' data: https://*.googleusercontent.com; font-src 'self'; frame-src 'self' https://accounts.google.com https://*.googleapis.com https://*.googleusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net https://analytics.pinelines.eu; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https://accounts.google.com https://www.googleapis.com https://sheets.googleapis.com https://oauth2.googleapis.com https://apis.google.com https://analytics.pinelines.eu https://cdn.jsdelivr.net https://www.google.com; img-src 'self' data: https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://accounts.google.com https://*.googleapis.com https://*.googleusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self';">
   <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,300;1,9..144,400;1,9..144,500;1,9..144,600;0,9..144,300;0,9..144,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/report-print.css">
-  <title>Grafta</title>
+  <title>Grafta — Health Tracking for Transplant Recipients</title>
 </head>
 <body>
 
-<!-- ── Sign-in / Landing page ── -->
+<!-- ── Sign-in / Landing page (hybrid design) ── -->
 <div id="viewSignin" class="view view-signin hidden">
 
-  <!-- Top bar -->
-  <div class="lp-topbar">
-    <div class="lp-brand">grafta.health</div>
-    <select id="langSelectSignin" class="lang-select" onchange="_app.setLang(this.value)">
-      <option value="en">EN</option>
-      <option value="ro">RO</option>
-      <option value="hu">HU</option>
-    </select>
-  </div>
-
-  <!-- Hero -->
-  <section class="lp-hero">
-    <div class="lp-section-inner lp-centered">
-      <h1 class="lp-headline" data-i18n-html="lp_headline">After transplant,<br>track everything that matters.</h1>
-      <p class="lp-sub" data-i18n-html="lp_sub">Medications, vitals, labs, fluids — logged daily, stored privately in your own Google Drive.</p>
-      <button id="signinBtn" class="lp-signin-btn">Sign in with Google</button>
-      <p class="lp-signin-note" data-i18n="signin_note">We only access files this app creates.</p>
+  <!-- NAV -->
+  <nav class="gh-nav">
+    <a class="gh-nav-logo" href="#hero">grafta</a>
+    <div class="gh-nav-right">
+      <select id="langSelectSignin" class="gh-lang-select" onchange="_app.setLang(this.value)">
+        <option value="en">EN</option>
+        <option value="ro">RO</option>
+        <option value="hu">HU</option>
+      </select>
+      <button type="button" class="gh-nav-cta" data-i18n="signin_btn" onclick="document.getElementById('signinBtn').click()">Sign in with Google</button>
     </div>
-  </section>
+  </nav>
 
-  <!-- What you track -->
-  <section class="lp-section">
-    <div class="lp-section-inner">
-      <h2 data-i18n="lp_what_title">Everything your care team asks you to track</h2>
-      <div class="lp-tracks-grid">
-        <div class="lp-track-item">
-          <span class="lp-track-icon">💊</span>
-          <strong data-i18n="lp_track_meds_name">Medications</strong>
-          <p data-i18n="lp_track_meds_desc">Daily meds with dosage and schedule</p>
-        </div>
-        <div class="lp-track-item">
-          <span class="lp-track-icon">🩺</span>
-          <strong data-i18n="lp_track_vitals_name">Vitals</strong>
-          <p data-i18n="lp_track_vitals_desc">Blood pressure, pulse, temperature, weight</p>
-        </div>
-        <div class="lp-track-item">
-          <span class="lp-track-icon">🧪</span>
-          <strong data-i18n="lp_track_labs_name">Lab results</strong>
-          <p data-i18n="lp_track_labs_desc">Creatinine, tacrolimus, and all key markers</p>
-        </div>
-        <div class="lp-track-item">
-          <span class="lp-track-icon">💧</span>
-          <strong data-i18n="lp_track_fluids_name">Fluids</strong>
-          <p data-i18n="lp_track_fluids_desc">Fluid intake and urine output</p>
-        </div>
-        <div class="lp-track-item">
-          <span class="lp-track-icon">📝</span>
-          <strong data-i18n="lp_track_notes_name">Notes</strong>
-          <p data-i18n="lp_track_notes_desc">Symptoms, observations, anything worth logging</p>
-        </div>
-        <div class="lp-track-item">
-          <span class="lp-track-icon">📊</span>
-          <strong data-i18n="lp_track_reports_name">Reports</strong>
-          <p data-i18n="lp_track_reports_desc">Print-ready summaries for doctor visits</p>
+  <!-- Hidden anchor button — real OAuth trigger wired in js/app.js -->
+  <button id="signinBtn" class="gh-signin-hidden" aria-hidden="true" tabindex="-1">Sign in with Google</button>
+
+  <!-- HERO -->
+  <section class="gh-hero" id="hero">
+    <div class="gh-blob-wrap" aria-hidden="true">
+      <svg class="gh-blob-svg" viewBox="0 0 700 600" xmlns="http://www.w3.org/2000/svg">
+        <path class="gh-blob-path" d="M360,80 C460,60 570,120 590,220 C610,320 560,430 460,470 C360,510 220,490 160,400 C100,310 120,180 200,120 C260,75 300,95 360,80 Z" fill="#E8927C" fill-opacity="0.18"/>
+      </svg>
+    </div>
+
+    <div class="gh-hero-inner">
+      <div class="gh-hero-left">
+        <p class="gh-hero-eyebrow gh-fade-up" data-i18n="gh_hero_eyebrow">Post-transplant health, simplified.</p>
+        <h1 class="gh-hero-headline gh-fade-up" data-i18n-html="gh_hero_headline">Your labs.<br><em>Your story.</em></h1>
+        <p class="gh-hero-sub gh-fade-up" data-i18n="gh_hero_sub">Track medications, lab results, and vitals — all stored in your own Google Drive. Private by design, built for transplant recipients.</p>
+        <button type="button" class="gh-btn-coral gh-fade-up" onclick="document.getElementById('signinBtn').click()">
+          <svg class="gh-google-icon" width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
+          <span data-i18n="signin_btn">Sign in with Google</span>
+        </button>
+        <p class="gh-hero-fine gh-fade-up" data-i18n="gh_hero_fine">Free. No credit card. No data on our servers.</p>
+      </div>
+
+      <div class="gh-hero-right gh-fade-up">
+        <div class="gh-ticker-card">
+          <div class="gh-ticker-header">
+            <span class="gh-ticker-dot"></span>
+            <span class="gh-ticker-label" data-i18n="gh_ticker_label">LIVE LOG</span>
+            <span class="gh-ticker-date" data-i18n="gh_ticker_date">Today</span>
+          </div>
+          <div class="gh-ticker-viewport" aria-label="Sample health log entries">
+            <div class="gh-ticker-track" id="ghTickerTrack"></div>
+          </div>
+          <div class="gh-ticker-footer">
+            <span class="gh-ticker-mono">grafta.health</span>
+            <span class="gh-ticker-status" data-i18n="gh_ticker_status">● Connected</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Privacy -->
-  <section class="lp-section lp-tinted">
-    <div class="lp-section-inner lp-two-col">
-      <div>
-        <h2 data-i18n="lp_privacy_title">Your data stays yours.</h2>
-        <p data-i18n="lp_privacy_p1">When you sign in, Grafta creates a spreadsheet inside your Google Drive. Every value you log lives there — not on our servers, not in our database.</p>
-        <p data-i18n="lp_privacy_p2">We don't have the ability to read your medical records. We never will.</p>
+  <!-- WHAT YOU TRACK -->
+  <section class="gh-track-section" id="track">
+    <div class="gh-container">
+      <h2 class="gh-section-headline gh-fade-up" data-i18n="gh_track_title">What you track</h2>
+      <p class="gh-section-sub gh-fade-up" data-i18n="gh_track_sub">Everything a transplant care team cares about — in one place.</p>
+      <div class="gh-flip-grid">
+
+        <div class="gh-flip-card gh-js-flip-card" tabindex="0">
+          <div class="gh-flip-inner">
+            <div class="gh-flip-front">
+              <span class="gh-flip-icon">💊</span>
+              <span class="gh-flip-name" data-i18n="gh_track_meds_name">Medications</span>
+            </div>
+            <div class="gh-flip-back">
+              <p data-i18n="gh_track_meds_back">Log immunosuppressants, doses, and times. Never miss a Tacrolimus window.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gh-flip-card gh-js-flip-card" tabindex="0">
+          <div class="gh-flip-inner">
+            <div class="gh-flip-front">
+              <span class="gh-flip-icon">🧪</span>
+              <span class="gh-flip-name" data-i18n="gh_track_labs_name">Lab Results</span>
+            </div>
+            <div class="gh-flip-back">
+              <p data-i18n="gh_track_labs_back">Creatinine, eGFR, tacrolimus trough — track trends between appointments.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gh-flip-card gh-js-flip-card" tabindex="0">
+          <div class="gh-flip-inner">
+            <div class="gh-flip-front">
+              <span class="gh-flip-icon">❤️</span>
+              <span class="gh-flip-name" data-i18n="gh_track_bp_name">Blood Pressure</span>
+            </div>
+            <div class="gh-flip-back">
+              <p data-i18n="gh_track_bp_back">Morning and evening BP with timestamps. Spot patterns your doctor needs to see.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gh-flip-card gh-js-flip-card" tabindex="0">
+          <div class="gh-flip-inner">
+            <div class="gh-flip-front">
+              <span class="gh-flip-icon">⚖️</span>
+              <span class="gh-flip-name" data-i18n="gh_track_weight_name">Weight</span>
+            </div>
+            <div class="gh-flip-back">
+              <p data-i18n="gh_track_weight_back">Daily weight monitoring — sudden changes can signal fluid retention or rejection.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gh-flip-card gh-js-flip-card" tabindex="0">
+          <div class="gh-flip-inner">
+            <div class="gh-flip-front">
+              <span class="gh-flip-icon">📝</span>
+              <span class="gh-flip-name" data-i18n="gh_track_symptoms_name">Symptoms</span>
+            </div>
+            <div class="gh-flip-back">
+              <p data-i18n="gh_track_symptoms_back">Log fatigue, swelling, or unusual pain. Build a timeline for your next visit.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="gh-flip-card gh-js-flip-card" tabindex="0">
+          <div class="gh-flip-inner">
+            <div class="gh-flip-front">
+              <span class="gh-flip-icon">📅</span>
+              <span class="gh-flip-name" data-i18n="gh_track_appts_name">Appointments</span>
+            </div>
+            <div class="gh-flip-back">
+              <p data-i18n="gh_track_appts_back">Track follow-ups, biopsy dates, and lab draw schedules alongside your health data.</p>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div class="lp-privacy-card">
-        <div class="lp-privacy-item" data-i18n="lp_privacy_c1">✓ &nbsp;Stored in your Google Drive</div>
-        <div class="lp-privacy-item" data-i18n="lp_privacy_c2">✓ &nbsp;No Grafta server holds your values</div>
-        <div class="lp-privacy-item" data-i18n="lp_privacy_c3">✓ &nbsp;Works offline, syncs when back online</div>
-        <div class="lp-privacy-item" data-i18n="lp_privacy_c4">✓ &nbsp;Export or delete your sheet anytime</div>
-        <div class="lp-privacy-item" data-i18n="lp_privacy_c5">✓ &nbsp;EN / RO / HU language support</div>
+    </div>
+  </section>
+
+  <!-- PRIVACY -->
+  <section class="gh-privacy-section" id="privacy">
+    <div class="gh-container gh-privacy-inner">
+      <div class="gh-privacy-text">
+        <h2 class="gh-privacy-headline gh-fade-up" data-i18n-html="gh_privacy_headline">Your data<br>stays yours.</h2>
+        <ul class="gh-privacy-list">
+          <li class="gh-fade-up"><span class="gh-check">✓</span><span data-i18n="gh_privacy_c1">Stored in your Google Drive</span></li>
+          <li class="gh-fade-up"><span class="gh-check">✓</span><span data-i18n="gh_privacy_c2">No Grafta server holds your values</span></li>
+          <li class="gh-fade-up"><span class="gh-check">✓</span><span data-i18n="gh_privacy_c3">Works offline</span></li>
+          <li class="gh-fade-up"><span class="gh-check">✓</span><span data-i18n="gh_privacy_c4">Export anytime, it's your file</span></li>
+          <li class="gh-fade-up"><span class="gh-check">✓</span><span data-i18n="gh_privacy_c5">Available in EN / RO / HU</span></li>
+        </ul>
+        <button type="button" class="gh-btn-coral gh-fade-up" style="margin-top:2rem;" data-i18n="gh_privacy_cta" onclick="document.getElementById('signinBtn').click()">Start for free</button>
+      </div>
+      <div class="gh-privacy-lock" aria-hidden="true">
+        <svg class="gh-lock-svg" id="ghLockSvg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path class="gh-lock-stroke" d="M60,120 L60,70 C60,35 140,35 140,70 L140,120" stroke="#A8D5C8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect class="gh-lock-stroke" x="28" y="118" width="144" height="112" rx="18" stroke="#A8D5C8" stroke-width="10" stroke-linecap="round"/>
+          <circle class="gh-lock-stroke" cx="100" cy="168" r="18" stroke="#E8927C" stroke-width="8"/>
+          <line class="gh-lock-stroke" x1="100" y1="186" x2="100" y2="208" stroke="#E8927C" stroke-width="8" stroke-linecap="round"/>
+        </svg>
       </div>
     </div>
   </section>
 
-  <!-- Analytics transparency -->
-  <section class="lp-section">
-    <div class="lp-section-inner">
-      <h2 data-i18n="lp_analytics_title">Honest about analytics</h2>
-      <p data-i18n="lp_analytics_p1">To improve Grafta, we track how the app is used — which features you open, which buttons you tap. Not what you log. Your medication names, lab values, and notes are never sent anywhere.</p>
-      <p data-i18n="lp_analytics_p2">You'll be asked for your consent before any tracking begins. If you decline, the app works exactly the same way. The tracking helps us understand what's useful and secure funding to keep building.</p>
+  <!-- ANALYTICS TRANSPARENCY -->
+  <section class="gh-analytics-section" id="analytics">
+    <div class="gh-container">
+      <h2 class="gh-section-headline gh-dark gh-fade-up" data-i18n-html="gh_analytics_headline">Radical transparency<br>on analytics.</h2>
+      <p class="gh-section-sub gh-dark gh-fade-up" data-i18n="gh_analytics_sub">We use minimal, cookieless analytics — and we'll tell you exactly what that means.</p>
+      <div class="gh-analytics-grid">
+        <div class="gh-analytics-col gh-left">
+          <div class="gh-analytics-header gh-we-track" data-i18n="gh_we_track">WE TRACK:</div>
+          <ul class="gh-analytics-list">
+            <li><span class="gh-mono-mark gh-ok">✓</span><span data-i18n="gh_track_1">Button clicks</span></li>
+            <li><span class="gh-mono-mark gh-ok">✓</span><span data-i18n="gh_track_2">Feature opens</span></li>
+            <li><span class="gh-mono-mark gh-ok">✓</span><span data-i18n="gh_track_3">Page views</span></li>
+            <li><span class="gh-mono-mark gh-ok">✓</span><span data-i18n="gh_track_4">Session duration</span></li>
+            <li><span class="gh-mono-mark gh-ok">✓</span><span data-i18n="gh_track_5">Error events</span></li>
+          </ul>
+        </div>
+        <div class="gh-analytics-col gh-right">
+          <div class="gh-analytics-header gh-we-never" data-i18n="gh_we_never">WE NEVER SEE:</div>
+          <ul class="gh-analytics-list">
+            <li><span class="gh-mono-mark gh-no">✕</span><span data-i18n="gh_never_1">Your creatinine</span></li>
+            <li><span class="gh-mono-mark gh-no">✕</span><span data-i18n="gh_never_2">Your doses</span></li>
+            <li><span class="gh-mono-mark gh-no">✕</span><span data-i18n="gh_never_3">Your notes</span></li>
+            <li><span class="gh-mono-mark gh-no">✕</span><span data-i18n="gh_never_4">Your weight</span></li>
+            <li><span class="gh-mono-mark gh-no">✕</span><span data-i18n="gh_never_5">Any health value</span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="gh-analytics-consent gh-fade-up" data-i18n-html="gh_analytics_consent">Analytics are powered by <strong>Umami</strong> — open source, self-hosted, GDPR-compliant by design. No cookies. No cross-site tracking. No selling your behavior. You can opt out in settings at any time.</p>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="lp-section lp-cta-section">
-    <div class="lp-section-inner lp-centered">
-      <h2 data-i18n="lp_cta_title">Start tracking in under a minute.</h2>
-      <p data-i18n="lp_cta_p">Sign in with Google and your tracking spreadsheet is created automatically in your Drive.</p>
-      <button class="lp-signin-btn lp-signin-btn--light" data-i18n="signin_btn" onclick="document.getElementById('signinBtn').click()">Sign in with Google</button>
-      <p class="lp-signin-note" data-i18n="lp_cta_note">Free to use. No account needed beyond Google.</p>
+  <!-- CTA BAND -->
+  <section class="gh-cta-band" id="cta">
+    <div class="gh-container gh-cta-inner">
+      <h2 class="gh-cta-headline gh-fade-up" data-i18n-html="gh_cta_headline">Start tracking<br><em>in under a minute.</em></h2>
+      <p class="gh-cta-sub gh-fade-up" data-i18n="gh_cta_sub">Connect your Google account. We create a private spreadsheet in your Drive. You own it forever.</p>
+      <button type="button" class="gh-btn-coral gh-fade-up" onclick="document.getElementById('signinBtn').click()">
+        <svg class="gh-google-icon" width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
+        <span data-i18n="gh_cta_btn">Sign in with Google — it's free</span>
+      </button>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="lp-footer">
-    <p data-i18n="lp_footer">Built for transplant recipients.</p>
+  <!-- FOOTER -->
+  <footer class="gh-footer">
+    <span class="gh-footer-left" data-i18n="gh_footer_left">Built for transplant recipients.</span>
+    <span class="gh-footer-right">grafta.health</span>
   </footer>
 
 </div>
@@ -259,6 +373,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
         integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC"
         crossorigin="anonymous"></script>
+<!-- GSAP (landing animations) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="js/landing.js"></script>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>
