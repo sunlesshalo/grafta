@@ -152,9 +152,12 @@ async function onSignedIn() {
     renderLabs();
     hideLoading();
 
-    // Background sync from sheet
+    // Background sync from sheet — only re-render if data changed
+    const _localSnapshot = JSON.stringify(getState(_viewingDate));
     syncAndMerge(_viewingDate).then(merged => {
-      renderDay(_viewingDate, _isToday);
+      if (JSON.stringify(merged) !== _localSnapshot) {
+        renderDay(_viewingDate, _isToday);
+      }
       setSyncStatus('ok');
     });
 

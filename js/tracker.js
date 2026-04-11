@@ -129,7 +129,7 @@ async function renderMeds() {
 
   let html = `<div class="col-title">${t('vitals_title')}</div>`;
   html += renderVitals(s);
-  html += `<div class="col-title col-title-meds">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" onclick="window._tracker.expandAll()">${t('expand_all')}</button><span style="font-weight:400;color:#999">${doneMeds}/${totalMeds}</span></span></div>`;
+  html += `<div class="col-title col-title-meds">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" onclick="window._tracker.expandAll()">${t('expand_all')}</button><span class="meds-count">${doneMeds}/${totalMeds}</span></span></div>`;
 
   if (allMeds.length === 0) {
     html += `<div style="padding:24px 0;text-align:center;color:#999;font-size:13px">
@@ -413,12 +413,7 @@ function renderFluidCol(type, elId, title, target) {
   html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" onclick="window._tracker.addCustomFluid('${type}')">+ ml</button>`;
   html += `</div>`;
 
-  html += `<div class="log-scroll">
-    <div class="log-header">
-      <span class="log-header-dot"></span>
-      <span class="log-header-label">TODAY'S LOG</span>
-      <span class="log-header-count">${entries.length} entries</span>
-    </div>`;
+  html += `<div class="log-scroll">`;
   entries.slice().reverse().forEach((entry, ri) => {
     const idx = entries.length - 1 - ri;
     html += `<div class="log-entry" onclick="window._tracker.editFluid('${type}',${idx})" title="${escapeHtml(t('tip_edit_fluid'))}">

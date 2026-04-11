@@ -306,7 +306,10 @@ body {
 
 /* ── Loading overlay ── */
 .loading-overlay {
-  display: flex; align-items: center; justify-content: center; padding: 48px 0;
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface);
+  z-index: 100;
 }
 .loading-overlay.hidden { display: none; }
 
@@ -410,8 +413,8 @@ body {
 }
 
 #colMeds  { grid-area: meds; }
-#colWater { grid-area: water; }
-#colUrine { grid-area: urine; }
+#colWater { grid-area: water; height: 55vh; display: flex; flex-direction: column; overflow: hidden; }
+#colUrine { grid-area: urine; height: 55vh; display: flex; flex-direction: column; overflow: hidden; }
 #colNotes { grid-area: notes; }
 #colLabs  { grid-area: labs; }
 
@@ -505,7 +508,7 @@ body {
 }
 .vital-ok-btn:active { background: var(--brand-green-dark); }
 
-.vital-locked { font-size: 11px; color: var(--brand-muted); }
+.vital-locked { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--brand-muted); }
 .vital-locked.alert { color: var(--status-error); font-weight: 600; }
 
 .log-del {
@@ -554,8 +557,10 @@ body {
 .time-group.all-done > .time-label { color: var(--brand-muted); }
 .time-group.collapsed > .time-label { opacity: 0.65; }
 .time-group-body { padding: 0 2px; }
+
+.meds-count { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 400; color: var(--brand-muted); }
 .time-group.collapsed .time-group-body { display: none; }
-.time-progress { font-size: 10px; font-weight: 600; color: var(--brand-border); }
+.time-progress { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 600; color: var(--brand-border); }
 .time-progress.done { color: var(--status-ok); }
 
 /* Time-of-day accent — brand-adjacent palette */
@@ -566,7 +571,7 @@ body {
 .med {
   display: flex; align-items: baseline; gap: 4px;
   padding: 1px 0; cursor: pointer;
-  font-size: 12px; line-height: 1.3;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; line-height: 1.3;
 }
 .med .box {
   width: 14px; height: 14px;
@@ -638,11 +643,11 @@ body {
 .log-scroll {
   border: 1px solid var(--brand-border);
   border-radius: 12px;
-  overflow: hidden;
-  max-height: 220px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   margin-top: 6px;
+  flex: 1;
+  min-height: 0;
 }
 
 /* Tinted header row — mirrors .ticker-header */
