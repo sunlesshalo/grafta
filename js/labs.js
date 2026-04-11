@@ -74,7 +74,12 @@ export async function renderLabs() {
   if (_labs.length === 0) {
     html += `<p style="color:#999;font-size:12px;padding:8px 0">${t('labs_no_results')}</p>`;
   } else {
-    html += `<div class="log-scroll">`;
+    html += `<div class="log-scroll">
+      <div class="log-header">
+        <span class="log-header-dot"></span>
+        <span class="log-header-label">LAB RESULTS</span>
+        <span class="log-header-count">${_labs.length} entries</span>
+      </div>`;
     _labs.forEach(lab => {
       const safeDate = escapeHtml(lab.date);
       html += `

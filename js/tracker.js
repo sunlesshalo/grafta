@@ -413,7 +413,12 @@ function renderFluidCol(type, elId, title, target) {
   html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" onclick="window._tracker.addCustomFluid('${type}')">+ ml</button>`;
   html += `</div>`;
 
-  html += `<div class="log-scroll">`;
+  html += `<div class="log-scroll">
+    <div class="log-header">
+      <span class="log-header-dot"></span>
+      <span class="log-header-label">TODAY'S LOG</span>
+      <span class="log-header-count">${entries.length} entries</span>
+    </div>`;
   entries.slice().reverse().forEach((entry, ri) => {
     const idx = entries.length - 1 - ri;
     html += `<div class="log-entry" onclick="window._tracker.editFluid('${type}',${idx})" title="${escapeHtml(t('tip_edit_fluid'))}">
