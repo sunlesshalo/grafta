@@ -229,6 +229,7 @@
   function initSectionFades() {
     const targets = document.querySelectorAll(
       '#viewSignin .gh-track-section .gh-fade-up, ' +
+      '#viewSignin .gh-features-section .gh-fade-up, ' +
       '#viewSignin .gh-analytics-section .gh-fade-up, ' +
       '#viewSignin .gh-faq-section .gh-fade-up, ' +
       '#viewSignin .gh-about-section .gh-fade-up, ' +
