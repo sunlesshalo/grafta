@@ -7,24 +7,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#ffffff">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net https://analytics.pinelines.eu; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https://accounts.google.com https://www.googleapis.com https://sheets.googleapis.com https://oauth2.googleapis.com https://apis.google.com https://analytics.pinelines.eu https://cdn.jsdelivr.net https://www.google.com; img-src 'self' data: https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://accounts.google.com https://*.googleapis.com https://*.googleusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self';">
-  <script>
-    // First-paint <html lang> — runtime updates still come from js/i18n.js setLang().
-    (function () {
-      try {
-        var supported = ['en', 'ro', 'hu'];
-        var stored = localStorage.getItem('mt_lang');
-        if (supported.indexOf(stored) !== -1) {
-          document.documentElement.lang = stored;
-          return;
-        }
-        var nav = (navigator.language || 'en').slice(0, 2).toLowerCase();
-        if (supported.indexOf(nav) !== -1) {
-          document.documentElement.lang = nav;
-        }
-      } catch (e) { /* localStorage disabled — leave default lang="en" */ }
-    })();
-  </script>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://accounts.google.com https://apis.google.com https://cdn.jsdelivr.net https://analytics.pinelines.eu; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https://accounts.google.com https://www.googleapis.com https://sheets.googleapis.com https://oauth2.googleapis.com https://apis.google.com https://analytics.pinelines.eu https://cdn.jsdelivr.net https://www.google.com; img-src 'self' data: https://*.googleusercontent.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://accounts.google.com https://*.googleapis.com https://*.googleusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+  <script src="js/early-lang.js"></script>
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -42,12 +26,12 @@
   <nav class="gh-nav">
     <a class="gh-nav-logo" href="#hero">grafta</a>
     <div class="gh-nav-right">
-      <select id="langSelectSignin" class="gh-lang-select" onchange="_app.setLang(this.value)" aria-label="Language">
+      <select id="langSelectSignin" class="gh-lang-select" aria-label="Language">
         <option value="en">EN</option>
         <option value="ro">RO</option>
         <option value="hu">HU</option>
       </select>
-      <button type="button" class="gh-nav-cta" data-i18n="signin_btn" onclick="document.getElementById('signinBtn').click()">Sign in with Google</button>
+      <button type="button" class="gh-nav-cta js-signin" data-i18n="signin_btn">Sign in with Google</button>
     </div>
   </nav>
 
@@ -67,7 +51,7 @@
         <p class="gh-hero-eyebrow gh-fade-up" data-i18n="gh_hero_eyebrow">Post-transplant health, simplified.</p>
         <h1 class="gh-hero-headline gh-fade-up" data-i18n-html="gh_hero_headline">Your labs.<br><em>Your story.</em></h1>
         <p class="gh-hero-sub gh-fade-up" data-i18n="gh_hero_sub">Track medications, lab results, and vitals — all stored in your own Google Drive. Private by design, built for transplant recipients.</p>
-        <button type="button" class="gh-btn-coral gh-fade-up" onclick="document.getElementById('signinBtn').click()">
+        <button type="button" class="gh-btn-coral gh-fade-up js-signin">
           <svg class="gh-google-icon" width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
           <span data-i18n="signin_btn">Sign in with Google</span>
         </button>
@@ -188,7 +172,7 @@
           <li class="gh-fade-up"><span class="gh-check">✓</span><span data-i18n="gh_privacy_c4">Export anytime, it's your file</span></li>
           <li class="gh-fade-up"><span class="gh-check">✓</span><span data-i18n="gh_privacy_c5">Available in EN / RO / HU</span></li>
         </ul>
-        <button type="button" class="gh-btn-coral gh-fade-up" style="margin-top:2rem;" data-i18n="gh_privacy_cta" onclick="document.getElementById('signinBtn').click()">Start for free</button>
+        <button type="button" class="gh-btn-coral gh-fade-up js-signin" style="margin-top:2rem;" data-i18n="gh_privacy_cta">Start for free</button>
       </div>
       <div class="gh-privacy-lock" aria-hidden="true">
         <svg class="gh-lock-svg" id="ghLockSvg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" fill="none">
@@ -237,7 +221,7 @@
     <div class="gh-container gh-cta-inner">
       <h2 class="gh-cta-headline gh-fade-up" data-i18n-html="gh_cta_headline">Start tracking<br><em>in under a minute.</em></h2>
       <p class="gh-cta-sub gh-fade-up" data-i18n="gh_cta_sub">Connect your Google account. We create a private spreadsheet in your Drive. You own it forever.</p>
-      <button type="button" class="gh-btn-coral gh-fade-up" onclick="document.getElementById('signinBtn').click()">
+      <button type="button" class="gh-btn-coral gh-fade-up js-signin">
         <svg class="gh-google-icon" width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>
         <span data-i18n="gh_cta_btn">Sign in with Google — it's free</span>
       </button>
@@ -275,21 +259,21 @@
 <div id="viewTracker" class="view hidden">
 
   <div class="day-nav" id="dayNav">
-    <button id="prevBtn" onclick="_app.prevDay()" aria-label="Previous day"><span aria-hidden="true">&larr;</span></button>
+    <button id="prevBtn" aria-label="Previous day"><span aria-hidden="true">&larr;</span></button>
     <div class="day-label" id="dayLabel">
       <span class="sync-dot" id="syncDot"></span>
     </div>
     <div class="day-nav-right">
-      <button id="nextBtn" onclick="_app.nextDay()" aria-label="Next day"><span aria-hidden="true">&rarr;</span></button>
-      <button id="editorBtn" class="gear-btn" onclick="_app.openEditor()" title="Edit med schedule" aria-label="Edit medication schedule"><span aria-hidden="true">&#9881;</span></button>
-      <button id="chartsBtn" class="gear-btn" onclick="_app.openCharts()" title="Charts" aria-label="Open charts"><span aria-hidden="true">&#128202;</span></button>
-      <button id="reportsBtn" class="gear-btn" onclick="_app.openReports()" title="Reports" aria-label="Open reports"><span aria-hidden="true">&#128203;</span></button>
-      <select id="langSelect" class="lang-select" onchange="_app.setLang(this.value)" aria-label="Language">
+      <button id="nextBtn" aria-label="Next day"><span aria-hidden="true">&rarr;</span></button>
+      <button id="editorBtn" class="gear-btn" title="Edit med schedule" aria-label="Edit medication schedule"><span aria-hidden="true">&#9881;</span></button>
+      <button id="chartsBtn" class="gear-btn" title="Charts" aria-label="Open charts"><span aria-hidden="true">&#128202;</span></button>
+      <button id="reportsBtn" class="gear-btn" title="Reports" aria-label="Open reports"><span aria-hidden="true">&#128203;</span></button>
+      <select id="langSelect" class="lang-select" aria-label="Language">
         <option value="en">EN</option>
         <option value="ro">RO</option>
         <option value="hu">HU</option>
       </select>
-      <button id="signoutBtn" class="gear-btn" onclick="_app.signOut()" title="Sign out">Sign out</button>
+      <button id="signoutBtn" class="gear-btn" title="Sign out">Sign out</button>
     </div>
   </div>
 
@@ -318,15 +302,15 @@
 <!-- ── Med editor overlay ── -->
 <div id="viewEditor" class="view view-editor hidden">
   <div class="editor-bar">
-    <button class="editor-back" onclick="_app.closeEditor()" aria-label="Back">← Back</button>
+    <button class="editor-back" id="editorBackBtn" aria-label="Back">← Back</button>
     <span class="editor-title">Med Schedule</span>
     <div class="editor-bar-actions">
-      <select id="langSelectEditor" class="lang-select" onchange="_app.setLang(this.value)" aria-label="Language">
+      <select id="langSelectEditor" class="lang-select" aria-label="Language">
         <option value="en">EN</option>
         <option value="ro">RO</option>
         <option value="hu">HU</option>
       </select>
-      <button class="editor-save" id="editorSaveBtn" onclick="_editor.save()">Save</button>
+      <button class="editor-save" id="editorSaveBtn">Save</button>
     </div>
   </div>
   <div id="editorBody" class="editor-body"></div>
@@ -335,7 +319,7 @@
 <!-- ── Charts overlay ── -->
 <div id="viewCharts" class="view view-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="chartsTitleEl">
   <div class="overlay-bar">
-    <button class="overlay-back" onclick="_app.closeCharts()" aria-label="Back"><span aria-hidden="true">← </span>Back</button>
+    <button class="overlay-back" id="chartsBackBtn" aria-label="Back"><span aria-hidden="true">← </span>Back</button>
     <span class="overlay-title" id="chartsTitleEl" tabindex="-1">Charts</span>
     <div></div>
   </div>
@@ -352,9 +336,9 @@
 <!-- ── Reports overlay ── -->
 <div id="viewReports" class="view view-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reportsTitleEl">
   <div class="overlay-bar">
-    <button class="overlay-back" onclick="_app.closeReports()"><span aria-hidden="true">← </span>Back</button>
+    <button class="overlay-back" id="reportsBackBtn"><span aria-hidden="true">← </span>Back</button>
     <span class="overlay-title" id="reportsTitleEl" tabindex="-1">Reports</span>
-    <button id="reportPrintBtn" class="overlay-action hidden" onclick="_reports.print()">Print / PDF</button>
+    <button id="reportPrintBtn" class="overlay-action hidden">Print / PDF</button>
   </div>
   <div class="reports-controls">
     <select id="reportPeriod">
@@ -373,7 +357,7 @@
       <option value="ro">Română</option>
       <option value="hu">Magyar</option>
     </select>
-    <button id="reportGenerateBtn" onclick="_reports.generate()">Generate Report</button>
+    <button id="reportGenerateBtn">Generate Report</button>
   </div>
   <div id="reportBody" class="report-body"></div>
 </div>

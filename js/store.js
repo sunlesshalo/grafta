@@ -91,7 +91,7 @@ async function flushSync() {
       setSyncStatus('fail');
       track('sync_fail');
       addToPending(date, state);
-      if (window._showError) window._showError('Sync failed — saved locally, will retry');
+      document.dispatchEvent(new CustomEvent('grafta:error', { detail: 'Sync failed — saved locally, will retry' }));
     }
   }
 

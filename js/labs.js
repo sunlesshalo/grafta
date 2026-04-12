@@ -7,6 +7,20 @@ import { escapeHtml } from './util.js';
 
 let _labs = []; // [{ date, creatinine, tacrolimus, notes }]
 let _loaded = false;
+let _delegationBound = false;
+
+export function initLabs() {
+  if (_delegationBound) return;
+  _delegationBound = true;
+  const el = document.getElementById('colLabs');
+  if (!el) return;
+  el.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    if (btn.dataset.action === 'addLab') addLab();
+    if (btn.dataset.action === 'deleteLab') deleteLab(btn.dataset.date);
+  });
+}
 
 // ── Load ──────────────────────────────────────────────────────────────────────
 
@@ -63,7 +77,7 @@ export async function renderLabs() {
         <input class="labs-input date-input" type="text" id="labNotes" placeholder="${escapeHtml(t('labs_notes_ph'))}" style="width:100%" aria-label="${escapeHtml(t('a11y_lab_notes'))}">
       </div>
       <div class="labs-form-row">
-        <button class="labs-add-btn" onclick="window._labs.addLab()">${t('labs_add')}</button>
+        <button class="labs-add-btn" data-action="addLab">${t('labs_add')}</button>
       </div>
     </div>`;
 
@@ -86,7 +100,7 @@ export async function renderLabs() {
             ${lab.tacrolimus ? `FK: <strong>${escapeHtml(lab.tacrolimus)}</strong>` : ''}
           </span>
           <span class="labs-entry-notes">${escapeHtml(lab.notes)}</span>
-          <button class="log-del" title="${escapeHtml(t('tip_del'))}" aria-label="${escapeHtml(t('tip_del'))}" onclick="window._labs.deleteLab('${safeDate}')"><span aria-hidden="true">×</span></button>
+          <button class="log-del" title="${escapeHtml(t('tip_del'))}" aria-label="${escapeHtml(t('tip_del'))}" data-action="deleteLab" data-date="${safeDate}"><span aria-hidden="true">×</span></button>
         </div>`;
     });
     html += `</div>`;

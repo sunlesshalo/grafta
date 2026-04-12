@@ -10,23 +10,58 @@ let _viewingDate  = null;
 let _isToday      = false;
 let _settings     = { water_target: 3000, day_start_hour: 5, bp_times: 2 };
 let _onOpenEditor = null;
-let _onOpenLabs   = null;
+let _onNewDay     = null;
 let _waterLabel   = 'drink_water'; // i18n key for selected drink type
 
 const DRINK_TYPES = ['drink_water','drink_coffee','drink_tea','drink_juice','drink_soup','drink_other'];
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
-export function initTracker({ settings, onOpenEditor }) {
+export function initTracker({ settings, onOpenEditor, onNewDay }) {
   _settings     = settings;
   _onOpenEditor = onOpenEditor;
+  _onNewDay     = onNewDay;
   bindMobTabs();
+  bindDelegation();
 }
 
 export function renderDay(dateKey, isToday) {
   _viewingDate = dateKey;
   _isToday     = isToday;
   renderAll();
+}
+
+// ── Event delegation ─────────────────────────────────────────────────────────
+
+function bindDelegation() {
+  const view = document.getElementById('viewTracker');
+  if (!view) return;
+
+  view.addEventListener('click', e => {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const action = el.dataset.action;
+    switch (action) {
+      case 'expandAll':      expandAll(); break;
+      case 'openEditor':     _onOpenEditor && _onOpenEditor(); break;
+      case 'toggleTimeGroup': toggleTimeGroup(el.dataset.bi); break;
+      case 'toggleMed':      toggleMed(el.dataset.id); break;
+      case 'resetDay':       resetDay(); break;
+      case 'newDay':         _onNewDay && _onNewDay(); break;
+      case 'clearVital':     clearVital(el.dataset.key, el.dataset.type); break;
+      case 'saveVital':      saveVital(el.dataset.key, el.dataset.type); break;
+      case 'setFluidLabel':  setFluidLabel(el.dataset.key); break;
+      case 'addFluid':       addFluid(el.dataset.type, Number(el.dataset.ml)); break;
+      case 'addCustomFluid': addCustomFluid(el.dataset.type); break;
+      case 'editFluid':      editFluid(el.dataset.type, Number(el.dataset.idx)); break;
+      case 'delFluid':       e.stopPropagation(); delFluid(el.dataset.type, Number(el.dataset.idx)); break;
+    }
+  });
+
+  // Notes textarea — delegated input
+  view.addEventListener('input', e => {
+    if (e.target.id === 'dayNotes') saveNotes(e.target.value);
+  });
 }
 
 // ── Mobile tabs ───────────────────────────────────────────────────────────────
@@ -129,12 +164,12 @@ async function renderMeds() {
 
   let html = `<div class="col-title">${t('vitals_title')}</div>`;
   html += renderVitals(s);
-  html += `<div class="col-title col-title-meds">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" onclick="window._tracker.expandAll()">${t('expand_all')}</button><span class="meds-count">${doneMeds}/${totalMeds}</span></span></div>`;
+  html += `<div class="col-title col-title-meds">${t('meds_title')} <span style="float:right;display:flex;align-items:center;gap:8px"><button class="expand-all-btn" data-action="expandAll">${t('expand_all')}</button><span class="meds-count">${doneMeds}/${totalMeds}</span></span></div>`;
 
   if (allMeds.length === 0) {
     html += `<div style="padding:24px 0;text-align:center;color:#999;font-size:13px">
       ${t('no_meds_yet')}<br>
-      <button onclick="window._app.openEditor()" style="margin-top:12px;background:#000;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">${t('setup_schedule')}</button>
+      <button data-action="openEditor" style="margin-top:12px;background:#000;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer">${t('setup_schedule')}</button>
     </div>`;
     el.innerHTML = html;
     return;
@@ -163,7 +198,7 @@ async function renderMeds() {
     const collapsed = (allDone && !isCurrent) ? ' collapsed' : '';
 
     html += `<div class="time-group${isCurrent ? ' current' : ''}${allDone ? ' all-done' : ''}${timeColorClass}${collapsed}" id="tg-${bi}">`;
-    html += `<div class="time-label" onclick="window._tracker.toggleTimeGroup('${bi}')">
+    html += `<div class="time-label" data-action="toggleTimeGroup" data-bi="${bi}">
       <span>${block.time}</span>
       <span class="time-progress${allDone ? ' done' : ''}">${doneCnt}/${activeMeds.length}${allDone ? ' ✓' : ''}</span>
     </div>`;
@@ -180,8 +215,8 @@ async function renderMeds() {
       if (cond && condMet)  cls += ' conditional-active';
 
       const safeId = escapeHtml(med.id);
-      const clickHandler = inactive ? '' : `onclick="window._tracker.toggleMed('${safeId}')"`;
-      html += `<div class="${cls}" data-med-id="${safeId}" ${clickHandler}>`;
+      const actionAttr = inactive ? '' : `data-action="toggleMed" data-id="${safeId}"`;
+      html += `<div class="${cls}" data-med-id="${safeId}" ${actionAttr}>`;
       html += `<span class="box${on && !inactive ? ' on' : ''}"></span>`;
       html += `<span>${med.name ? escapeHtml(med.name) : `<em style="color:#999">${t('unnamed')}</em>`}`;
       if (med.dose) html += ` <span style="color:#666">${escapeHtml(med.dose)}</span>`;
@@ -194,22 +229,22 @@ async function renderMeds() {
   });
 
   html += `<div class="day-actions">`;
-  if (_isToday) html += `<button class="reset-btn" onclick="window._tracker.resetDay()" title="${t('tip_reset')}">${t('reset_today')}</button>`;
-  html += `<button class="new-day-btn" onclick="window._app.newDay()" title="${t('tip_new_day')}">${t('new_day')}</button>`;
+  if (_isToday) html += `<button class="reset-btn" data-action="resetDay" title="${t('tip_reset')}">${t('reset_today')}</button>`;
+  html += `<button class="new-day-btn" data-action="newDay" title="${t('tip_new_day')}">${t('new_day')}</button>`;
   html += `</div>`;
   el.innerHTML = html;
 }
 
-export function toggleTimeGroup(bi) {
+function toggleTimeGroup(bi) {
   const el = document.getElementById(`tg-${bi}`);
   if (el) el.classList.toggle('collapsed');
 }
 
-export function expandAll() {
+function expandAll() {
   document.querySelectorAll('.time-group.collapsed').forEach(el => el.classList.remove('collapsed'));
 }
 
-export function toggleMed(medId) {
+function toggleMed(medId) {
   const s = state();
   s.checked[medId] = !s.checked[medId];
   save(s);
@@ -221,7 +256,7 @@ export function toggleMed(medId) {
   renderMeds();
 }
 
-export function resetDay() {
+function resetDay() {
   if (confirm(t('reset_confirm'))) {
     track('day_reset');
     const s = { ...getState(_viewingDate) };
@@ -265,7 +300,7 @@ function vitalsRow(label, key, value, type) {
       ? `${value.value}°C`
       : `${value.value} kg`;
     const alertCls = (type === 'bp' && bpHigh(value)) || (type === 'temp' && value.value >= 37.5) ? ' alert' : '';
-    html += `<span class="vital-locked${alertCls}" title="${t(tipKey)}">${display} <button class="log-del" title="${t('tip_del')}" aria-label="${escapeHtml(t('tip_del'))}" onclick="window._tracker.clearVital('${key}','${type}')"><span aria-hidden="true">×</span></button></span>`;
+    html += `<span class="vital-locked${alertCls}" title="${t(tipKey)}">${display} <button class="log-del" title="${t('tip_del')}" aria-label="${escapeHtml(t('tip_del'))}" data-action="clearVital" data-key="${key}" data-type="${type}"><span aria-hidden="true">×</span></button></span>`;
   } else if (type === 'bp') {
     const slot = String(key) === '0' ? 'am' : 'pm';
     const ariaSys   = escapeHtml(t(`a11y_bp_sys_${slot}`));
@@ -275,7 +310,7 @@ function vitalsRow(label, key, value, type) {
     html += `<span class="vital-slash" aria-hidden="true">/</span>`;
     html += `<input class="vital-input" id="bp${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px" title="${t('tip_bp')}" aria-label="${ariaDia}">`;
     html += `<input class="vital-input" id="bp${key}Pulse" type="number" inputmode="numeric" placeholder="♥" style="width:36px" title="${t('tip_pulse')}" aria-label="${ariaPulse}">`;
-    html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','bp')">${t('ok_btn')}</button>`;
+    html += `<button class="vital-ok-btn" data-action="saveVital" data-key="${key}" data-type="bp">${t('ok_btn')}</button>`;
   } else {
     const ph    = type === 'weight' ? 'kg'  : '°C';
     const step  = type === 'weight' ? '0.1' : '0.1';
@@ -283,7 +318,7 @@ function vitalsRow(label, key, value, type) {
     const ariaKey = type === 'weight' ? 'a11y_weight' : 'a11y_temperature';
     const ariaLabel = escapeHtml(t(ariaKey));
     html += `<input class="vital-input wide" id="${key}Val" type="number" inputmode="decimal" step="${step}" placeholder="${ph}" style="width:${width}" title="${t(tipKey)}" aria-label="${ariaLabel}">`;
-    html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','${type}')">${t('ok_btn')}</button>`;
+    html += `<button class="vital-ok-btn" data-action="saveVital" data-key="${key}" data-type="${type}">${t('ok_btn')}</button>`;
   }
 
   html += `</div>`;
@@ -292,8 +327,7 @@ function vitalsRow(label, key, value, type) {
 
 function renderNotes(s) {
   return `<div class="notes-box">
-    <textarea class="notes-input" id="dayNotes" placeholder="${escapeHtml(t('notes_ph'))}" aria-label="${escapeHtml(t('a11y_day_notes'))}"
-      oninput="window._tracker.saveNotes(this.value)">${escapeHtml(s.notes || '')}</textarea>
+    <textarea class="notes-input" id="dayNotes" placeholder="${escapeHtml(t('notes_ph'))}" aria-label="${escapeHtml(t('a11y_day_notes'))}">${escapeHtml(s.notes || '')}</textarea>
   </div>`;
 }
 
@@ -305,7 +339,7 @@ function renderNotesCol(s) {
   el.innerHTML = html;
 }
 
-export function saveVital(key, type) {
+function saveVital(key, type) {
   const s = state();
   if (type === 'bp') {
     const idx = parseInt(key, 10);
@@ -325,7 +359,7 @@ export function saveVital(key, type) {
   renderAll();
 }
 
-export function clearVital(key, type) {
+function clearVital(key, type) {
   const s = state();
   if (type === 'bp') {
     const idx = parseInt(key, 10);
@@ -339,7 +373,7 @@ export function clearVital(key, type) {
   renderAll();
 }
 
-export function saveNotes(value) {
+function saveNotes(value) {
   const s = state();
   s.notes = value;
   setState(_viewingDate, s); // save without triggering extra renders
@@ -407,26 +441,26 @@ function renderFluidCol(type, elId, title, target) {
     html += `<div class="fluid-type-row">`;
     DRINK_TYPES.forEach(key => {
       const active = _waterLabel === key ? ' active' : '';
-      html += `<button class="fluid-type-btn${active}" onclick="window._tracker.setFluidLabel('${key}')">${t(key)}</button>`;
+      html += `<button class="fluid-type-btn${active}" data-action="setFluidLabel" data-key="${key}">${t(key)}</button>`;
     });
     html += `</div>`;
   }
 
   html += `<div class="fluid-btns">`;
   [100, 150, 200, 250, 500].forEach(ml => {
-    html += `<button class="fluid-btn" onclick="window._tracker.addFluid('${type}',${ml})">+${ml}</button>`;
+    html += `<button class="fluid-btn" data-action="addFluid" data-type="${type}" data-ml="${ml}">+${ml}</button>`;
   });
-  html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" onclick="window._tracker.addCustomFluid('${type}')">+ ml</button>`;
+  html += `<button class="fluid-btn misc" title="${t('tip_custom_fluid')}" data-action="addCustomFluid" data-type="${type}">+ ml</button>`;
   html += `</div>`;
 
   html += `<div class="log-scroll">`;
   entries.slice().reverse().forEach((entry, ri) => {
     const idx = entries.length - 1 - ri;
-    html += `<div class="log-entry" onclick="window._tracker.editFluid('${type}',${idx})" title="${escapeHtml(t('tip_edit_fluid'))}">
+    html += `<div class="log-entry" data-action="editFluid" data-type="${type}" data-idx="${idx}" title="${escapeHtml(t('tip_edit_fluid'))}">
       <span class="log-time">${escapeHtml(entry.time || t('night'))}</span>
       ${entry.label ? `<span class="log-label">${escapeHtml(entry.label)}</span>` : ''}
       <span class="log-amount">${Number(entry.amount) || 0} ml</span>
-      <button class="log-del" title="${escapeHtml(t('tip_del'))}" aria-label="${escapeHtml(t('tip_del'))}" onclick="event.stopPropagation();window._tracker.delFluid('${type}',${idx})"><span aria-hidden="true">×</span></button>
+      <button class="log-del" title="${escapeHtml(t('tip_del'))}" aria-label="${escapeHtml(t('tip_del'))}" data-action="delFluid" data-type="${type}" data-idx="${idx}"><span aria-hidden="true">×</span></button>
     </div>`;
   });
   html += `</div>`;
@@ -434,12 +468,12 @@ function renderFluidCol(type, elId, title, target) {
   el.innerHTML = html;
 }
 
-export function setFluidLabel(key) {
+function setFluidLabel(key) {
   _waterLabel = key;
   renderFluidCol('water', 'colWater', t('fluids_title'), _settings.water_target);
 }
 
-export function addFluid(type, ml, method = 'quick') {
+function addFluid(type, ml, method = 'quick') {
   const s = state();
   if (!s[type]) s[type] = [];
   const entry = { amount: ml, time: isNight() ? null : nowTime() };
@@ -460,12 +494,12 @@ export function addFluid(type, ml, method = 'quick') {
   renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
 }
 
-export function addCustomFluid(type) {
+function addCustomFluid(type) {
   const val = prompt(t('fluid_ml_prompt'));
   if (val && !isNaN(val) && Number(val) > 0) addFluid(type, Number(val), 'custom');
 }
 
-export function delFluid(type, idx) {
+function delFluid(type, idx) {
   const s = state();
   s[type].splice(idx, 1);
   track('fluid_delete', { type });
@@ -474,7 +508,7 @@ export function delFluid(type, idx) {
   renderFluidCol('urine', 'colUrine', t('urine_title'),  null);
 }
 
-export function editFluid(type, idx) {
+function editFluid(type, idx) {
   const s = state();
   const entry = s[type]?.[idx];
   if (!entry) return;

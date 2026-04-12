@@ -5,66 +5,24 @@ import { getSpreadsheetId, getSettings, setSetting } from './sheets.js';
 import { getState, setState, retryPending, syncAndMerge, setSyncStatus, getCurrentConfigVersion } from './store.js';
 import { loadConfig, getCachedMeds, resolveScheduleForDate } from './schedule.js';
 import { initTracker, renderDay, renderAll as trackerRenderAll } from './tracker.js';
-import { openEditor, render as editorRender } from './editor.js';
-import { renderLabs } from './labs.js';
+import { openEditor, render as editorRender, save as editorSave } from './editor.js';
+import { initLabs, renderLabs } from './labs.js';
 import { initCharts, openCharts, setRange } from './charts.js';
 import { initReports, generate as generateReport, print as printReport } from './reports.js';
-import * as tracker from './tracker.js';
-import * as editor  from './editor.js';
-import * as labs    from './labs.js';
-import * as reports from './reports.js';
 import { t, tArr, setLang, getLang, applyStaticTranslations } from './i18n.js';
 import { initAnalytics, track, trackPageview, showConsentBanner, setConsent } from './analytics.js';
-
-// ── Expose globals for inline onclick handlers ────────────────────────────────
-window._tracker = tracker;
-window._editor  = editor;
-window._labs    = labs;
-window._reports = reports;
-window._app     = {
-  prevDay,
-  nextDay,
-  newDay,
-  openEditor: openEditorView,
-  closeEditor: closeEditorView,
-  openCharts:  openChartsView,
-  closeCharts: closeChartsView,
-  openReports: openReportsView,
-  closeReports: closeReportsView,
-  signOut: () => { track('auth_signout'); signOut(); showView('viewSignin'); trackPageview('/app/signin'); },
-  setLang: (lang) => {
-    const prev = getLang();
-    setLang(lang);
-    track('lang_change', { from: prev, to: lang });
-    // Update consent banner text if visible
-    const ct = document.getElementById('consentText');
-    if (ct) ct.textContent = t('consent_text');
-    const ca = document.getElementById('consentAccept');
-    if (ca) ca.textContent = t('consent_accept');
-    const cd = document.getElementById('consentDecline');
-    if (cd) cd.textContent = t('consent_decline');
-    updateDayLabel();
-    if (!document.getElementById('viewTracker').classList.contains('hidden')) {
-      trackerRenderAll();
-    }
-    if (!document.getElementById('viewEditor').classList.contains('hidden')) {
-      editorRender();
-    }
-    // Persist to Google Sheets in the background
-    getSpreadsheetId().then(id => setSetting(id, 'lang', lang)).catch(() => {});
-  },
-};
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let _settings    = { water_target: 3000, day_start_hour: 5, first_day: null, bp_times: 2 };
 let _viewingDate = null;
 let _isToday     = false;
+let _tipTimer    = null;
+let _errTimer    = null;
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
 applyStaticTranslations();
 showConsentBanner();
-// Apply consent banner translations
 const consentText = document.getElementById('consentText');
 const consentAcceptBtn = document.getElementById('consentAccept');
 const consentDeclineBtn = document.getElementById('consentDecline');
@@ -73,9 +31,57 @@ if (consentAcceptBtn) consentAcceptBtn.textContent = t('consent_accept');
 if (consentDeclineBtn) consentDeclineBtn.textContent = t('consent_decline');
 initAnalytics();
 
-// Consent banner buttons
+// ── Static element bindings ──────────────────────────────────────────────────
+
+// Consent
 document.getElementById('consentAccept')?.addEventListener('click', () => setConsent(true));
 document.getElementById('consentDecline')?.addEventListener('click', () => setConsent(false));
+
+// Auth
+document.getElementById('signinBtn')?.addEventListener('click', signIn);
+document.getElementById('reconnectBtn')?.addEventListener('click', reconnect);
+
+// Sign-in triggers (landing page CTA buttons)
+document.addEventListener('click', e => {
+  if (e.target.closest('.js-signin')) {
+    document.getElementById('signinBtn')?.click();
+  }
+});
+
+// Day navigation
+document.getElementById('prevBtn')?.addEventListener('click', prevDay);
+document.getElementById('nextBtn')?.addEventListener('click', nextDay);
+
+// Toolbar buttons
+document.getElementById('editorBtn')?.addEventListener('click', openEditorView);
+document.getElementById('chartsBtn')?.addEventListener('click', openChartsView);
+document.getElementById('reportsBtn')?.addEventListener('click', openReportsView);
+document.getElementById('signoutBtn')?.addEventListener('click', () => {
+  track('auth_signout'); signOut(); showView('viewSignin'); trackPageview('/app/signin');
+});
+
+// Editor bar
+document.getElementById('editorBackBtn')?.addEventListener('click', closeEditorView);
+document.getElementById('editorSaveBtn')?.addEventListener('click', () => editorSave());
+
+// Charts overlay
+document.getElementById('chartsBackBtn')?.addEventListener('click', closeChartsView);
+document.getElementById('chartsRangeBar')?.addEventListener('click', e => {
+  const btn = e.target.closest('.range-btn');
+  if (btn) setRange(parseInt(btn.dataset.days));
+});
+
+// Reports overlay
+document.getElementById('reportsBackBtn')?.addEventListener('click', closeReportsView);
+document.getElementById('reportGenerateBtn')?.addEventListener('click', () => generateReport());
+document.getElementById('reportPrintBtn')?.addEventListener('click', () => printReport());
+
+// Language selects
+['langSelect', 'langSelectSignin', 'langSelectEditor'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', e => appSetLang(e.target.value));
+});
+
+// ── Auth flow ─────────────────────────────────────────────────────────────────
 
 initAuth(async (signedIn) => {
   if (signedIn) {
@@ -86,49 +92,33 @@ initAuth(async (signedIn) => {
   }
 });
 
-document.getElementById('signinBtn')?.addEventListener('click', signIn);
-document.getElementById('reconnectBtn')?.addEventListener('click', reconnect);
-
-// Range buttons in Charts view
-document.getElementById('chartsRangeBar')?.addEventListener('click', e => {
-  const btn = e.target.closest('.range-btn');
-  if (btn) setRange(parseInt(btn.dataset.days));
-});
-
-// ── Sign-in flow ──────────────────────────────────────────────────────────────
-
 async function onSignedIn() {
   showView('viewTracker');
   trackPageview('/app/tracker');
   setSyncStatus('saving');
 
   try {
-    // Ensure spreadsheet exists (creates on first login)
     const sheetId = await getSpreadsheetId();
-
-    // Load settings + schedule in parallel
     const [settings] = await Promise.all([
       getSettings(sheetId),
       loadConfig(),
     ]);
     _settings = { ...settings };
 
-    // Apply language from Sheets (overrides any local default)
     if (_settings.lang) {
       setLang(_settings.lang);
       applyStaticTranslations();
     }
 
-    // Sync settings to localStorage for editor quick access
     localStorage.setItem('mt_water_target', String(_settings.water_target));
     localStorage.setItem('mt_day_start',    String(_settings.day_start_hour));
     localStorage.setItem('mt_bp_times',     String(_settings.bp_times ?? 2));
     if (_settings.patient_name) localStorage.setItem('mt_patient_name', _settings.patient_name);
 
-    // Init tracker with settings
-    initTracker({ settings: _settings, onOpenEditor: openEditorView });
+    initTracker({ settings: _settings, onOpenEditor: openEditorView, onNewDay: newDay });
     initCharts(_settings);
     initReports();
+    initLabs();
 
     const medCount = getCachedMeds().length;
     const firstDay = _settings.first_day;
@@ -137,7 +127,6 @@ async function onSignedIn() {
       : 0;
     track('session_start', { has_meds: medCount > 0, med_count: medCount, days_since_first: daysSinceFirst });
 
-    // If no meds yet — go straight to editor
     if (medCount === 0) {
       setSyncStatus('ok');
       hideLoading();
@@ -152,7 +141,6 @@ async function onSignedIn() {
     renderLabs();
     hideLoading();
 
-    // Background sync from sheet — only re-render if data changed
     const _localSnapshot = JSON.stringify(getState(_viewingDate));
     syncAndMerge(_viewingDate).then(merged => {
       if (JSON.stringify(merged) !== _localSnapshot) {
@@ -167,8 +155,30 @@ async function onSignedIn() {
     console.error('onSignedIn error:', e);
     setSyncStatus('fail');
     hideLoading();
-    if (window._showError) window._showError(t('offline_banner'));
+    showError(t('offline_banner'));
   }
+}
+
+// ── Language ──────────────────────────────────────────────────────────────────
+
+function appSetLang(lang) {
+  const prev = getLang();
+  setLang(lang);
+  track('lang_change', { from: prev, to: lang });
+  const ct = document.getElementById('consentText');
+  if (ct) ct.textContent = t('consent_text');
+  const ca = document.getElementById('consentAccept');
+  if (ca) ca.textContent = t('consent_accept');
+  const cd = document.getElementById('consentDecline');
+  if (cd) cd.textContent = t('consent_decline');
+  updateDayLabel();
+  if (!document.getElementById('viewTracker').classList.contains('hidden')) {
+    trackerRenderAll();
+  }
+  if (!document.getElementById('viewEditor').classList.contains('hidden')) {
+    editorRender();
+  }
+  getSpreadsheetId().then(id => setSetting(id, 'lang', lang)).catch(() => {});
 }
 
 // ── Day navigation ────────────────────────────────────────────────────────────
@@ -195,14 +205,12 @@ function goToDate(dateKey) {
   _isToday     = dateKey === todayKey();
   updateDayLabel();
   renderDay(_viewingDate, _isToday);
-
-  // Background sync from sheet
   syncAndMerge(dateKey).then(() => {
     renderDay(_viewingDate, _isToday);
   });
 }
 
-export function prevDay() {
+function prevDay() {
   if (!_viewingDate || _viewingDate <= firstDay()) return;
   const next = shiftDate(_viewingDate, -1);
   const daysBack = Math.floor((Date.now() - new Date(next + 'T12:00:00').getTime()) / 86400000);
@@ -210,7 +218,7 @@ export function prevDay() {
   goToDate(next);
 }
 
-export function nextDay() {
+function nextDay() {
   if (!_viewingDate || _isToday) return;
   const next = shiftDate(_viewingDate, 1);
   const daysBack = Math.floor((Date.now() - new Date(next + 'T12:00:00').getTime()) / 86400000);
@@ -218,8 +226,7 @@ export function nextDay() {
   goToDate(next);
 }
 
-export function newDay() {
-  // Navigate to the real calendar date (ignoring day_start_hour)
+function newDay() {
   const realToday = new Date().toISOString().slice(0, 10);
   track('new_day', { from: _viewingDate, to: realToday });
   goToDate(realToday);
@@ -252,20 +259,17 @@ function openEditorView() {
   showView('viewEditor');
   trackPageview('/app/editor');
   track('editor_open', { med_count: getCachedMeds().length });
-  applyStaticTranslations(); // sync editor bar + lang select to current language
+  applyStaticTranslations();
   openEditor(async () => {
-    // Set viewing date if not set (first run — editor opened before tracker)
     if (!_viewingDate) {
       _viewingDate = todayKey();
       _isToday = true;
       updateDayLabel();
     }
-    // After save: stamp new config version on today only — never rewrite history
     const today = todayKey();
     const s = getState(today);
     s.config_version = getCurrentConfigVersion();
     setState(today, s);
-    // Re-render tracker
     closeEditorView();
   });
 }
@@ -278,7 +282,6 @@ function closeEditorView() {
 }
 
 // ── Dialog helpers (role=dialog overlays: Charts, Reports) ───────────────────
-// Focus management + Tab/Shift+Tab trap. Shared by Charts and Reports.
 
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 let _lastFocusedBeforeOverlay = null;
@@ -322,7 +325,7 @@ function closeDialog(returnToViewId) {
 // Global Escape: dismiss the active dialog overlay (Charts or Reports).
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
-  if (e.isComposing || e.keyCode === 229) return; // IME composition
+  if (e.isComposing || e.keyCode === 229) return;
   const charts  = document.getElementById('viewCharts');
   const reports = document.getElementById('viewReports');
   if (charts && !charts.classList.contains('hidden')) {
@@ -369,7 +372,6 @@ function applyReportsTranslations() {
     const current = periodSel.value;
     periodSel.innerHTML = opts.map(o => `<option value="${o.value}"${o.value === current ? ' selected' : ''}>${o.label}</option>`).join('');
   }
-  // Report language selector — default to app language
   const langSel = document.getElementById('reportLang');
   if (langSel) langSel.value = getLang();
 
@@ -381,7 +383,6 @@ function applyReportsTranslations() {
 
 // ── Labs ──────────────────────────────────────────────────────────────────────
 
-// Labs tab click triggers renderLabs lazily
 document.addEventListener('click', e => {
   const tab = e.target.closest('.mob-tab');
   if (tab && tab.dataset.tab === '3') renderLabs();
@@ -397,8 +398,8 @@ document.addEventListener('click', e => {
     e.stopPropagation();
     popup.textContent = t(icon.dataset.tipKey);
     popup.classList.remove('hidden');
-    clearTimeout(window._tipTimer);
-    window._tipTimer = setTimeout(() => popup.classList.add('hidden'), 4000);
+    clearTimeout(_tipTimer);
+    _tipTimer = setTimeout(() => popup.classList.add('hidden'), 4000);
   } else {
     popup.classList.add('hidden');
   }
@@ -419,7 +420,7 @@ function showWelcome() {
     <div style="text-align:center;padding:32px 16px">
       <h2 style="font-size:20px;margin-bottom:12px">${t('welcome_title')}</h2>
       <p style="color:#555;font-size:14px;line-height:1.5;margin-bottom:24px">${t('welcome_text')}</p>
-      <button onclick="window._app.openEditor()"
+      <button data-action="openEditor"
         style="background:#000;color:#fff;border:none;border-radius:6px;padding:12px 24px;font-size:15px;font-weight:700;cursor:pointer">${t('welcome_btn')}</button>
     </div>`;
 }
@@ -431,22 +432,22 @@ function showView(id) {
     const el = document.getElementById(v);
     if (el) el.classList.toggle('hidden', v !== id);
   });
-  if (id === 'viewSignin' && typeof window.__initGraftaLanding === 'function') {
-    window.__initGraftaLanding();
+  if (id === 'viewSignin') {
+    document.dispatchEvent(new Event('grafta:init-landing'));
   }
 }
 
-
 // ── Error toast ───────────────────────────────────────────────────────────────
 
-window._showError = function(msg) {
+function showError(msg) {
   const el = document.getElementById('errorToast');
   if (!el) return;
   el.textContent = msg;
   el.classList.remove('hidden');
-  clearTimeout(window._errTimer);
-  window._errTimer = setTimeout(() => el.classList.add('hidden'), 5000);
-};
+  clearTimeout(_errTimer);
+  _errTimer = setTimeout(() => el.classList.add('hidden'), 5000);
+}
+document.addEventListener('grafta:error', e => showError(e.detail));
 document.addEventListener('click', e => {
   if (e.target.id === 'errorToast') e.target.classList.add('hidden');
 });
@@ -463,7 +464,6 @@ function updateOnlineStatus() {
     if (text) text.textContent = t('offline_banner');
     banner.classList.remove('hidden');
   }
-  // Update sync dot
   if (!navigator.onLine) setSyncStatus('offline');
 }
 

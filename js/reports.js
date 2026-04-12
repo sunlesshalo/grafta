@@ -43,7 +43,7 @@ export async function generate() {
     document.getElementById('reportPrintBtn')?.classList.remove('hidden');
   } catch (e) {
     console.error('[reports] error:', e);
-    if (window._showError) window._showError(t('charts_load_error'));
+    document.dispatchEvent(new CustomEvent('grafta:error', { detail: t('charts_load_error') }));
     if (body) body.innerHTML = '';
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = t('reports_generate'); }

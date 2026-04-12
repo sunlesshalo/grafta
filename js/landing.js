@@ -1,7 +1,7 @@
 /* =====================================================
    GRAFTA — landing.js (hybrid design animations)
    Initialized lazily when #viewSignin becomes visible.
-   Exposes window.__initGraftaLanding() for app.js to call.
+   Listens for 'grafta:init-landing' custom event from app.js.
    ===================================================== */
 
 (function () {
@@ -335,7 +335,7 @@
   }
 
   // Expose for app.js to call after showView('viewSignin')
-  window.__initGraftaLanding = initAll;
+  document.addEventListener('grafta:init-landing', initAll);
 
   // Also try on DOMContentLoaded in case viewSignin is visible at boot
   if (document.readyState === 'loading') {
