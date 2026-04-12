@@ -277,29 +277,84 @@ function closeEditorView() {
   setSyncStatus('ok');
 }
 
+// ── Dialog helpers (role=dialog overlays: Charts, Reports) ───────────────────
+// Focus management + Tab/Shift+Tab trap. Shared by Charts and Reports.
+
+const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+let _lastFocusedBeforeOverlay = null;
+let _trapHandler = null;
+
+function openDialog(viewId, titleId) {
+  _lastFocusedBeforeOverlay = document.activeElement;
+  showView(viewId);
+  const dialog = document.getElementById(viewId);
+  const title  = document.getElementById(titleId);
+  if (title && typeof title.focus === 'function') title.focus();
+
+  _trapHandler = (e) => {
+    if (e.key !== 'Tab') return;
+    const focusables = Array.from(dialog.querySelectorAll(FOCUSABLE_SELECTOR))
+      .filter(el => !el.closest('.hidden') && el.offsetParent !== null);
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last  = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  };
+  document.addEventListener('keydown', _trapHandler);
+}
+
+function closeDialog(returnToViewId) {
+  if (_trapHandler) {
+    document.removeEventListener('keydown', _trapHandler);
+    _trapHandler = null;
+  }
+  showView(returnToViewId);
+  if (_lastFocusedBeforeOverlay && document.body.contains(_lastFocusedBeforeOverlay)) {
+    try { _lastFocusedBeforeOverlay.focus(); } catch (e) { /* element no longer focusable */ }
+  }
+  _lastFocusedBeforeOverlay = null;
+}
+
+// Global Escape: dismiss the active dialog overlay (Charts or Reports).
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (e.isComposing || e.keyCode === 229) return; // IME composition
+  const charts  = document.getElementById('viewCharts');
+  const reports = document.getElementById('viewReports');
+  if (charts && !charts.classList.contains('hidden')) {
+    closeChartsView();
+  } else if (reports && !reports.classList.contains('hidden')) {
+    closeReportsView();
+  }
+});
+
 // ── Charts ────────────────────────────────────────────────────────────────────
 
 function openChartsView() {
-  showView('viewCharts');
+  openDialog('viewCharts', 'chartsTitleEl');
   trackPageview('/app/charts');
   track('charts_open', { range: 7 });
   openCharts();
 }
 
 function closeChartsView() {
-  showView('viewTracker');
+  closeDialog('viewTracker');
 }
 
 // ── Reports ───────────────────────────────────────────────────────────────────
 
 function openReportsView() {
-  showView('viewReports');
+  openDialog('viewReports', 'reportsTitleEl');
   trackPageview('/app/reports');
   applyReportsTranslations();
 }
 
 function closeReportsView() {
-  showView('viewTracker');
+  closeDialog('viewTracker');
 }
 
 function applyReportsTranslations() {
