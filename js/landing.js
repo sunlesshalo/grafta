@@ -90,14 +90,14 @@
       { name: 'Tacrolimus',    value: '2 mg',       time: '08:00' },
       { name: 'BP',            value: '118/74',     time: '08:15' },
       { name: 'Creatinine',    value: '1.1 mg/dL',  time: '07:30' },
-      { name: 'eGFR',          value: '68 mL/min',  time: '07:30' },
+      { name: 'Temp',          value: '36.4 °C',    time: '07:30' },
       { name: 'Weight',        value: '74.2 kg',    time: '07:45' },
       { name: 'Mycophenolate', value: '500 mg',     time: '08:00' },
       { name: 'Prednisolone',  value: '5 mg',       time: '08:00' },
       { name: 'BP',            value: '121/76',     time: '20:10' },
       { name: 'Tacrolimus',    value: '2 mg',       time: '20:00' },
-      { name: 'Hemoglobin',    value: '13.4 g/dL',  time: '07:30' },
-      { name: 'Potassium',     value: '4.2 mmol/L', time: '07:30' },
+      { name: 'Water',         value: '200 ml',     time: '09:15' },
+      { name: 'Tacrolimus',    value: '4.8 ng/mL',  time: '07:30' },
       { name: 'Weight',        value: '74.0 kg',    time: '07:50' },
     ];
 
@@ -230,6 +230,8 @@
     const targets = document.querySelectorAll(
       '#viewSignin .gh-track-section .gh-fade-up, ' +
       '#viewSignin .gh-analytics-section .gh-fade-up, ' +
+      '#viewSignin .gh-faq-section .gh-fade-up, ' +
+      '#viewSignin .gh-about-section .gh-fade-up, ' +
       '#viewSignin .gh-cta-band .gh-fade-up, ' +
       '#viewSignin .gh-analytics-consent'
     );

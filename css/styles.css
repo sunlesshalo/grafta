@@ -609,6 +609,91 @@ body {
 }
 #viewSignin .gh-analytics-consent strong { color: var(--gh-dark); }
 
+/* FAQ */
+#viewSignin .gh-faq-section {
+  background: #fff;
+  padding: 6rem 0;
+}
+#viewSignin .gh-faq-list {
+  max-width: 680px;
+  margin: 2.5rem auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+#viewSignin .gh-faq-item {
+  border-bottom: 1px solid var(--gh-border);
+}
+#viewSignin .gh-faq-item:first-child {
+  border-top: 1px solid var(--gh-border);
+}
+#viewSignin .gh-faq-q {
+  font-family: var(--gh-f-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--gh-dark);
+  padding: 1.25rem 2rem 1.25rem 0;
+  cursor: pointer;
+  list-style: none;
+  position: relative;
+}
+#viewSignin .gh-faq-q::-webkit-details-marker { display: none; }
+#viewSignin .gh-faq-q::after {
+  content: '+';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: var(--gh-muted);
+  transition: transform 0.25s ease;
+}
+#viewSignin .gh-faq-item[open] .gh-faq-q::after {
+  content: '−';
+}
+#viewSignin .gh-faq-a {
+  font-family: var(--gh-f-body);
+  font-size: 0.95rem;
+  color: var(--gh-muted);
+  line-height: 1.7;
+  padding: 0 0 1.25rem;
+}
+
+/* ABOUT */
+#viewSignin .gh-about-section {
+  background: var(--gh-dark);
+  padding: 6rem 0;
+}
+#viewSignin .gh-about-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+#viewSignin .gh-about-headline {
+  font-family: var(--gh-f-head);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  letter-spacing: -0.03em;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 2rem;
+}
+#viewSignin .gh-about-body p {
+  font-family: var(--gh-f-body);
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.8;
+  margin-bottom: 1.2rem;
+}
+#viewSignin .gh-about-sign {
+  font-family: var(--gh-f-head);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--gh-coral);
+  margin-top: 0.5rem;
+}
+
 /* CTA BAND */
 #viewSignin .gh-cta-band {
   background: var(--gh-green);
@@ -672,6 +757,8 @@ body {
   #viewSignin .gh-flip-card { height: 160px; }
   #viewSignin .gh-privacy-section,
   #viewSignin .gh-analytics-section,
+  #viewSignin .gh-faq-section,
+  #viewSignin .gh-about-section,
   #viewSignin .gh-cta-band,
   #viewSignin .gh-track-section { padding: 4rem 0; }
   #viewSignin .gh-footer { flex-direction: column; gap: 0.4rem; text-align: center; }
