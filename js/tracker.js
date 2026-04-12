@@ -12,6 +12,8 @@ let _settings     = { water_target: 3000, day_start_hour: 5, bp_times: 2 };
 let _onOpenEditor = null;
 let _onNewDay     = null;
 let _waterLabel   = 'drink_water'; // i18n key for selected drink type
+let _delegationBound = false;
+let _mobTabsBound    = false;
 
 const DRINK_TYPES = ['drink_water','drink_coffee','drink_tea','drink_juice','drink_soup','drink_other'];
 
@@ -34,8 +36,10 @@ export function renderDay(dateKey, isToday) {
 // ── Event delegation ─────────────────────────────────────────────────────────
 
 function bindDelegation() {
+  if (_delegationBound) return;
   const view = document.getElementById('viewTracker');
   if (!view) return;
+  _delegationBound = true;
 
   view.addEventListener('click', e => {
     const el = e.target.closest('[data-action]');
@@ -67,6 +71,8 @@ function bindDelegation() {
 // ── Mobile tabs ───────────────────────────────────────────────────────────────
 
 function bindMobTabs() {
+  if (_mobTabsBound) return;
+  _mobTabsBound = true;
   document.querySelectorAll('.mob-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       const idx = parseInt(tab.dataset.tab, 10);
