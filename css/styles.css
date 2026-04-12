@@ -730,6 +730,15 @@ body {
   line-height: 1.8;
   margin-bottom: 1.2rem;
 }
+#viewSignin .gh-about-body a {
+  color: rgba(255,255,255,0.92);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color .2s;
+}
+#viewSignin .gh-about-body a:hover {
+  color: #fff;
+}
 #viewSignin .gh-about-sign {
   font-family: var(--gh-f-head);
   font-style: italic;

@@ -741,7 +741,7 @@ export const LANGS = {
     gh_faq_q3:            'Mi történik, ha a Grafta megszűnik?',
     gh_faq_a3:            'Az adataid a Google Drive-odban maradnak normál táblázatként. Megnyithatod, szerkesztheted vagy megoszthatod az orvosoddal — nem vagy hozzánk kötve.',
     gh_faq_q4:            'Mit tudok jelenleg rögzíteni?',
-    gh_faq_a4:            'Gyógyszereket (ütemtervvel és szedési aránnyal), kreatinin és tacrolimus labort, vérnyomást, testsúlyt, hőmérsékletet, folyadékbevitelt és vizeletmennyiséget. További laborértékek hamarosan érkeznek.',
+    gh_faq_a4:            'Gyógyszereket, kreatinin és tacrolimus labort, vérnyomást, testsúlyt, hőmérsékletet, folyadékbevitelt és vizeletmennyiséget. További laborértékek hamarosan érkeznek.',
     gh_faq_q5:            'Az orvosom látja az adataimat?',
     gh_faq_a5:            'Nem automatikusan. Megoszthatod vele a Google Sheets fájlodat, vagy PDF összefoglalót nyomtathatsz a következő vizitedhez.',
     gh_faq_q6:            'Kell valamit telepítenem?',
