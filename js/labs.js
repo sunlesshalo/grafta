@@ -46,21 +46,21 @@ export async function renderLabs() {
       <div class="labs-form-row">
         <div class="labs-input-group">
           <span class="labs-label">${t('labs_date')}</span>
-          <input class="labs-input date-input" type="date" id="labDate" value="${today}">
+          <input class="labs-input date-input" type="date" id="labDate" value="${today}" aria-label="${escapeHtml(t('a11y_lab_date'))}">
         </div>
       </div>
       <div class="labs-form-row">
         <div class="labs-input-group">
           <span class="labs-label">${t('labs_creatinine')} <span class="tip-icon" data-tip-key="tip_creatinine">i</span></span>
-          <input class="labs-input" type="number" step="0.01" inputmode="decimal" id="labCreatinine" placeholder="mg/dL">
+          <input class="labs-input" type="number" step="0.01" inputmode="decimal" id="labCreatinine" placeholder="mg/dL" aria-label="${escapeHtml(t('a11y_lab_creatinine'))}">
         </div>
         <div class="labs-input-group">
           <span class="labs-label">${t('labs_tacrolimus')} <span class="tip-icon" data-tip-key="tip_tacrolimus">i</span></span>
-          <input class="labs-input" type="number" step="0.1" inputmode="decimal" id="labTacrolimus" placeholder="ng/mL">
+          <input class="labs-input" type="number" step="0.1" inputmode="decimal" id="labTacrolimus" placeholder="ng/mL" aria-label="${escapeHtml(t('a11y_lab_tacrolimus'))}">
         </div>
       </div>
       <div class="labs-form-row">
-        <input class="labs-input date-input" type="text" id="labNotes" placeholder="${t('labs_notes_ph')}" style="width:100%">
+        <input class="labs-input date-input" type="text" id="labNotes" placeholder="${escapeHtml(t('labs_notes_ph'))}" style="width:100%" aria-label="${escapeHtml(t('a11y_lab_notes'))}">
       </div>
       <div class="labs-form-row">
         <button class="labs-add-btn" onclick="window._labs.addLab()">${t('labs_add')}</button>
@@ -86,7 +86,7 @@ export async function renderLabs() {
             ${lab.tacrolimus ? `FK: <strong>${escapeHtml(lab.tacrolimus)}</strong>` : ''}
           </span>
           <span class="labs-entry-notes">${escapeHtml(lab.notes)}</span>
-          <button class="log-del" title="${t('tip_del')}" onclick="window._labs.deleteLab('${safeDate}')">×</button>
+          <button class="log-del" title="${escapeHtml(t('tip_del'))}" aria-label="${escapeHtml(t('tip_del'))}" onclick="window._labs.deleteLab('${safeDate}')"><span aria-hidden="true">×</span></button>
         </div>`;
     });
     html += `</div>`;

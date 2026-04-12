@@ -286,6 +286,13 @@ const LANGS = {
     a11y_collapse_all_meds:    'Collapse all medications',
     a11y_sign_in_google:       'Sign in with Google',
     a11y_print_report:         'Print report',
+    a11y_prev_day:             'Previous day',
+    a11y_next_day:             'Next day',
+    a11y_edit_schedule:        'Edit medication schedule',
+    a11y_open_charts:          'Open charts',
+    a11y_open_reports:         'Open reports',
+    a11y_med_options:          'Medication options',
+    a11y_sign_out:             'Sign out',
     // Analytics consent
     consent_text:    'We use privacy-friendly analytics (no cookies, no personal data) to improve the app.',
     consent_accept:  'OK',
@@ -577,6 +584,13 @@ const LANGS = {
     a11y_collapse_all_meds:    'Restrânge toate medicamentele',
     a11y_sign_in_google:       'Conectează-te cu Google',
     a11y_print_report:         'Tipărește raportul',
+    a11y_prev_day:             'Ziua anterioară',
+    a11y_next_day:             'Ziua următoare',
+    a11y_edit_schedule:        'Editează programul medicamentelor',
+    a11y_open_charts:          'Deschide graficele',
+    a11y_open_reports:         'Deschide rapoartele',
+    a11y_med_options:          'Opțiuni medicament',
+    a11y_sign_out:             'Deconectare',
     // Analytics consent
     consent_text:    'Folosim analize prietenoase cu intimitatea (fără cookie-uri, fără date personale) pentru a îmbunătăți aplicația.',
     consent_accept:  'OK',
@@ -868,6 +882,13 @@ const LANGS = {
     a11y_collapse_all_meds:    'Összes gyógyszer összecsukása',
     a11y_sign_in_google:       'Bejelentkezés Google-lel',
     a11y_print_report:         'Jelentés nyomtatása',
+    a11y_prev_day:             'Előző nap',
+    a11y_next_day:             'Következő nap',
+    a11y_edit_schedule:        'Gyógyszerszedési terv szerkesztése',
+    a11y_open_charts:          'Grafikonok megnyitása',
+    a11y_open_reports:         'Jelentések megnyitása',
+    a11y_med_options:          'Gyógyszer beállítások',
+    a11y_sign_out:             'Kijelentkezés',
     // Analytics consent
     consent_text:    'Adatvédelemre odafigyelő elemzést használunk (nincs cookie, nincs személyes adat) az alkalmazás fejlesztéséhez.',
     consent_accept:  'OK',
@@ -964,9 +985,30 @@ export function applyStaticTranslations() {
   const signoutBtn = document.getElementById('signoutBtn');
   if (signoutBtn) signoutBtn.textContent = t('signout');
 
-  // Sync language selects to current lang
+  // Sync language selects to current lang (+ localize their aria-label)
   ['langSelect', 'langSelectSignin', 'langSelectEditor'].forEach(id => {
     const sel = document.getElementById(id);
-    if (sel) sel.value = _lang;
+    if (!sel) return;
+    sel.value = _lang;
+    sel.setAttribute('aria-label', t('a11y_language'));
+  });
+
+  // Accessible names for tracker icon-only buttons
+  const iconBtnLabels = {
+    prevBtn:    'a11y_prev_day',
+    nextBtn:    'a11y_next_day',
+    editorBtn:  'a11y_edit_schedule',
+    chartsBtn:  'a11y_open_charts',
+    reportsBtn: 'a11y_open_reports',
+  };
+  Object.entries(iconBtnLabels).forEach(([id, key]) => {
+    const btn = document.getElementById(id);
+    if (btn) btn.setAttribute('aria-label', t(key));
+  });
+
+  // Localize "Back" accessible name on overlay/editor back buttons
+  const backLabel = t('editor_back').replace(/^←\s*/, '');
+  document.querySelectorAll('.overlay-back, .editor-back').forEach(btn => {
+    btn.setAttribute('aria-label', backLabel);
   });
 }

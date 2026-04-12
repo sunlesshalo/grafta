@@ -265,18 +265,24 @@ function vitalsRow(label, key, value, type) {
       ? `${value.value}°C`
       : `${value.value} kg`;
     const alertCls = (type === 'bp' && bpHigh(value)) || (type === 'temp' && value.value >= 37.5) ? ' alert' : '';
-    html += `<span class="vital-locked${alertCls}" title="${t(tipKey)}">${display} <button class="log-del" title="${t('tip_del')}" onclick="window._tracker.clearVital('${key}','${type}')">×</button></span>`;
+    html += `<span class="vital-locked${alertCls}" title="${t(tipKey)}">${display} <button class="log-del" title="${t('tip_del')}" aria-label="${escapeHtml(t('tip_del'))}" onclick="window._tracker.clearVital('${key}','${type}')"><span aria-hidden="true">×</span></button></span>`;
   } else if (type === 'bp') {
-    html += `<input class="vital-input" id="bp${key}Sys" type="number" inputmode="numeric" placeholder="sys" style="width:40px" title="${t('tip_bp')}">`;
-    html += `<span class="vital-slash">/</span>`;
-    html += `<input class="vital-input" id="bp${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px" title="${t('tip_bp')}">`;
-    html += `<input class="vital-input" id="bp${key}Pulse" type="number" inputmode="numeric" placeholder="♥" style="width:36px" title="${t('tip_pulse')}">`;
+    const slot = String(key) === '0' ? 'am' : 'pm';
+    const ariaSys   = escapeHtml(t(`a11y_bp_sys_${slot}`));
+    const ariaDia   = escapeHtml(t(`a11y_bp_dia_${slot}`));
+    const ariaPulse = escapeHtml(t(`a11y_bp_pulse_${slot}`));
+    html += `<input class="vital-input" id="bp${key}Sys" type="number" inputmode="numeric" placeholder="sys" style="width:40px" title="${t('tip_bp')}" aria-label="${ariaSys}">`;
+    html += `<span class="vital-slash" aria-hidden="true">/</span>`;
+    html += `<input class="vital-input" id="bp${key}Dia" type="number" inputmode="numeric" placeholder="dia" style="width:40px" title="${t('tip_bp')}" aria-label="${ariaDia}">`;
+    html += `<input class="vital-input" id="bp${key}Pulse" type="number" inputmode="numeric" placeholder="♥" style="width:36px" title="${t('tip_pulse')}" aria-label="${ariaPulse}">`;
     html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','bp')">${t('ok_btn')}</button>`;
   } else {
     const ph    = type === 'weight' ? 'kg'  : '°C';
     const step  = type === 'weight' ? '0.1' : '0.1';
     const width = type === 'weight' ? '56px' : '48px';
-    html += `<input class="vital-input wide" id="${key}Val" type="number" inputmode="decimal" step="${step}" placeholder="${ph}" style="width:${width}" title="${t(tipKey)}">`;
+    const ariaKey = type === 'weight' ? 'a11y_weight' : 'a11y_temperature';
+    const ariaLabel = escapeHtml(t(ariaKey));
+    html += `<input class="vital-input wide" id="${key}Val" type="number" inputmode="decimal" step="${step}" placeholder="${ph}" style="width:${width}" title="${t(tipKey)}" aria-label="${ariaLabel}">`;
     html += `<button class="vital-ok-btn" onclick="window._tracker.saveVital('${key}','${type}')">${t('ok_btn')}</button>`;
   }
 
@@ -286,7 +292,7 @@ function vitalsRow(label, key, value, type) {
 
 function renderNotes(s) {
   return `<div class="notes-box">
-    <textarea class="notes-input" id="dayNotes" placeholder="${escapeHtml(t('notes_ph'))}"
+    <textarea class="notes-input" id="dayNotes" placeholder="${escapeHtml(t('notes_ph'))}" aria-label="${escapeHtml(t('a11y_day_notes'))}"
       oninput="window._tracker.saveNotes(this.value)">${escapeHtml(s.notes || '')}</textarea>
   </div>`;
 }
@@ -420,7 +426,7 @@ function renderFluidCol(type, elId, title, target) {
       <span class="log-time">${escapeHtml(entry.time || t('night'))}</span>
       ${entry.label ? `<span class="log-label">${escapeHtml(entry.label)}</span>` : ''}
       <span class="log-amount">${Number(entry.amount) || 0} ml</span>
-      <button class="log-del" title="${escapeHtml(t('tip_del'))}" onclick="event.stopPropagation();window._tracker.delFluid('${type}',${idx})">×</button>
+      <button class="log-del" title="${escapeHtml(t('tip_del'))}" aria-label="${escapeHtml(t('tip_del'))}" onclick="event.stopPropagation();window._tracker.delFluid('${type}',${idx})"><span aria-hidden="true">×</span></button>
     </div>`;
   });
   html += `</div>`;
@@ -492,8 +498,8 @@ export function editFluid(type, idx) {
       <div class="edit-fluid-header">${escapeHtml(t('edit_fluid_title'))}</div>
       ${labelHtml}
       <div class="edit-fluid-amount-row">
-        <input type="number" class="edit-fluid-input" value="${Number(entry.amount) || 0}" min="1" inputmode="numeric">
-        <span>ml</span>
+        <input type="number" class="edit-fluid-input" value="${Number(entry.amount) || 0}" min="1" inputmode="numeric" aria-label="${escapeHtml(t('a11y_fluid_amount'))}">
+        <span aria-hidden="true">ml</span>
       </div>
       <div class="edit-fluid-actions">
         <button class="edit-fluid-cancel">${escapeHtml(t('cancel_btn'))}</button>

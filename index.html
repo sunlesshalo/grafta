@@ -42,7 +42,7 @@
   <nav class="gh-nav">
     <a class="gh-nav-logo" href="#hero">grafta</a>
     <div class="gh-nav-right">
-      <select id="langSelectSignin" class="gh-lang-select" onchange="_app.setLang(this.value)">
+      <select id="langSelectSignin" class="gh-lang-select" onchange="_app.setLang(this.value)" aria-label="Language">
         <option value="en">EN</option>
         <option value="ro">RO</option>
         <option value="hu">HU</option>
@@ -275,16 +275,16 @@
 <div id="viewTracker" class="view hidden">
 
   <div class="day-nav" id="dayNav">
-    <button id="prevBtn" onclick="_app.prevDay()">&larr;</button>
+    <button id="prevBtn" onclick="_app.prevDay()" aria-label="Previous day"><span aria-hidden="true">&larr;</span></button>
     <div class="day-label" id="dayLabel">
       <span class="sync-dot" id="syncDot"></span>
     </div>
     <div class="day-nav-right">
-      <button id="nextBtn" onclick="_app.nextDay()">&rarr;</button>
-      <button id="editorBtn" class="gear-btn" onclick="_app.openEditor()" title="Edit med schedule">&#9881;</button>
-      <button id="chartsBtn" class="gear-btn" onclick="_app.openCharts()" title="Charts">&#128202;</button>
-      <button id="reportsBtn" class="gear-btn" onclick="_app.openReports()" title="Reports">&#128203;</button>
-      <select id="langSelect" class="lang-select" onchange="_app.setLang(this.value)">
+      <button id="nextBtn" onclick="_app.nextDay()" aria-label="Next day"><span aria-hidden="true">&rarr;</span></button>
+      <button id="editorBtn" class="gear-btn" onclick="_app.openEditor()" title="Edit med schedule" aria-label="Edit medication schedule"><span aria-hidden="true">&#9881;</span></button>
+      <button id="chartsBtn" class="gear-btn" onclick="_app.openCharts()" title="Charts" aria-label="Open charts"><span aria-hidden="true">&#128202;</span></button>
+      <button id="reportsBtn" class="gear-btn" onclick="_app.openReports()" title="Reports" aria-label="Open reports"><span aria-hidden="true">&#128203;</span></button>
+      <select id="langSelect" class="lang-select" onchange="_app.setLang(this.value)" aria-label="Language">
         <option value="en">EN</option>
         <option value="ro">RO</option>
         <option value="hu">HU</option>
@@ -318,10 +318,10 @@
 <!-- ── Med editor overlay ── -->
 <div id="viewEditor" class="view view-editor hidden">
   <div class="editor-bar">
-    <button class="editor-back" onclick="_app.closeEditor()">← Back</button>
+    <button class="editor-back" onclick="_app.closeEditor()" aria-label="Back">← Back</button>
     <span class="editor-title">Med Schedule</span>
     <div class="editor-bar-actions">
-      <select id="langSelectEditor" class="lang-select" onchange="_app.setLang(this.value)">
+      <select id="langSelectEditor" class="lang-select" onchange="_app.setLang(this.value)" aria-label="Language">
         <option value="en">EN</option>
         <option value="ro">RO</option>
         <option value="hu">HU</option>
@@ -335,7 +335,7 @@
 <!-- ── Charts overlay ── -->
 <div id="viewCharts" class="view view-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="chartsTitleEl">
   <div class="overlay-bar">
-    <button class="overlay-back" onclick="_app.closeCharts()"><span aria-hidden="true">← </span>Back</button>
+    <button class="overlay-back" onclick="_app.closeCharts()" aria-label="Back"><span aria-hidden="true">← </span>Back</button>
     <span class="overlay-title" id="chartsTitleEl" tabindex="-1">Charts</span>
     <div></div>
   </div>

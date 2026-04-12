@@ -91,7 +91,7 @@ function renderMedRow(med) {
         ${altLabelRaw && med.dose_alt ? `<span class="editor-med-alt"> / ${escapeHtml(med.dose_alt)} (${escapeHtml(altLabelRaw)})</span>` : ''}
         ${med.conditional ? `<span class="editor-med-cond"> — if ${escapeHtml(med.conditional)}</span>` : ''}
       </div>
-      <button class="editor-med-menu-btn" onclick="window._editor.toggleInline('${escapeHtml(med.id)}')">⋮</button>
+      <button class="editor-med-menu-btn" aria-label="${escapeHtml(t('a11y_med_options'))}" onclick="window._editor.toggleInline('${escapeHtml(med.id)}')"><span aria-hidden="true">⋮</span></button>
     </div>`;
 }
 
@@ -102,35 +102,42 @@ function renderInlineEdit(med) {
   ).join('');
   const safeId = escapeHtml(med.id);
 
+  const aName  = escapeHtml(t('a11y_med_name'));
+  const aDose  = escapeHtml(t('a11y_med_dose'));
+  const aTimes = escapeHtml(t('a11y_med_times'));
+  const aAlt   = escapeHtml(t('a11y_med_dose_alt'));
+  const aCond  = escapeHtml(t('a11y_med_conditional'));
+  const aNotes = escapeHtml(t('a11y_med_notes'));
+
   return `
     <div class="editor-inline" id="inline-${safeId}">
       <div class="editor-field">
         <label>${t('field_name')}</label>
-        <input type="text" value="${escapeHtml(med.name)}" oninput="window._editor.update('${safeId}','name',this.value)">
+        <input type="text" value="${escapeHtml(med.name)}" aria-label="${aName}" oninput="window._editor.update('${safeId}','name',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_dose')}</label>
-        <input type="text" value="${escapeHtml(med.dose)}" placeholder="${escapeHtml(t('field_dose_ph'))}" oninput="window._editor.update('${safeId}','dose',this.value)">
+        <input type="text" value="${escapeHtml(med.dose)}" placeholder="${escapeHtml(t('field_dose_ph'))}" aria-label="${aDose}" oninput="window._editor.update('${safeId}','dose',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_schedule')}</label>
-        <select onchange="window._editor.update('${safeId}','alt_rule',this.value)">${altOptions}</select>
+        <select aria-label="${escapeHtml(t('field_schedule'))}" onchange="window._editor.update('${safeId}','alt_rule',this.value)">${altOptions}</select>
       </div>
       <div class="editor-field">
         <label>${t('field_alt_dose')}</label>
-        <input type="text" value="${escapeHtml(med.dose_alt)}" placeholder="${escapeHtml(t('field_dose_alt_ph'))}" oninput="window._editor.update('${safeId}','dose_alt',this.value)">
+        <input type="text" value="${escapeHtml(med.dose_alt)}" placeholder="${escapeHtml(t('field_dose_alt_ph'))}" aria-label="${aAlt}" oninput="window._editor.update('${safeId}','dose_alt',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_time')}</label>
-        <input type="time" value="${escapeHtml(med.time)}" oninput="window._editor.update('${safeId}','time',this.value)">
+        <input type="time" value="${escapeHtml(med.time)}" aria-label="${aTimes}" oninput="window._editor.update('${safeId}','time',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_condition')}</label>
-        <input type="text" value="${escapeHtml(med.conditional)}" placeholder="${escapeHtml(t('field_cond_ph'))}" oninput="window._editor.update('${safeId}','conditional',this.value)">
+        <input type="text" value="${escapeHtml(med.conditional)}" placeholder="${escapeHtml(t('field_cond_ph'))}" aria-label="${aCond}" oninput="window._editor.update('${safeId}','conditional',this.value)">
       </div>
       <div class="editor-field">
         <label>${t('field_notes')}</label>
-        <input type="text" value="${escapeHtml(med.notes)}" oninput="window._editor.update('${safeId}','notes',this.value)">
+        <input type="text" value="${escapeHtml(med.notes)}" aria-label="${aNotes}" oninput="window._editor.update('${safeId}','notes',this.value)">
       </div>
       <button class="editor-delete-btn" onclick="window._editor.deleteMed('${safeId}')">${t('editor_remove_med')}</button>
     </div>`;
@@ -141,27 +148,31 @@ function renderSettings() {
   const wt = localStorage.getItem('mt_water_target') || '3000';
   const ds = localStorage.getItem('mt_day_start')    || '5';
   const bt = localStorage.getItem('mt_bp_times')     || '2';
+  const aPatient = escapeHtml(t('a11y_setting_patient_name'));
+  const aWater   = escapeHtml(t('a11y_setting_water_target'));
+  const aStart   = escapeHtml(t('a11y_setting_day_start'));
+  const aBpAm    = escapeHtml(t('a11y_setting_bp_am_time'));
   return `
     <div class="editor-settings">
       <h3>${t('settings_title')}</h3>
       <div class="editor-field">
         <label>${t('patient_name')}</label>
-        <input type="text" value="${escapeHtml(pn)}" placeholder="${escapeHtml(t('patient_name_ph'))}" id="settingPatientName"
+        <input type="text" value="${escapeHtml(pn)}" placeholder="${escapeHtml(t('patient_name_ph'))}" id="settingPatientName" aria-label="${aPatient}"
           oninput="localStorage.setItem('mt_patient_name', this.value)">
       </div>
       <div class="editor-field">
         <label>${t('water_target')} <span class="tip-icon" data-tip-key="tip_water_target">i</span></label>
-        <input type="number" value="${Number(wt) || 3000}" placeholder="${escapeHtml(t('ml'))}" id="settingWaterTarget"
+        <input type="number" value="${Number(wt) || 3000}" placeholder="${escapeHtml(t('ml'))}" id="settingWaterTarget" aria-label="${aWater}"
           oninput="localStorage.setItem('mt_water_target', this.value)">
       </div>
       <div class="editor-field">
         <label>${t('day_starts')} <span class="tip-icon" data-tip-key="tip_day_start">i</span></label>
-        <input type="number" value="${Number(ds) || 5}" min="0" max="6" id="settingDayStart"
+        <input type="number" value="${Number(ds) || 5}" min="0" max="6" id="settingDayStart" aria-label="${aStart}"
           oninput="localStorage.setItem('mt_day_start', this.value)">
       </div>
       <div class="editor-field">
         <label>${t('bp_readings_label')} <span class="tip-icon" data-tip-key="tip_bp_times">i</span></label>
-        <input type="number" value="${Number(bt) || 2}" min="1" max="4" id="settingBpTimes"
+        <input type="number" value="${Number(bt) || 2}" min="1" max="4" id="settingBpTimes" aria-label="${aBpAm}"
           oninput="localStorage.setItem('mt_bp_times', this.value)">
       </div>
     </div>`;
