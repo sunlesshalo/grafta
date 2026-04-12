@@ -1,0 +1,22 @@
+{
+  "name": "grafta",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Post-transplant medication, vitals, and lab tracker. Vanilla JS PWA.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "serve": "npx serve -s -l 3000"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "playwright": "^1.59.1",
+    "vitest": "^4.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sunlesshalo/grafta.git"
+  },
+  "license": "ISC"
+}
