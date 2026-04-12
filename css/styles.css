@@ -1502,6 +1502,8 @@ body {
 
 .editor-settings .editor-field label { width: auto; flex-shrink: 0; white-space: nowrap; }
 .editor-settings .editor-field input { flex: none; width: 80px; }
+.editor-field-toggle { justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--brand-border-warm); }
+.editor-field-toggle input[type="checkbox"] { width: auto; flex: none; }
 
 /* ── Info tooltip icon + popup ── */
 .tip-icon {

@@ -3,7 +3,7 @@
 import { getCachedMeds, setCachedMeds, saveSchedule, generateId } from './schedule.js';
 import { getSpreadsheetId, setSetting } from './sheets.js';
 import { t } from './i18n.js';
-import { track } from './analytics.js';
+import { track, hasConsent, setConsent } from './analytics.js';
 import { escapeHtml } from './util.js';
 
 let _meds         = [];   // working copy
@@ -67,9 +67,14 @@ function bindDelegation() {
     }
   });
 
-  // Delegated change for select (alt_rule)
+  // Delegated change for select (alt_rule) + analytics toggle
   body.addEventListener('change', e => {
     const el = e.target;
+    if (el.id === 'settingAnalytics') {
+      setConsent(el.checked);
+      track('analytics_opt_' + (el.checked ? 'in' : 'out'));
+      return;
+    }
     if (el.dataset.field && el.dataset.medId) {
       update(el.dataset.medId, el.dataset.field, el.value);
     }
@@ -216,6 +221,10 @@ function renderSettings() {
         <label>${t('bp_readings_label')} <span class="tip-icon" data-tip-key="tip_bp_times">i</span></label>
         <input type="number" value="${Number(bt) || 2}" min="1" max="4" id="settingBpTimes" aria-label="${aBpAm}"
           data-setting="mt_bp_times">
+      </div>
+      <div class="editor-field editor-field-toggle">
+        <label for="settingAnalytics">${t('analytics_toggle_label')}</label>
+        <input type="checkbox" id="settingAnalytics" ${hasConsent() ? 'checked' : ''}>
       </div>
     </div>`;
 }
