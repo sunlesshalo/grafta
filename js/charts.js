@@ -171,6 +171,7 @@ const DARK     = '#0F2622';
 const MUTED    = '#4A6965';
 const AMBER    = '#D97706';
 const AMBER_B  = 'rgba(217,119,6,0.55)';     // bars
+const INDIGO   = '#6366F1';                   // pulse — distinct from coral/green
 const GRID     = 'rgba(212,234,230,0.9)';    // brand-border
 const MONO     = "'JetBrains Mono', 'Courier New', monospace";
 const FS       = 11;
@@ -247,10 +248,10 @@ function renderBPChart(body, data, labels) {
   }
 
   if (data.some(r => r.pulse_am)) {
-    datasets.push({ label: t('charts_pulse_am'), data: data.map(r => r.pulse_am), borderColor: AMBER, backgroundColor: 'rgba(217,119,6,0.08)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: AMBER, tension: 0.35, spanGaps: false, fill: true, yAxisID: 'yPulse' });
+    datasets.push({ label: t('charts_pulse_am'), data: data.map(r => r.pulse_am), borderColor: INDIGO, backgroundColor: 'rgba(99,102,241,0.08)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: INDIGO, tension: 0.35, spanGaps: false, fill: true, yAxisID: 'yPulse' });
   }
   if (_settings.bp_times > 1 && data.some(r => r.pulse_pm)) {
-    datasets.push({ label: t('charts_pulse_pm'), data: data.map(r => r.pulse_pm), borderColor: AMBER, borderWidth: 1.5, borderDash: [4,3], pointRadius: 2, tension: 0.35, spanGaps: false, fill: false, yAxisID: 'yPulse' });
+    datasets.push({ label: t('charts_pulse_pm'), data: data.map(r => r.pulse_pm), borderColor: INDIGO, borderWidth: 1.5, borderDash: [4,3], pointRadius: 2, tension: 0.35, spanGaps: false, fill: false, yAxisID: 'yPulse' });
   }
 
   datasets.push({ label: '140', data: labels.map(() => 140), borderColor: CORAL_R, borderWidth: 1, borderDash: [6,4], pointRadius: 0, fill: false, tension: 0 });
