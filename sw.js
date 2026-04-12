@@ -1,5 +1,5 @@
-const CACHE = 'mt-v2-51';
-const PRECACHE = ['/', '/css/styles.css', '/css/report-print.css', '/js/early-lang.js', '/js/auth.js', '/js/sheets.js', '/js/store.js', '/js/schedule.js', '/js/tracker.js', '/js/editor.js', '/js/labs.js', '/js/charts.js', '/js/reports.js', '/js/i18n.js', '/js/translations.js', '/js/analytics.js', '/js/util.js', '/js/app.js', '/manifest.json', '/icon-192.png', '/icon-512.png'];
+const CACHE = 'mt-v2-52';
+const PRECACHE = ['/', '/privacy.html', '/terms.html', '/css/styles.css', '/css/report-print.css', '/js/early-lang.js', '/js/auth.js', '/js/sheets.js', '/js/store.js', '/js/schedule.js', '/js/tracker.js', '/js/editor.js', '/js/labs.js', '/js/charts.js', '/js/reports.js', '/js/i18n.js', '/js/translations.js', '/js/analytics.js', '/js/util.js', '/js/app.js', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting()));

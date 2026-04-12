@@ -96,6 +96,8 @@ export const LANGS = {
     gh_cta_sub:           'Sign in with Google. Your spreadsheet is created automatically. You own it forever.',
     gh_cta_btn:           'Sign in with Google',
     gh_footer_left:       'Built by a transplant recipient, for transplant recipients.',
+    gh_footer_privacy:    'Privacy Policy',
+    gh_footer_terms:      'Terms of Service',
     reconnect_text:      'Session expired —',
     reconnect_btn:       'Reconnect',
     // Tabs
@@ -437,6 +439,8 @@ export const LANGS = {
     gh_cta_sub:           'Conectează-te cu Google. Tabelul tău se creează automat. Îl deții pentru totdeauna.',
     gh_cta_btn:           'Conectează-te cu Google',
     gh_footer_left:       'Construit de un transplantat, pentru transplantați.',
+    gh_footer_privacy:    'Politica de confidentialitate',
+    gh_footer_terms:      'Termeni si conditii',
     reconnect_text:      'Sesiune expirată —',
     reconnect_btn:       'Reconectează-te',
     // Tabs
@@ -778,6 +782,8 @@ export const LANGS = {
     gh_cta_sub:           'Jelentkezz be Google fiókoddal. A táblázatod automatikusan létrejön. Csak te látod a rögzített adataid.',
     gh_cta_btn:           'Bejelentkezés Google fiókoddal',
     gh_footer_left:       'Transzplantálttól transzplantáltaknak.',
+    gh_footer_privacy:    'Adatvedelmi szabalyzat',
+    gh_footer_terms:      'Felhasznalasi feltetelek',
     reconnect_text:      'Munkamenet lejárt —',
     reconnect_btn:       'Újracsatlakozás',
     // Tabs

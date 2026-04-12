@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <script src="js/early-lang.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <title>Privacy Policy — Grafta</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gh-f-body: 'DM Sans', system-ui, sans-serif;
+      --gh-f-mono: 'JetBrains Mono', monospace;
+      --gh-muted: #6b7280;
+      --gh-border: #e5e7eb;
+    }
+    body {
+      font-family: var(--gh-f-body);
+      color: #1a1a1a;
+      line-height: 1.7;
+      background: #fff;
+    }
+    .legal-nav {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gh-border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 2.5rem;
+    }
+    .legal-nav a {
+      font-family: var(--gh-f-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+    .legal-lang-select {
+      font-family: var(--gh-f-mono);
+      font-size: 0.78rem;
+      border: 1px solid var(--gh-border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .legal-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+    .legal-body h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .legal-body .legal-updated {
+      font-size: 0.82rem;
+      color: var(--gh-muted);
+      margin-bottom: 2.5rem;
+    }
+    .legal-body h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin: 2rem 0 0.8rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--gh-border);
+    }
+    .legal-body h2:first-of-type { border-top: none; padding-top: 0; }
+    .legal-body p { margin-bottom: 0.8rem; }
+    .legal-body ul { margin: 0.5rem 0 1rem 1.5rem; }
+    .legal-body li { margin-bottom: 0.4rem; }
+    .legal-body a { color: #4f46e5; }
+    .legal-body strong { font-weight: 600; }
+    .legal-footer {
+      border-top: 1px solid var(--gh-border);
+      padding: 1.4rem 2.5rem;
+      font-family: var(--gh-f-mono);
+      font-size: 0.75rem;
+      color: var(--gh-muted);
+      text-align: center;
+    }
+    [data-lang] { display: none; }
+    [data-lang].active { display: block; }
+    @media (max-width: 560px) {
+      .legal-nav { padding: 0.9rem 1.2rem; }
+      .legal-body { padding: 2rem 1.2rem 4rem; }
+      .legal-body h1 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="legal-nav">
+  <a href="/">grafta.health</a>
+  <select class="legal-lang-select" id="langSelect" aria-label="Language">
+    <option value="en">EN</option>
+    <option value="ro">RO</option>
+    <option value="hu">HU</option>
+  </select>
+</nav>
+
+<!-- ── ENGLISH ── -->
+<div class="legal-body" data-lang="en">
+  <h1>Privacy Policy</h1>
+  <p class="legal-updated">Last updated: 12 April 2026</p>
+
+  <h2>1. Data Controller</h2>
+  <p><strong>PINE LINES SRL</strong><br>
+  CUI: 40670956<br>
+  Str. Horea 88-90, Ap. 13, 400275 Cluj-Napoca, Romania<br>
+  Email: <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a></p>
+
+  <h2>2. What Grafta Does</h2>
+  <p>Grafta is a free health-tracking web application for kidney transplant recipients. It lets you log medications, vitals, and lab results. All health data is stored in a Google Sheets spreadsheet inside <strong>your own Google Drive</strong>. Grafta does not have its own database and cannot access your health data.</p>
+
+  <h2>3. Health Data — Stays on Your Device and Google Drive</h2>
+  <p>Grafta does <strong>not</strong> collect, store, or process your health data on any server we control. Your medication logs, lab results, blood pressure, weight, temperature, fluid intake, and notes are written directly to your Google Sheets file via the Google Sheets API. The data lives in your Google account and is subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+  <p>We never see, read, or have access to any health values you enter.</p>
+
+  <h2>4. Google Sign-In and API Access</h2>
+  <p>Grafta uses Google Sign-In to authenticate you. When you sign in, we request permission to:</p>
+  <ul>
+    <li>Create and edit spreadsheet files that Grafta creates in your Google Drive</li>
+  </ul>
+  <p>We do not request access to your contacts, emails, photos, or any other Google services. The OAuth token is stored locally in your browser and is never sent to our servers.</p>
+
+  <h2>5. Analytics</h2>
+  <p>We use <strong>Umami</strong>, a self-hosted, open-source, cookieless analytics tool. Analytics data is collected <strong>only after you explicitly consent</strong> via the consent banner shown on your first visit.</p>
+  <p>If you consent, we collect:</p>
+  <ul>
+    <li>Page views and session duration</li>
+    <li>Button clicks and feature usage (e.g., which features you open)</li>
+    <li>Error events (to fix bugs)</li>
+    <li>Your selected language</li>
+  </ul>
+  <p>We <strong>never</strong> collect:</p>
+  <ul>
+    <li>Any health data (creatinine, doses, weight, blood pressure, notes, etc.)</li>
+    <li>Your name, email, or Google account information</li>
+    <li>IP addresses (Umami anonymizes them by default)</li>
+    <li>Cross-site tracking data</li>
+  </ul>
+  <p>Umami does not use cookies. No data is shared with or sold to third parties. Analytics are hosted at <strong>analytics.pinelines.eu</strong> on infrastructure we control.</p>
+
+  <h2>6. Cookies and Local Storage</h2>
+  <p>Grafta does <strong>not</strong> set any cookies. We use browser localStorage to store:</p>
+  <ul>
+    <li>Your language preference</li>
+    <li>Your analytics consent choice</li>
+    <li>Temporary offline data (synced to your Google Sheet when back online)</li>
+    <li>App settings (water target, display preferences)</li>
+  </ul>
+  <p>This data never leaves your browser.</p>
+
+  <h2>7. Legal Basis for Processing</h2>
+  <p>Under the GDPR, we process data based on:</p>
+  <ul>
+    <li><strong>Consent</strong> (Art. 6(1)(a)) — for analytics, collected via the consent banner. You can withdraw consent at any time.</li>
+    <li><strong>Legitimate interest</strong> (Art. 6(1)(f)) — for essential localStorage data needed to make the app function.</li>
+  </ul>
+
+  <h2>8. Data Retention</h2>
+  <ul>
+    <li><strong>Health data:</strong> Stored in your Google Drive indefinitely — you control it.</li>
+    <li><strong>Analytics data:</strong> Retained on our Umami instance. Aggregated, no personal identifiers.</li>
+    <li><strong>localStorage:</strong> Persists until you clear your browser data or uninstall the app.</li>
+  </ul>
+
+  <h2>9. Your Rights</h2>
+  <p>Under the GDPR, you have the right to:</p>
+  <ul>
+    <li><strong>Access</strong> — request what data we hold about you</li>
+    <li><strong>Rectification</strong> — correct inaccurate data</li>
+    <li><strong>Erasure</strong> — request deletion of your data</li>
+    <li><strong>Restriction</strong> — limit how we process your data</li>
+    <li><strong>Portability</strong> — receive your data in a portable format</li>
+    <li><strong>Objection</strong> — object to processing based on legitimate interest</li>
+    <li><strong>Withdraw consent</strong> — at any time, without affecting prior processing</li>
+  </ul>
+  <p>To exercise any of these rights, email us at <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a>.</p>
+
+  <h2>10. Supervisory Authorities</h2>
+  <p>You have the right to lodge a complaint with a data protection authority:</p>
+  <ul>
+    <li><strong>Romania:</strong> ANSPDCP — <a href="https://www.dataprotection.ro" target="_blank" rel="noopener">www.dataprotection.ro</a></li>
+    <li><strong>Hungary:</strong> NAIH — <a href="https://www.naih.hu" target="_blank" rel="noopener">www.naih.hu</a></li>
+    <li>Or the supervisory authority in your EU member state of residence.</li>
+  </ul>
+
+  <h2>11. International Transfers</h2>
+  <p>Your health data is stored by Google in accordance with their data processing terms. Analytics data is stored on a Hetzner server in the EU. No data is transferred outside the EU/EEA by us.</p>
+
+  <h2>12. Children</h2>
+  <p>Grafta is not directed at children under 16. We do not knowingly collect data from children. If you believe a child has provided data, contact us and we will delete it.</p>
+
+  <h2>13. Changes to This Policy</h2>
+  <p>We may update this policy. The "last updated" date at the top will reflect the latest revision. Material changes will be communicated via the app.</p>
+
+  <h2>14. Contact</h2>
+  <p>For any privacy-related questions:<br>
+  <strong>PINE LINES SRL</strong><br>
+  Email: <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a></p>
+</div>
+
+<!-- ── ROMANIAN ── -->
+<div class="legal-body" data-lang="ro">
+  <h1>Politica de confidentialitate</h1>
+  <p class="legal-updated">Ultima actualizare: 12 aprilie 2026</p>
+
+  <h2>1. Operatorul de date</h2>
+  <p><strong>PINE LINES SRL</strong><br>
+  CUI: 40670956<br>
+  Str. Horea 88-90, Ap. 13, 400275 Cluj-Napoca, Romania<br>
+  Email: <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a></p>
+
+  <h2>2. Ce face Grafta</h2>
+  <p>Grafta este o aplicatie web gratuita de monitorizare a sanatatii pentru beneficiarii de transplant renal. Permite inregistrarea medicamentelor, semnelor vitale si rezultatelor analizelor. Toate datele de sanatate sunt stocate intr-un fisier Google Sheets din <strong>propriul tau Google Drive</strong>. Grafta nu are o baza de date proprie si nu poate accesa datele tale de sanatate.</p>
+
+  <h2>3. Datele de sanatate — raman pe dispozitivul tau si in Google Drive</h2>
+  <p>Grafta <strong>nu</strong> colecteaza, stocheaza sau prelucreaza datele tale de sanatate pe niciun server pe care il controlam. Inregistrarile medicamentelor, rezultatele analizelor, tensiunea arteriala, greutatea, temperatura, aportul de lichide si notitele sunt scrise direct in fisierul tau Google Sheets prin API-ul Google Sheets. Datele se afla in contul tau Google si sunt supuse <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Politicii de confidentialitate Google</a>.</p>
+  <p>Nu vedem, nu citim si nu avem acces la nicio valoare de sanatate pe care o introduci.</p>
+
+  <h2>4. Autentificarea Google si accesul API</h2>
+  <p>Grafta foloseste Google Sign-In pentru autentificare. Cand te conectezi, solicitam permisiunea de a:</p>
+  <ul>
+    <li>Crea si edita fisiere de tip spreadsheet pe care Grafta le creeaza in Google Drive-ul tau</li>
+  </ul>
+  <p>Nu solicitam acces la contacte, emailuri, fotografii sau alte servicii Google. Token-ul OAuth este stocat local in browser si nu este trimis niciodata pe serverele noastre.</p>
+
+  <h2>5. Analize (Analytics)</h2>
+  <p>Folosim <strong>Umami</strong>, un instrument de analize open-source, auto-gazduit, fara cookie-uri. Datele de analize sunt colectate <strong>doar dupa ce iti exprimi acordul explicit</strong> prin bannerul de consimtamant afisat la prima vizita.</p>
+  <p>Daca esti de acord, colectam:</p>
+  <ul>
+    <li>Vizualizari de pagini si durata sesiunii</li>
+    <li>Click-uri pe butoane si utilizarea functiilor (de exemplu, ce functii deschizi)</li>
+    <li>Evenimente de eroare (pentru remedierea erorilor)</li>
+    <li>Limba selectata</li>
+  </ul>
+  <p><strong>Nu</strong> colectam niciodata:</p>
+  <ul>
+    <li>Date de sanatate (creatinina, doze, greutate, tensiune arteriala, notite etc.)</li>
+    <li>Numele, emailul sau informatiile contului tau Google</li>
+    <li>Adrese IP (Umami le anonimizeaza implicit)</li>
+    <li>Date de urmarire cross-site</li>
+  </ul>
+  <p>Umami nu foloseste cookie-uri. Nicio data nu este partajata sau vanduta tertilor. Analizele sunt gazduite pe <strong>analytics.pinelines.eu</strong> pe infrastructura pe care o controlam.</p>
+
+  <h2>6. Cookie-uri si stocare locala</h2>
+  <p>Grafta <strong>nu</strong> seteaza cookie-uri. Folosim localStorage din browser pentru a stoca:</p>
+  <ul>
+    <li>Preferinta ta de limba</li>
+    <li>Alegerea ta privind consimtamantul pentru analize</li>
+    <li>Date temporare offline (sincronizate cu Google Sheet cand revii online)</li>
+    <li>Setari ale aplicatiei (tinta de apa, preferinte de afisare)</li>
+  </ul>
+  <p>Aceste date nu parasesc niciodata browserul tau.</p>
+
+  <h2>7. Temeiul legal al prelucrarii</h2>
+  <p>Conform GDPR, prelucram datele pe baza:</p>
+  <ul>
+    <li><strong>Consimtamantului</strong> (Art. 6(1)(a)) — pentru analize, colectat prin bannerul de consimtamant. Poti retrage consimtamantul oricand.</li>
+    <li><strong>Interesului legitim</strong> (Art. 6(1)(f)) — pentru datele esentiale din localStorage necesare functionarii aplicatiei.</li>
+  </ul>
+
+  <h2>8. Perioada de pastrare a datelor</h2>
+  <ul>
+    <li><strong>Datele de sanatate:</strong> Stocate in Google Drive-ul tau pe termen nedeterminat — tu le controlezi.</li>
+    <li><strong>Datele de analize:</strong> Pastrate pe instanta noastra Umami. Agregate, fara identificatori personali.</li>
+    <li><strong>localStorage:</strong> Persista pana cand stergi datele browserului sau dezinstalezi aplicatia.</li>
+  </ul>
+
+  <h2>9. Drepturile tale</h2>
+  <p>Conform GDPR, ai dreptul la:</p>
+  <ul>
+    <li><strong>Acces</strong> — solicita ce date detinem despre tine</li>
+    <li><strong>Rectificare</strong> — corecteaza datele inexacte</li>
+    <li><strong>Stergere</strong> — solicita stergerea datelor tale</li>
+    <li><strong>Restrictionare</strong> — limiteaza modul in care prelucram datele tale</li>
+    <li><strong>Portabilitate</strong> — primeste datele tale intr-un format portabil</li>
+    <li><strong>Opozitie</strong> — opune-te prelucrarii bazate pe interes legitim</li>
+    <li><strong>Retragerea consimtamantului</strong> — oricand, fara a afecta prelucrarea anterioara</li>
+  </ul>
+  <p>Pentru a exercita oricare dintre aceste drepturi, scrie-ne la <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a>.</p>
+
+  <h2>10. Autoritati de supraveghere</h2>
+  <p>Ai dreptul de a depune o plangere la o autoritate de protectie a datelor:</p>
+  <ul>
+    <li><strong>Romania:</strong> ANSPDCP — <a href="https://www.dataprotection.ro" target="_blank" rel="noopener">www.dataprotection.ro</a></li>
+    <li><strong>Ungaria:</strong> NAIH — <a href="https://www.naih.hu" target="_blank" rel="noopener">www.naih.hu</a></li>
+    <li>Sau autoritatea de supraveghere din statul tau membru UE de resedinta.</li>
+  </ul>
+
+  <h2>11. Transferuri internationale</h2>
+  <p>Datele tale de sanatate sunt stocate de Google conform termenilor lor de prelucrare a datelor. Datele de analize sunt stocate pe un server Hetzner in UE. Nicio data nu este transferata in afara UE/SEE de catre noi.</p>
+
+  <h2>12. Copii</h2>
+  <p>Grafta nu se adreseaza copiilor sub 16 ani. Nu colectam in cunostinta de cauza date de la copii. Daca crezi ca un copil a furnizat date, contacteaza-ne si le vom sterge.</p>
+
+  <h2>13. Modificari ale acestei politici</h2>
+  <p>Putem actualiza aceasta politica. Data „ultima actualizare" de sus va reflecta ultima revizie. Modificarile semnificative vor fi comunicate prin aplicatie.</p>
+
+  <h2>14. Contact</h2>
+  <p>Pentru orice intrebari legate de confidentialitate:<br>
+  <strong>PINE LINES SRL</strong><br>
+  Email: <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a></p>
+</div>
+
+<!-- ── HUNGARIAN ── -->
+<div class="legal-body" data-lang="hu">
+  <h1>Adatvedelmi szabalyzat</h1>
+  <p class="legal-updated">Utolso frissites: 2026. aprilis 12.</p>
+
+  <h2>1. Adatkezelo</h2>
+  <p><strong>PINE LINES SRL</strong><br>
+  CUI: 40670956<br>
+  Str. Horea 88-90, Ap. 13, 400275 Kolozsvar (Cluj-Napoca), Romania<br>
+  Email: <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a></p>
+
+  <h2>2. Mit csinal a Grafta</h2>
+  <p>A Grafta egy ingyenes egeszsegkovetest szolgalo webalkalmazas vesetranszplantalt paciensek szamara. Lehetove teszi a gyogyszerek, letjelek es laboreredmenyek rogziteset. Minden egeszsegugyi adat egy Google Sheets fajlban tarolodik a <strong>sajat Google Drive-odban</strong>. A Graftanak nincs sajat adatbazisa, es nem ferhet hozza az egeszsegugyi adataidhoz.</p>
+
+  <h2>3. Egeszsegugyi adatok — a keszulekedenen es a Google Drive-ban maradnak</h2>
+  <p>A Grafta <strong>nem</strong> gyujt, tarol vagy dolgoz fel egeszsegugyi adatokat semmilyen altunk uzemeltetett szerveren. A gyogyszernaplo-bejegyzesek, laboreredmenyek, vernyomas, testsuly, homerseklet, folyadekbevetel es jegyzetek kozvetlenul a Google Sheets fajlodba irodik a Google Sheets API-n keresztul. Az adatok a Google-fiokodban talalhatok, es a <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google adatvedelmi szabalyzata</a> vonatkozik rajuk.</p>
+  <p>Soha nem latjuk, olvassuk vagy ferunk hozza semmilyen egeszsegugyi ertekhez, amelyet megadsz.</p>
+
+  <h2>4. Google bejelentkezes es API-hozzaferes</h2>
+  <p>A Grafta a Google Sign-In szolgaltatast hasznalja a hitelesiteshez. Bejelentkezeskor engedelyt kerunk a kovetkezokhoz:</p>
+  <ul>
+    <li>A Grafta altal a Google Drive-ban letrehozott tablazatfajlok letrehozasa es szerkesztese</li>
+  </ul>
+  <p>Nem kerunk hozzaferest a nevjegyeidhez, emailjeidhez, fotoihoz vagy mas Google-szolgaltatasokhoz. Az OAuth-token helyben, a bongeszoben tarolodik, es soha nem kerül a szervereinkre.</p>
+
+  <h2>5. Analizak (Analytics)</h2>
+  <p>Az <strong>Umami</strong> nevu nyilt forrasu, sajat szerveren uzemeltetett, suti nelkuli analitikai eszkozt hasznaljuk. Az analitikai adatok gyujtese <strong>csak az explicit hozzajarulasod utan</strong> tortenik, amelyet az elso latogataskor megjeleno hozzajarulasi banneren keresztul adsz meg.</p>
+  <p>Ha beleegyezel, a kovetkezoket gyujtjuk:</p>
+  <ul>
+    <li>Oldalmegtekintest es munkamenet idotartamat</li>
+    <li>Gombkattintasokat es funkciohasznalatot (pl. mely funkciokat nyitod meg)</li>
+    <li>Hibaeseményeket (hibak javitasahoz)</li>
+    <li>A valasztott nyelvet</li>
+  </ul>
+  <p><strong>Soha nem</strong> gyujtjuk:</p>
+  <ul>
+    <li>Egeszsegugyi adatokat (kreatinin, dozisok, testsuly, vernyomas, jegyzetek stb.)</li>
+    <li>Nevedet, email-cimedet vagy Google-fiok informacioidat</li>
+    <li>IP-cimeket (az Umami alapertelmezetten anonimizalja oket)</li>
+    <li>Oldalak kozotti kovetesi adatokat</li>
+  </ul>
+  <p>Az Umami nem hasznal sutiket. Az adatokat nem osztjuk meg es nem adjuk el harmadik feleknek. Az analizak az <strong>analytics.pinelines.eu</strong> cimen, az altunk uzemeltetett infrastrukturan vannak tavololva.</p>
+
+  <h2>6. Sutik es helyi tarolas</h2>
+  <p>A Grafta <strong>nem</strong> allit be sutiket. A bongeszo localStorage-at hasznaljuk a kovetkezok tarolasara:</p>
+  <ul>
+    <li>Nyelvi preferenciad</li>
+    <li>Analitikai hozzajarulasi dontesed</li>
+    <li>Atmeneti offline adatok (szinkronizalva a Google Sheet-tel, ha ujra online vagy)</li>
+    <li>Alkalmazasbeallitasok (vizcel, megjelenites)</li>
+  </ul>
+  <p>Ezek az adatok soha nem hagyjak el a bongészodet.</p>
+
+  <h2>7. Az adatkezeles jogalapja</h2>
+  <p>A GDPR alapjan az adatokat a kovetkezo jogalapokra hivatkozva kezeljuk:</p>
+  <ul>
+    <li><strong>Hozzajarulas</strong> (6. cikk (1)(a)) — az analizakhoz, a hozzajarulasi banneren keresztul gyujtve. A hozzajarulast barmikoer visszavonhatod.</li>
+    <li><strong>Jogos erdek</strong> (6. cikk (1)(f)) — az alkalmazas mukodesehez szukseges alapveto localStorage-adatokhoz.</li>
+  </ul>
+
+  <h2>8. Adatmegorzesi idoszak</h2>
+  <ul>
+    <li><strong>Egeszsegugyi adatok:</strong> A Google Drive-odban tarolva határozatlan ideig — te iranyitod.</li>
+    <li><strong>Analitikai adatok:</strong> Az Umami-peldanyunkon tarolva. Osszesitett, szemelyazonositok nelkul.</li>
+    <li><strong>localStorage:</strong> Addig marad meg, amig nem torlod a bongeszo adatait vagy nem tarlitod el az alkalmazast.</li>
+  </ul>
+
+  <h2>9. Jogaid</h2>
+  <p>A GDPR alapjan jogod van a kovetkezokhoz:</p>
+  <ul>
+    <li><strong>Hozzaferes</strong> — kerd le, milyen adatokat tarolunk rolad</li>
+    <li><strong>Helyesbites</strong> — javitsd a pontatlan adatokat</li>
+    <li><strong>Torles</strong> — kerd az adataid torlesét</li>
+    <li><strong>Korlatozas</strong> — korlatizd az adatkezeles modjat</li>
+    <li><strong>Adathordozhatosag</strong> — kapd meg az adataidat hordozhato formatumban</li>
+    <li><strong>Tiltakozas</strong> — tiltakozz a jogos erdeken alapulo adatkezeles ellen</li>
+    <li><strong>Hozzajarulas visszavonasa</strong> — barmikoer, a korabbi adatkezeles erintese nelkul</li>
+  </ul>
+  <p>Barmely jog gyakorlasahoz irj nekunk: <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a>.</p>
+
+  <h2>10. Felugyeleti hatosagok</h2>
+  <p>Jogod van panaszt benyujtani egy adatvedelmi hatosagnal:</p>
+  <ul>
+    <li><strong>Romania:</strong> ANSPDCP — <a href="https://www.dataprotection.ro" target="_blank" rel="noopener">www.dataprotection.ro</a></li>
+    <li><strong>Magyarorszag:</strong> NAIH — <a href="https://www.naih.hu" target="_blank" rel="noopener">www.naih.hu</a></li>
+    <li>Vagy a lakhely szerinti EU-tagallam felugyeleti hatosaga.</li>
+  </ul>
+
+  <h2>11. Nemzetkozi adattovabbitas</h2>
+  <p>Egeszsegugyi adataidat a Google tarolja az adatkezekesi felteteleiknek megfeleloen. Az analitikai adatokat egy EU-beli Hetzner-szerveren taroljuk. Altunk nem tortenik adattovabbitas az EU/EGT-n kivulre.</p>
+
+  <h2>12. Gyermekek</h2>
+  <p>A Grafta nem 16 ev alatti gyermekeknek szol. Nem gyujtunk tudatosan adatokat gyermekektol. Ha ugy velod, hogy egy gyermek adatokat adott meg, lepj kapcsolatba velunk, es toroljuk azokat.</p>
+
+  <h2>13. A szabalyzat modositasai</h2>
+  <p>Frissithetjuk ezt a szabalyzatot. A felul lathato „utolso frissites" datum az utolso modositast tukrozi. A lenyeges valtozasokrol az alkalmazason keresztul ertesitunk.</p>
+
+  <h2>14. Kapcsolat</h2>
+  <p>Barmilyen adatvedelmi kerdessel fordulj hozzank:<br>
+  <strong>PINE LINES SRL</strong><br>
+  Email: <a href="mailto:hello@pinelines.eu">hello@pinelines.eu</a></p>
+</div>
+
+<footer class="legal-footer">PINE LINES SRL &middot; CUI 40670956 &middot; Cluj-Napoca, Romania</footer>
+
+<script>
+(function () {
+  var supported = ['en', 'ro', 'hu'];
+  var stored = localStorage.getItem('mt_lang');
+  var lang = supported.indexOf(stored) !== -1 ? stored : 'en';
+
+  function setLang(l) {
+    lang = l;
+    localStorage.setItem('mt_lang', l);
+    document.documentElement.lang = l;
+    document.querySelectorAll('[data-lang]').forEach(function (el) {
+      el.classList.toggle('active', el.getAttribute('data-lang') === l);
+    });
+    document.getElementById('langSelect').value = l;
+  }
+
+  setLang(lang);
+  document.getElementById('langSelect').addEventListener('change', function (e) {
+    setLang(e.target.value);
+  });
+})();
+</script>
+</body>
+</html>

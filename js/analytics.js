@@ -71,12 +71,12 @@ function loadScript() {
 export function track(name, properties = {}) {
   try {
     const consent = localStorage.getItem(KEY_CONSENT);
-    if (consent === 'denied') return;
+    if (consent !== 'granted') return;          // opt-in: no tracking without explicit consent
 
     const enriched = { ...properties, lang: getLang() };
     const event = { name, properties: enriched, timestamp: new Date().toISOString() };
 
-    if (_loaded && consent === 'granted' && navigator.onLine && typeof umami !== 'undefined') {
+    if (_loaded && navigator.onLine && typeof umami !== 'undefined') {
       umami.track(name, enriched);
     } else {
       enqueue(event);
@@ -89,9 +89,9 @@ export function track(name, properties = {}) {
 export function trackPageview(url) {
   try {
     const consent = localStorage.getItem(KEY_CONSENT);
-    if (consent === 'denied') return;
+    if (consent !== 'granted') return;          // opt-in: no tracking without explicit consent
 
-    if (_loaded && consent === 'granted' && typeof umami !== 'undefined') {
+    if (_loaded && typeof umami !== 'undefined') {
       umami.track(props => ({ ...props, url }));
     }
     // Pageviews are not queued — stale pageviews have no value
