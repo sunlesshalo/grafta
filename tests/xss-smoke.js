@@ -125,7 +125,7 @@ const GAPI_MOCK = `
       },
       drive: {
         files: {
-          list: () => gapiResult({ files: [{ id: FAKE_SPREADSHEET_ID, name: 'Med Tracker v2' }] }),
+          list: () => gapiResult({ files: [{ id: FAKE_SPREADSHEET_ID, name: 'Grafta – Health Tracker' }] }),
           update: () => gapiResult({}),
         },
       },

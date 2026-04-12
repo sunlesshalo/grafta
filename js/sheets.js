@@ -2,7 +2,7 @@
 
 import { getToken, ensureToken, requestReconnect, waitForGapi } from './auth.js';
 
-const SHEET_NAME  = 'Med Tracker v2';
+const SHEET_NAME  = 'Grafta – Health Tracker';
 const KEY_SHEET   = 'mt_sheet_id'; // localStorage key for spreadsheet ID
 
 // Sheet names
@@ -93,10 +93,10 @@ export async function getSpreadsheetId() {
 async function findBestSpreadsheet() {
   await waitForGapi();
   try {
-    // Search for v2 name first, then fall back to legacy name
+    // Search for current name first, then fall back to legacy names
     const res = await gapiCall('drive.files.list', () =>
       window.gapi.client.drive.files.list({
-        q: `(name='${SHEET_NAME}' or name='Med Tracker') and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
+        q: `(name='${SHEET_NAME}' or name='Med Tracker v2' or name='Med Tracker') and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`,
         fields: 'files(id,name)',
         orderBy: 'createdTime',
         spaces: 'drive',
@@ -105,7 +105,7 @@ async function findBestSpreadsheet() {
     const files = res.result.files || [];
     if (files.length === 0) return null;
 
-    // Prefer "Med Tracker v2" named ones first, then any with data
+    // Prefer current-named ones first, then any with data
     const v2Files = files.filter(f => f.name === SHEET_NAME);
     const candidates = v2Files.length > 0 ? v2Files : files;
 
@@ -113,17 +113,22 @@ async function findBestSpreadsheet() {
       try {
         const config = await getRange(file.id, `${S.CONFIG}!A:A`);
         if (config.length > 1) { // has rows beyond header
-          // Rename to v2 if it has the old name
+          // Rename if it has a legacy name
           if (file.name !== SHEET_NAME) {
-            renameSpreadsheet(file.id, SHEET_NAME).catch(() => {});
+            console.log('[sheets] Renaming spreadsheet from', JSON.stringify(file.name), 'to', JSON.stringify(SHEET_NAME));
+            renameSpreadsheet(file.id, SHEET_NAME).catch(e => console.warn('[sheets] Rename failed:', e));
           }
           return file.id;
         }
       } catch { /* skip inaccessible */ }
     }
 
-    // All empty — return the oldest
-    return files[0].id;
+    // All empty — return the oldest, but still rename if legacy
+    const oldest = files[0];
+    if (oldest.name !== SHEET_NAME) {
+      renameSpreadsheet(oldest.id, SHEET_NAME).catch(e => console.warn('[sheets] Rename failed:', e));
+    }
+    return oldest.id;
   } catch (e) {
     console.warn('[sheets] Drive search failed:', e);
   }

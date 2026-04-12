@@ -69,7 +69,7 @@ const GAPI_MOCK = `
       init: () => Promise.resolve(),
       setToken: () => {},
       sheets: { spreadsheets: { values: { get: ({ range }) => gapiResult(fakeGet(range)), update: () => gapiResult({}), append: () => gapiResult({}), batchUpdate: () => gapiResult({}) }, create: () => gapiResult({ spreadsheetId: FAKE_SPREADSHEET_ID }), get: () => gapiResult({ sheets: [{ properties: { title: 'Labs', sheetId: 3 } }] }), batchUpdate: () => gapiResult({}) } },
-      drive: { files: { list: () => gapiResult({ files: [{ id: FAKE_SPREADSHEET_ID, name: 'Med Tracker v2' }] }), update: () => gapiResult({}) } },
+      drive: { files: { list: () => gapiResult({ files: [{ id: FAKE_SPREADSHEET_ID, name: 'Grafta – Health Tracker' }] }), update: () => gapiResult({}) } },
     },
   };
   window.google = { accounts: { oauth2: { initTokenClient: (cfg) => ({ requestAccessToken: () => {} }) } } };
