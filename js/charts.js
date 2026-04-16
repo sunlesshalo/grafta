@@ -326,9 +326,9 @@ function renderLabsChart(body, labs) {
   const labLabels = labs.map(r => r.date);
 
   const datasets = [
-    { label: t('charts_creatinine'), data: labs.map(r => r.creatinine), borderColor: CORAL, backgroundColor: CORAL_F, borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: CORAL, tension: 0.35, spanGaps: false, fill: true, yAxisID: 'y' },
+    { label: t('charts_creatinine'), data: labs.map(r => r.creatinine), borderColor: CORAL, backgroundColor: CORAL_F, borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: CORAL, tension: 0.35, spanGaps: true, fill: true, yAxisID: 'y' },
     { label: '≤1.2 mg/dL',           data: labLabels.map(() => 1.2),   borderColor: CORAL_R, borderWidth: 1, borderDash: [6,4], pointRadius: 0, fill: false, tension: 0, yAxisID: 'y' },
-    { label: t('charts_tacrolimus'), data: labs.map(r => r.tacrolimus), borderColor: GREEN, backgroundColor: GREEN_F, borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: GREEN, tension: 0.35, spanGaps: false, fill: true, yAxisID: 'y2' },
+    { label: t('charts_tacrolimus'), data: labs.map(r => r.tacrolimus), borderColor: GREEN, backgroundColor: GREEN_F, borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: GREEN, tension: 0.35, spanGaps: true, fill: true, yAxisID: 'y2' },
   ];
 
   const opts = {
