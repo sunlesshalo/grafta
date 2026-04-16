@@ -323,12 +323,21 @@ function renderLabsChart(body, labs) {
   const { section, canvasId } = makeSection('charts_labs');
   body.appendChild(section);
 
-  const labLabels = labs.map(r => r.date);
+  // Deduplicate by date — keep latest non-null value per field
+  const byDate = {};
+  labs.forEach(r => {
+    if (!byDate[r.date]) byDate[r.date] = { date: r.date };
+    if (r.creatinine != null) byDate[r.date].creatinine = r.creatinine;
+    if (r.tacrolimus != null) byDate[r.date].tacrolimus = r.tacrolimus;
+  });
+  const merged = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
+
+  const labLabels = merged.map(r => fmtDate(r.date));
 
   const datasets = [
-    { label: t('charts_creatinine'), data: labs.map(r => r.creatinine), borderColor: CORAL, backgroundColor: CORAL_F, borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: CORAL, tension: 0.35, spanGaps: true, fill: true, yAxisID: 'y' },
-    { label: '≤1.2 mg/dL',           data: labLabels.map(() => 1.2),   borderColor: CORAL_R, borderWidth: 1, borderDash: [6,4], pointRadius: 0, fill: false, tension: 0, yAxisID: 'y' },
-    { label: t('charts_tacrolimus'), data: labs.map(r => r.tacrolimus), borderColor: GREEN, backgroundColor: GREEN_F, borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: GREEN, tension: 0.35, spanGaps: true, fill: true, yAxisID: 'y2' },
+    { label: t('charts_creatinine'), data: merged.map(r => r.creatinine), borderColor: CORAL, backgroundColor: CORAL_F, borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: CORAL, tension: 0.35, spanGaps: true, fill: true, yAxisID: 'y' },
+    { label: '≤1.2 mg/dL',           data: labLabels.map(() => 1.2),    borderColor: CORAL_R, borderWidth: 1, borderDash: [6,4], pointRadius: 0, fill: false, tension: 0, yAxisID: 'y' },
+    { label: t('charts_tacrolimus'), data: merged.map(r => r.tacrolimus), borderColor: GREEN, backgroundColor: GREEN_F, borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: GREEN, tension: 0.35, spanGaps: true, fill: true, yAxisID: 'y2' },
   ];
 
   const opts = {
