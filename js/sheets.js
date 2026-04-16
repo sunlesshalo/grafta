@@ -315,30 +315,44 @@ export async function getLabs(spreadsheetId) {
 }
 
 export async function appendLab(spreadsheetId, date, creatinine, tacrolimus, notes) {
-  await appendRows(spreadsheetId, S.LABS, [[date, String(creatinine), String(tacrolimus), notes || '']]);
+  const row = [date, String(creatinine), String(tacrolimus), notes || ''];
+  const rows = await getRange(spreadsheetId, `${S.LABS}!A:A`);
+  const idx = rows.findIndex((r, i) => i > 0 && r[0] === date);
+  if (idx >= 0) {
+    await updateRange(spreadsheetId, `${S.LABS}!A${idx + 1}:D${idx + 1}`, [row]);
+  } else {
+    await appendRows(spreadsheetId, S.LABS, [row]);
+  }
 }
 
 export async function deleteLabRow(spreadsheetId, date) {
   const rows = await getRange(spreadsheetId, `${S.LABS}!A:A`);
-  const idx = rows.findIndex((r, i) => i > 0 && r[0] === date);
-  if (idx < 0) return;
+  const matchIndices = rows
+    .map((r, i) => (i > 0 && r[0] === date ? i : -1))
+    .filter(i => i >= 0);
+  if (matchIndices.length === 0) return;
 
   await waitForGapi();
   const sheetsRes = await window.gapi.client.sheets.spreadsheets.get({
-    spreadsheetId: await getSpreadsheetId(),
+    spreadsheetId,
     fields: 'sheets.properties',
   });
   const labSheet = sheetsRes.result.sheets?.find(s => s.properties.title === S.LABS);
   if (!labSheet) return;
 
-  await batchUpdate(await getSpreadsheetId(), [{
-    deleteDimension: {
-      range: {
-        sheetId: labSheet.properties.sheetId,
-        dimension: 'ROWS',
-        startIndex: idx,
-        endIndex: idx + 1,
+  // Delete bottom-up so earlier indices stay valid after each removal.
+  const requests = matchIndices
+    .slice()
+    .sort((a, b) => b - a)
+    .map(i => ({
+      deleteDimension: {
+        range: {
+          sheetId: labSheet.properties.sheetId,
+          dimension: 'ROWS',
+          startIndex: i,
+          endIndex: i + 1,
+        },
       },
-    },
-  }]);
+    }));
+  await batchUpdate(spreadsheetId, requests);
 }
