@@ -271,6 +271,16 @@ export async function getConfig(spreadsheetId) {
 }
 
 export async function saveConfig(spreadsheetId, rows) {
+  // values.update only writes the cells you pass, leaving stale rows in place.
+  // Clear all data rows first so a shorter list (e.g. after a delete) doesn't
+  // leave ghost rows that re-surface as duplicates on next read.
+  await waitForGapi();
+  await gapiCall(`values.clear(${S.CONFIG} data)`, () =>
+    window.gapi.client.sheets.spreadsheets.values.clear({
+      spreadsheetId,
+      range: `${S.CONFIG}!A2:J`,
+    })
+  );
   const values = [HEADERS[S.CONFIG], ...rows];
   await updateRange(spreadsheetId, `${S.CONFIG}!A:J`, values);
 }
