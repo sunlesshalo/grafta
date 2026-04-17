@@ -13,8 +13,14 @@ let _meds = null;  // array of med objects
  * Row format: [id, time, name, dose, dose_alt, alt_rule, conditional, notes, active, created_at]
  */
 export function parseConfigRows(rows) {
+  const seen = new Set();
   return rows.slice(1) // skip header
     .filter(row => row[0]) // skip empty rows
+    .filter(row => { // deduplicate by id (ghost rows from stale sheet data)
+      if (seen.has(row[0])) return false;
+      seen.add(row[0]);
+      return true;
+    })
     .map(row => ({
       id:          row[0] || '',
       time:        row[1] || '08:00',
@@ -112,7 +118,15 @@ export function isConditionalMet(conditional, bp) {
 export async function loadConfig() {
   const sheetId = await getSpreadsheetId();
   const rows    = await getConfig(sheetId);
+  const rawCount = rows.slice(1).filter(r => r[0]).length;
   _meds = parseConfigRows(rows);
+
+  // Auto-clean ghost rows: if dedup removed any, rewrite the sheet immediately
+  if (_meds.length < rawCount) {
+    console.warn(`[schedule] Cleaned ${rawCount - _meds.length} duplicate config rows`);
+    const cleanRows = serializeConfigRows(_meds);
+    await saveConfig(sheetId, cleanRows);
+  }
 
   // Sync config version from sheet history (handles new device / cross-device)
   if (getCurrentConfigVersion() === 0 && _meds.length > 0) {
